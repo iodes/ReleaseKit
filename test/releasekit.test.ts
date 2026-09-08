@@ -303,7 +303,7 @@ describe('theme-aware assets', () => {
     const plan = await planImages(p, '1');
     expect(plan.requests).toMatchObject([{ action: 'provide', theme: 'light', promptFile: null }]);
     expect(plan.generationRequests).toBe(0);
-    await expect(importImage(p, '1', 'queue', 'shared', path.join(p.root, 'dark.png'))).rejects.toThrow('themed variant');
+
     await importImage(p, '1', 'queue', 'light', path.join(p.root, 'light.png'));
     await finalize(p, '1');
     expect((await validate(p, '1')).valid).toBe(true);
@@ -375,14 +375,20 @@ describe('content, installation, and command-line behavior', () => {
     expect(command.stderr).toBe(''); expect(command.status).toBe(0); expect(JSON.parse(command.stdout)).toEqual([]);
   });
 
-  it('resolves an imported image relative to the explicit CLI working directory', async () => {
+  it('replaces an image using a file relative to the explicit CLI working directory', async () => {
     const p = await fixture('dark'); await commit(p.root, 'queue\n', 'Add queue');
     await release(p, '1', 'v0', undefined, true);
+    const previous = (await readVisual(p, '1', 'queue')).variants.dark!;
+    await fs.writeFile(path.join(p.root, 'replacement.png'), await png('#456789', 256, 160));
     const packageRoot = fileURLToPath(new URL('../', import.meta.url));
-    const command = spawnSync(process.execPath, ['--import', 'tsx', 'src/cli.ts', '--cwd', p.root, '--json', 'image', 'import', '1', 'queue', '--theme', 'dark', '--file', 'dark.png'], {
+    const command = spawnSync(process.execPath, ['--import', 'tsx', 'src/cli.ts', '--cwd', p.root, '--json', 'image', 'import', '1', 'queue', '--theme', 'dark', '--file', 'replacement.png'], {
       cwd: packageRoot, encoding: 'utf8', windowsHide: true,
     });
     expect(command.stderr).toBe(''); expect(command.status).toBe(0);
-    expect(JSON.parse(command.stdout).width).toBe(128);
+    const selected = JSON.parse(command.stdout);
+    expect(selected.width).toBe(256);
+    expect((await readVisual(p, '1', 'queue')).variants.dark).toEqual(selected);
+    expect(await exists(await p.releaseFile('1', previous.file))).toBe(false);
+    expect(await fs.readdir(await p.releaseFile('1', 'assets'))).toEqual([path.posix.basename(selected.file)]);
   });
 });

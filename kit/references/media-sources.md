@@ -1,6 +1,6 @@
 # Choosing the image source
 
-A release note needs a truthful explanation of the feature. It does not need an invented illustration for every subject. Choose the source before composition and rendering.
+Choose a truthful source for each note's image before composition and rendering: a supported generated explanation or approved supplied media. When a real capture or approved artwork is required but unavailable, request it and keep the image pending. Follow [image coverage](theme-pairing.md#coverage-and-repeat-runs); omit images only for the user's explicit text-only choices.
 
 | Source | Appropriate use | Agent action |
 | --- | --- | --- |
@@ -27,8 +27,8 @@ A native photo, content image, or screenshot often has one authentic appearance.
 releasekit image import 1.4.0 product-detail --theme shared --file ./approved-capture.png
 ```
 
-This requires `source: provided`. The CLI copies the selected bytes unchanged. `variants.shared` stores one asset; the public bundle exports one file with `fallbackTheme: shared`. The normal consumer lookup, `variants[theme] ?? variants[fallbackTheme]`, displays that file in either viewer theme. A shared slot is not a fabricated pair and does not require a second generation or duplicate file. Its original dimensions and colors are retained.
+This requires `source: provided`; pass `--source provided` with the import to change the source and selected image together. The CLI copies the selected bytes unchanged. `variants.shared` stores one asset; the public bundle exports one file with `fallbackTheme: shared`. The normal consumer lookup, `variants[theme] ?? variants[fallbackTheme]`, displays that file in either viewer theme. A shared slot is not a fabricated pair and does not require a second generation or duplicate file. Its original dimensions and colors are retained.
 
-If the product actually supplies distinct dark/light captures, import those with `--theme dark` and `--theme light`. Once one themed capture is imported, the plan requests the remaining configured capture. Choose shared or distinct themed entries, not both in the same note; remove the previous variant entries deliberately when switching. A missing theme is never generated as a substitute for an authentic capture.
+If the product actually supplies distinct dark/light captures, import those with `--theme dark` and `--theme light`. Once one themed capture is imported, the plan requests the remaining configured capture. The CLI switches between shared and themed selections during import; keep the previous entries until it succeeds. See [image transitions](theme-pairing.md#switch-between-shared-and-themed-images). A missing theme is never generated as a substitute for an authentic capture.
 
 Inspect the content and crop before import. Keep the original source while preparing any user-authorized crop or presentation adjustment. Theme changes must not alter product content. File validation checks bytes and metadata; the agent's review establishes whether the selected media is the appropriate approved source.

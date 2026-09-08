@@ -69,8 +69,18 @@ AI:  Found v1.4.0 and its preceding release tag v1.3.0 on this line.
      Created releasekit/releases/1.4.0/
      ✓ Pinned v1.3.0 → v1.4.0 and collected change evidence
      ✓ Wrote English originals with Korean and Japanese translations
-     Next: use releasekit-image for the images required by these notes.
-     Choose: Prepare images (recommended), Review copy, or Stop for now.
+     Next: use releasekit-image to prepare images for all drafted notes.
+     Choose: Prepare images (recommended), Request copy changes,
+     or Finish drafting — save the draft and ask for revisions later.
+
+You: Finish drafting.
+AI:  Drafting 1.4.0 is complete. Review releasekit/releases/1.4.0/.
+     Ask me here to rewrite a feature description, leave a feature out,
+     or add a feature that was missed. I'll update the draft and its
+     affected translations. Images and finalization remain pending.
+
+You: Rewrite the queue feature description to explain when to use it.
+AI:  Updated that feature description and its Korean and Japanese translations.
 
 You: Prepare images.
 AI:  ✓ Generated dark/light explanations from shared scene briefs
@@ -81,7 +91,9 @@ AI:  ✓ Generated dark/light explanations from shared scene briefs
 
 You: Use ./approved-capture.png for the product-detail note.
 AI:  ✓ Reviewed and imported it once for both viewer themes
-     Next: use releasekit-finalize to check and confirm 1.4.0.
+     Images for all current notes are ready to review.
+     Ask me to revise any feature image or replace it with another image.
+     If no image changes are needed, use releasekit-finalize to confirm 1.4.0.
 
 You: Use releasekit-finalize for 1.4.0, then export up to three releases
      in English to ./release-output.
@@ -135,9 +147,9 @@ Git range → Draft source + translations → Images → Finalize → Optional e
 | `releasekit-image` | Plan, generate or request, review, and import required images. |
 | `releasekit-finalize` | Review copy, evidence, translations, and images; validate and mark the release ready; export when requested. |
 
-All three skills use the agent's native question picker when clarification is needed and the tool is available, with free-text input for another answer; otherwise they ask in chat. This covers language choices, image references, translation scope or terminology, and unresolved finalization/export choices. Existing decisions are reused, and routine technical parameters are resolved through repository inspection. Required CLI flags do not become a questionnaire. Once a question is asked, dependent work waits for your submitted answer; a default selection, elapsed time, or a closed picker does not count as a choice. The agent keeps an asynchronous picker open while waiting, or asks in chat if the environment cannot support that wait. Image uploads are requested through the conversation's attachment flow.
+All three skills use the agent's native question picker when clarification is needed and the tool is available, with free-text input for another answer; otherwise they ask in chat. This covers language choices, image references, translation scope or terminology, and unresolved finalization/export choices. Existing decisions are reused, and routine technical parameters are resolved through repository inspection. Required CLI flags do not become a questionnaire. Once a question is asked, dependent work waits for your submitted answer; a default selection, elapsed time, or a closed picker does not count as a choice. Only one question request may remain unanswered in the conversation: newly discovered questions and next-step choices wait in a queue, even across skills or releases. A partial answer keeps the remaining questions pending. The agent keeps an asynchronous picker open while waiting, or asks in chat if the environment cannot support that wait. Image uploads are requested through the conversation's attachment flow.
 
-After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation; you can also stop for now. If you already requested the remaining work, the agent continues without asking again. When source and translations are complete, the next step is images; when required images are complete, it is finalization. Text-only releases go directly to finalization. Completed steps are skipped, and missing images or translations stay visible until resolved.
+After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation. After drafting is complete, **Finish drafting** saves the draft for you to read and request changes from the agent. The handoff includes links and examples of revision requests; the agent edits the same draft and refreshes affected translations when you ask. At other stages, you can stop for now. If you already requested the remaining work, the agent continues without asking again. When source and translations are complete, the next step is images; when required images are complete, it is finalization. Text-only releases go directly to finalization. Completed steps are skipped, and missing images or translations stay visible until resolved.
 
 The agent handles editorial work, media selection, and image generation where appropriate. The CLI handles files, evidence, validation, and export. Finalization includes review and marks local content ready with a content fingerprint. Export is optional; committing, publishing, and displaying it remain separate steps.
 
@@ -179,7 +191,8 @@ releasekit export --current 1.4.0 --limit 3 --locale en-US --out ./release-outpu
 - Use `--from-root` for an explicitly requested full-history first release.
 - `--to` defaults to the pinned SHA when preparing a saved baseline, and to `HEAD` otherwise; `--previous` can supply the comparison start.
 - Edit existing drafts in place. `prepare` never overwrites them.
-- Use `note add --no-image` for an intentionally text-only note.
+- Notes include images by default. Use `note add --no-image` only for an explicit text-only choice. Adding a note clears any previous `emptyReason`.
+- Use `releasekit note remove <version> <id>` to exclude a draft note. It removes the note folder, translations, visual brief, prompts, and unused managed images, including older imports. Images referenced by remaining visuals and source originals are preserved. The result lists removed paths and retained shared assets. Removing the last note leaves the draft pending until you add notes or supply a factual `emptyReason`.
 - Add `--json` for structured results or `--cwd` to select a project directory.
 - Export to a new directory; an existing destination is never overwritten.
 
@@ -197,6 +210,10 @@ Codex and Cursor share `.agents/skills` to avoid duplicate discovery. Claude Cod
 </details>
 
 ## Image themes
+
+Image work covers **every drafted note** by default, including small fixes and improvements. Only an explicit text-only choice omits a note's image. Calling `releasekit-image` again fills missing images, including those for notes added later, and reuses existing valid images. Existing images that need corrections stay pending until the affected revision or replacement is requested.
+
+After generation, review the images and ask the agent to revise anything you dislike or replace it with another approved image. When no image changes are needed and the content is complete, ask for `releasekit-finalize` to confirm the release.
 
 **Generated graphics default to dark and light.** Paired variants share one scene brief, preserving geometry, feature meaning, and semantic colors while presentation surfaces adapt. Images are shared across locales.
 
@@ -217,6 +234,8 @@ visuals:
 
 `releasekit image plan <version>` reports pending and reusable assets, with separate `generationRequests` and `providedRequests` counts. It reuses current imports and never calls a model API. Single-theme exports contain one real asset and an explicit fallback.
 
+To replace or regenerate an image, import the reviewed result with the same release version and note ID and the intended `--theme`. Import automatically switches shared/themed usage and removes the note's unused managed images after saving, including older imports. Files still referenced by visuals and source originals outside the note's managed assets are preserved. Keep existing variant entries until the replacement is imported. Use `--source provided` when replacing generated illustrations with a supplied image, or `--source generated` for the reverse change when the subject permits it; source and selection are saved together. See [image transitions](kit/references/theme-pairing.md#switch-between-shared-and-themed-images).
+
 Requests with `action: generate` include a prompt for the agent or an external tool. Requests with `action: provide` have `promptFile: null` and identify the needed source. Missing supplied media stays pending and blocks finalization; the agent can continue independent writing and translation work.
 
 <details>
@@ -233,7 +252,7 @@ releasekit image import 1.4.0 product-detail --theme shared --file ./approved-ca
 
 The CLI keeps the original bytes, dimensions, and colors. One `shared` asset serves both viewer themes without generating or duplicating another file.
 
-If genuine dark/light captures exist, import them with `--theme dark` and `--theme light` instead. A note must use either `shared` or themed entries; remove the previous variant entries when switching. A missing configured capture remains a supplied-image request.
+If genuine dark/light captures exist, import them with `--theme dark` and `--theme light` instead. The CLI replaces the previous shared/themed selection during import; keep its metadata in place until the new file is successfully registered. A missing configured capture remains a supplied-image request.
 
 Follow the current image plan even if older prompt files remain. See the [supplied-media example](examples/provided-media/README.md) and [media source guide](kit/references/media-sources.md) for pending inputs and older briefs.
 

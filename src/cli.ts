@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Project, prepare, startProject } from './project.js';
 import { initProject, installSkills } from './install.js';
-import { addNote, markTranslation, syncImagePolicy } from './content.js';
-import { planImages, importImage } from './images.js';
+import { addNote, removeNote, markTranslation, syncImagePolicy } from './content.js';
+import { planImages, importImage, type ImportImageOptions } from './images.js';
 import { validate, finalize } from './validate.js';
 import { exportBundle } from './export.js';
 import { configSchema, noteMetaSchema, assetVariant, type ProjectConfig } from './model.js';
@@ -53,6 +53,8 @@ note.command('add <version> <id>').description('Scaffold a note and its locale f
     await addNote(project(), version, id, noteMetaSchema.shape.category.parse(options.category), options.image);
     emit({ version, note: id, status: 'draft' });
   });
+note.command('remove <version> <id>').description('Remove a draft note, its locale files, prompts, and unused managed images')
+  .action(async (version: string, id: string) => emit(await removeNote(project(), version, id)));
 const images = program.command('image').description('Plan themed illustrations and register selected files');
 images.command('plan <version>').description('Plan generation or supplied-image requests without calling a model')
   .option('--sync-config', 'apply current project image settings to this draft')
@@ -61,10 +63,12 @@ images.command('plan <version>').description('Plan generation or supplied-image 
     if (options.syncConfig) await syncImagePolicy(instance, version);
     emit(await planImages(instance, version));
   });
-images.command('import <version> <note>').description('Import a selected raster variant')
-  .addOption(new Option('--theme <theme>', 'variant to register; shared is for supplied images').choices(['dark', 'light', 'shared']).makeOptionMandatory())
+images.command('import <version> <note>').description('Import or replace an image, switch shared/themed usage, and remove unused note images')
+  .addOption(new Option('--theme <theme>', 'variant to register; shared replaces themed entries and a theme replaces shared').choices(['dark', 'light', 'shared']).makeOptionMandatory())
+  .addOption(new Option('--source <source>', 'save the media source with this import; otherwise keep the current source').choices(['generated', 'provided']))
   .requiredOption('--file <file>', 'selected local PNG, JPEG, or WebP')
-  .action(async (version: string, id: string, options: { theme: string; file: string }) => emit(await importImage(project(), version, id, assetVariant.parse(options.theme), path.resolve(program.opts<{ cwd: string }>().cwd, options.file))));
+  .action(async (version: string, id: string, options: ImportImageOptions & { theme: string; file: string }) =>
+    emit(await importImage(project(), version, id, assetVariant.parse(options.theme), path.resolve(program.opts<{ cwd: string }>().cwd, options.file), { source: options.source })));
 const translation = program.command('translation').description('Track source freshness for reviewed translations');
 translation.command('mark <version> <note>').description('Mark an already reviewed translation current')
   .requiredOption('--locale <locale>', 'translation language code')

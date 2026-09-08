@@ -1,11 +1,12 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
-import { type AssetVariant, type Visual, themes, assetVariant, imageSource, activeVariants } from './model.js';
+import { type AssetVariant, type Visual, themes, assetVariant, sceneSchema, imageSource, activeVariants } from './model.js';
 import { Project, editable } from './project.js';
 import { readVisual, checkReferenceFiles } from './content.js';
 import { digest, identifier, exists, write, writeYaml } from './files.js';
 import { imagePrompt, sceneHash } from './prompts.js';
+import { fileKey, managedAssetFiles, retainedImageFiles } from './assets.js';
 
 export async function inspectImage(bytes: Buffer) {
   const image = sharp(bytes, { limitInputPixels: 16_777_216, failOn: 'warning' });
@@ -76,31 +77,53 @@ export async function planImages(project: Project, version: string) {
   };
 }
 
-export async function importImage(project: Project, version: string, noteId: string, variant: AssetVariant, source: string) {
+async function obsoleteNoteImages(project: Project, version: string, noteId: string, selected: Visual): Promise<string[]> {
+  const candidates = await managedAssetFiles(project, version, noteId);
+  if (!candidates.length) return [];
+  const retained = await retainedImageFiles(project, { version, noteId, visual: selected });
+  const obsolete: string[] = [];
+  for (const file of candidates) {
+    if (!retained.has(await fileKey(file))) obsolete.push(file);
+  }
+  return obsolete;
+}
+
+export interface ImportImageOptions { source?: 'generated' | 'provided' }
+
+export async function importImage(project: Project, version: string, noteId: string, variant: AssetVariant, source: string, options: ImportImageOptions = {}) {
   const release = await project.release(version);
   editable(release); identifier(noteId); assetVariant.parse(variant);
   if (!release.notes.some(n => n.id === noteId && n.image)) throw new Error(`No image-enabled note named ${noteId}.`);
   const visual = await readVisual(project, version, noteId);
+  if (options.source !== undefined) visual.scene.source = sceneSchema.shape.source.parse(options.source);
   const provided = imageSource(visual.scene) === 'provided';
   if (variant === 'shared') {
-    if (!provided) throw new Error('Only supplied images can use a shared asset.');
-    if (visual.variants.dark || visual.variants.light) throw new Error('Remove the themed variant entries before switching to one shared supplied image.');
+    if (!provided) throw new Error('Only supplied images can use a shared asset. Use --source provided when importing a supplied replacement.');
+    visual.variants = {};
   } else {
     if (!themes(release.visuals).includes(variant)) throw new Error(`Theme ${variant} is not enabled for this release. Update the project setting and sync the draft first.`);
-    if (visual.variants.shared) throw new Error('Remove the shared variant entry before switching to distinct supplied theme variants.');
+    delete visual.variants.shared;
   }
   const bytes = await fs.readFile(path.resolve(project.root, source));
   const inspected = await inspectImage(bytes);
   const file = `assets/${noteId}.${variant}.${inspected.sha256.slice(0, 12)}.${inspected.extension}`;
   const destination = await project.releaseFile(version, file);
-  if (await exists(destination)) {
-    if (digest(await fs.readFile(destination)) !== inspected.sha256) throw new Error('The asset destination has conflicting content.');
-  } else await write(destination, bytes);
+  const destinationExists = await exists(destination);
+  if (destinationExists && digest(await fs.readFile(destination)) !== inspected.sha256) throw new Error('The asset destination has conflicting content.');
   visual.variants[variant] = {
     file, sha256: inspected.sha256, sceneHash: sceneHash(visual.scene, release.visuals, variant),
     width: inspected.width, height: inspected.height,
   };
-  await writeYaml(await project.releaseFile(version, `visuals/${noteId}.yaml`), visual);
+  // Resolve cleanup before writing, and remove old files only after the selection is saved.
+  const obsolete = await obsoleteNoteImages(project, version, noteId, visual);
+  if (!destinationExists) await write(destination, bytes);
+  try {
+    await writeYaml(await project.releaseFile(version, `visuals/${noteId}.yaml`), visual);
+  } catch (error) {
+    if (!destinationExists) await fs.unlink(destination);
+    throw error;
+  }
+  for (const oldFile of obsolete) await fs.rm(oldFile, { force: true });
   return visual.variants[variant]!;
 }
 

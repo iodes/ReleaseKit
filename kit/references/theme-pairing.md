@@ -10,6 +10,16 @@ This generation policy does not require inventing a second appearance for suppli
 
 Policy is captured in each release when it is prepared. Editing the project default affects new releases. To apply the current project policy to an existing draft, run `releasekit image plan <version> --sync-config`. Previously selected files are retained; themes disabled by the new policy are not exported. Ready releases must be reopened before their policy changes.
 
+## Coverage and repeat runs
+
+The default image scope is every note in the saved release, including smaller fixes and improvements. Review the current `release.yaml` each time so newly added notes are included. A plain `releasekit-image` invocation uses this full scope without asking the user to pick important notes. Honor an explicitly limited request and the user's explicit text-only choices. If earlier agent prioritization disabled a note's image without such a choice, restore `image: true` and create or complete its visual brief in place, preserving its text, translations, and existing assets. Do not recreate the note. Missing supplied media stays pending instead of making the note text-only.
+
+Before planning, complete missing or unfinished briefs for the image-enabled notes. Preserve existing scene specifications and the release's captured theme policy when they have not been changed by the user's request. Run `releasekit image plan <version>` from the current saved state, then handle the missing requests across all notes. Respect `action: generate` versus `action: provide` and the configured dark/light or shared variants.
+
+On repeat runs, generate or import only missing images and missing required variants. Reuse existing valid imports and their completed reviews; do not regenerate an accepted image merely because the skill was invoked again. This includes a run after the user adds notes: complete those notes' missing images while retaining earlier ones. If everything is already current, generate nothing and provide the image-review and finalization guidance.
+
+An existing image reported as stale or invalid is unresolved, even though its file exists. Name the affected note and the reason, preserve the current selection, and offer a targeted correction; a missing-images request alone does not authorize replacing it. An explicit request to edit, regenerate, or replace an image applies to that target even when the plan considers it current; follow [replacement handling](#replace-or-regenerate-an-image). Keep other accepted images intact and check affected theme counterparts when the scene changes. Do not claim complete coverage or recommend finalization while required assets remain unresolved.
+
 ## One scene, two presentation treatments
 
 Both outputs share the same scene brief. Lock subject identity, geometry, object count, positions, scale, crop, camera, UI topology, action state, chart values, and any allowed literal labels. Change presentation surfaces, neutral values, lighting, shadows, and necessary edge separation. Preserve meaningful status colors and natural photographic or material colors.
@@ -35,7 +45,34 @@ Do not invert pixels or shift brightness globally. A black lens remains a black 
 5. When the available tool supports image references or edits, use the counterpart for a constrained theme edit. Otherwise repeat the exact scene contract and inspect for layout drift. Never claim pixel-identical geometry from independent stochastic generations.
 6. Compare the pair. Both files should have the same pixel dimensions. Verify pose, crop, UI state, values, and semantic colors by sight, then import the selected counterpart.
 
-Use one file per theme, not a split canvas or a two-panel comparison image. Keep previously accepted files while iterating. Do not restart the entire release when one small defect can be corrected locally.
+Use one file per theme, not a split canvas or a two-panel comparison image. Keep the current selection until a reviewed replacement is imported into the same slot. Do not restart the entire release when one small defect can be corrected locally.
+
+## Replace or regenerate an image
+
+Treat replacement and regeneration as an edit to the existing release, note ID, and affected theme. Reopen a ready release as a draft before editing it. Reuse its scene brief and current assets as needed for the requested correction. A request to regenerate an image still needs work even if the unchanged asset is reported as current by the plan; report the requested replacement as pending until it has been generated, reviewed, and imported.
+
+Keep the existing variant metadata while preparing the candidate, then run `releasekit image import <version> <note> --theme <theme> --file <selected-file>` for the same slot. Import validates the candidate and saves the new selection before removing unused managed images for this note, including older imports and obsolete shared/themed files. Reimporting identical bytes reuses the same file. Other selected variants, notes, releases, declared image references, and original source files outside the note's managed assets are preserved. If decoding or saving fails, the previous source and selection remain intact; report the replacement as pending.
+
+Keep temporary generation candidates outside the release's `assets/` directory and remove task-created discarded candidates when the replacement is complete. Do not add a new note or clear the old variant entry to make a replacement request. A replacement that remains one shared supplied image stays in the `shared` slot. Use [the transition flow](#switch-between-shared-and-themed-images) when the requested replacement changes between shared and themed usage.
+
+### Switch between shared and themed images
+
+Keep the current variant entries while preparing and reviewing the replacement. Import with the requested target `--theme`; the CLI replaces incompatible shared or themed entries automatically and cleans unused managed images after saving. When the requested media source also changes, pass `--source provided` or `--source generated` so that source and selection are saved together. Do not pre-clear variants or separately change `scene.source` merely to perform this transition.
+
+For example, replace generated dark/light illustrations with one approved capture:
+
+```sh
+releasekit image import 1.4.0 queue-action --theme shared --source provided --file ./approved-capture.png
+```
+
+To replace that shared image with distinct approved theme captures:
+
+```sh
+releasekit image import 1.4.0 queue-action --theme dark --file ./approved-dark.png
+releasekit image import 1.4.0 queue-action --theme light --file ./approved-light.png
+```
+
+The source remains supplied when `--source` is omitted. For a requested generated explanation instead, use `--source generated` on the first themed import; supplied-only subjects still require real media. Use only the release's configured themes. The first themed import replaces the shared selection, while any required counterpart remains pending until imported. Never synthesize or duplicate a supplied counterpart or describe a partial pair as complete. A source or scene change can also make an existing themed counterpart stale; review and refresh that affected image before finalization.
 
 ## External generation handoff
 

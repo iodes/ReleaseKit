@@ -3,11 +3,13 @@ name: releasekit-finalize
 description: Finalize a ReleaseKit release by reviewing facts, copy, translations, and images, validating content, and marking the local release ready. Export a release bundle when requested.
 ---
 
+Before asking anything, check for an unanswered question request already in this conversation. Keep that request pending across skill transitions and queue every new question until it is resolved; follow [the shared question guidance](references/workflow.md#ask-with-the-native-question-ui).
+
 Read the target release, [the workflow](references/workflow.md), and [the content contract](references/format.md). Reuse the version and choices established in the request and conversation. Use [the shared question guidance](references/workflow.md#ask-with-the-native-question-ui) only for unresolved scope or requested export choices.
 
 Invoking this skill to finalize a release includes review, corrections within the requested scope, validation, and local finalization. Complete those actions without a separate confirmation step. If the user explicitly asks only for an assessment, report the findings and leave the release status unchanged.
 
-Compare claims against the pinned final diff and target-revision files. For `initialContent: summary`, use the baseline snapshot and [the adoption guide](references/adoption.md); do not require a reconstruction of old commits or assume an initial launch. Use [the writing guide](references/writing.md) to check changed behavior, action paths, requirements, and limitations. Refresh affected translations after source edits using [Translate selected locales](references/workflow.md#translate-selected-locales). Preserve current translations and manual edits.
+Compare claims against the pinned final diff and target-revision files. For `initialContent: summary`, use the baseline snapshot and [the adoption guide](references/adoption.md); do not require a reconstruction of old commits or assume an initial launch. Use [the writing guide](references/writing.md) to check concise feature titles in every locale, changed behavior, action paths, requirements, and limitations. Refresh affected translations after source edits using [Translate selected locales](references/workflow.md#translate-selected-locales). Preserve current translations and manual edits.
 
 Inspect selected images for correct subject, readable framing, absent invented details, and consistent geometry across configured themes using [the pairing guide](references/theme-pairing.md). Reuse a completed visual review when the note, brief, and assets are unchanged. The CLI verifies files and metadata; it cannot judge whether the image depicts the feature accurately. Keep missing or unsuitable assets pending and use `releasekit-image` for the needed correction.
 
