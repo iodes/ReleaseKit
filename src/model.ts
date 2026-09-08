@@ -74,12 +74,6 @@ export const visualSchema = z.strictObject({
   variants: z.strictObject({ dark: assetSchema.optional(), light: assetSchema.optional(), shared: assetSchema.optional() }),
 });
 export type Visual = z.infer<typeof visualSchema>;
-export const evidenceSchema = z.strictObject({
-  schemaVersion: z.literal(1), source: sourceSchema,
-  commits: z.array(z.strictObject({ sha, subject: z.string() })),
-  files: z.array(z.strictObject({ status: z.string(), path: z.string(), oldPath: z.string().optional() })),
-});
-export type Evidence = z.infer<typeof evidenceSchema>;
 const exportedImage = z.strictObject({
   src: z.string(), width: z.number().int().positive(), height: z.number().int().positive(),
 });

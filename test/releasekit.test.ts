@@ -24,7 +24,8 @@ describe('pinned Git evidence and history', () => {
     await commit(p.root, 'initial\nqueue\nfuture\n', 'Later change', 'v2');
     await fs.writeFile(path.join(p.root, 'app.txt'), 'uncommitted\n');
     const r = await prepare(p, '1.0', { from: 'v0', to: 'v1' });
-    const patch = await fs.readFile(await p.releaseFile('1.0', 'changes.patch'), 'utf8');
+    const patch = git(p.root, ['diff', '--no-ext-diff', '--no-textconv', r.source.fromSha!, r.source.toSha, '--', 'app.txt']);
+    expect(await fs.readdir(await p.releaseDir('1.0'))).toEqual(['release.yaml']);
     expect(r.source.toSha).toBe(first);
     expect(patch).toContain('+queue');
     expect(patch).not.toContain('future');
@@ -39,7 +40,7 @@ describe('pinned Git evidence and history', () => {
     const p = await fixture();
     const first = await prepare(p, 'first', { fromRoot: true });
     expect(first.source.fromSha).toBeNull();
-    expect((await p.evidence('first')).files.map(f => f.path)).toContain('app.txt');
+    expect(collect(p.root, first.source.fromSha, first.source.toSha).files.map(f => f.path)).toContain('app.txt');
     expect(() => collect(p.root, 'HEAD', 'HEAD')).toThrow('same commit');
     expect(() => collect(p.root, 'missing-tag', 'HEAD')).toThrow();
   });
@@ -49,7 +50,7 @@ describe('pinned Git evidence and history', () => {
     await commit(p.root, 'temporary\n', 'Temporary change');
     await commit(p.root, 'initial\n', 'Revert temporary change');
     const r = await prepare(p, 'reverted', { from: 'v0' });
-    expect((await p.evidence('reverted')).files).toEqual([]);
+    expect(collect(p.root, r.source.fromSha, r.source.toSha).files).toEqual([]);
     expect((await validate(p, 'reverted')).valid).toBe(false);
     r.emptyReason = 'No user-visible changes remain in this range.';
     await p.save(r);
@@ -107,10 +108,10 @@ describe('pinned Git evidence and history', () => {
     const featureCommit = git(p.root, ['rev-parse', 'HEAD']).trim();
     git(p.root, ['switch', 'main']); await commit(p.root, 'main change\n', 'Update main');
     git(p.root, ['merge', '--no-ff', 'feature', '-m', 'Merge capability']);
-    const { evidence, patch } = collect(p.root, 'v0', 'HEAD');
+    const evidence = collect(p.root, 'v0', 'HEAD');
     expect(evidence.files.map(f => f.path).sort()).toEqual(['app.txt', 'feature.txt']);
     expect(evidence.commits.some(c => c.sha === featureCommit)).toBe(true);
-    expect(patch).toContain('+new capability');
+    expect(git(p.root, ['show', `${evidence.source.toSha}:feature.txt`])).toBe('new capability\n');
   });
 });
 

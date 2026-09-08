@@ -1,8 +1,8 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { configSchema, releaseSchema, evidenceSchema, type ProjectConfig, type Release, type Evidence } from './model.js';
-import { exists, identifier, readYaml, within, writeYaml, write, KIT_DIR } from './files.js';
-import { repoRoot, collect, checkPrevious } from './git.js';
+import { configSchema, releaseSchema, type ProjectConfig, type Release } from './model.js';
+import { exists, identifier, readYaml, within, writeYaml, KIT_DIR } from './files.js';
+import { repoRoot, resolveRange, checkPrevious } from './git.js';
 
 export class Project {
   readonly root: string;
@@ -35,9 +35,6 @@ export class Project {
     if (!(await exists(folder))) return [];
     const entries = await fs.readdir(folder, { withFileTypes: true });
     return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
-  }
-  async evidence(version: string): Promise<Evidence> {
-    return evidenceSchema.parse(JSON.parse(await fs.readFile(await this.releaseFile(version, 'evidence.json'), 'utf8')));
   }
   async history(version: string, limit: number): Promise<Release[]> {
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new Error('History limit must be an integer from 1 to 100.');
@@ -73,25 +70,23 @@ export async function prepare(project: Project, version: string, options: Prepar
   let previous = options.previous ? await project.release(options.previous) : undefined;
   const from = options.fromRoot ? null : options.from ?? previous?.source.toSha;
   if (from === undefined) throw new Error('Specify --from, --previous, or --from-root.');
-  const { evidence, patch } = collect(project.root, from, options.to ?? 'HEAD');
+  const source = resolveRange(project.root, from, options.to ?? 'HEAD');
   if (!previous && !options.fromRoot && !options.firstRelease) {
     const existing = await Promise.all((await project.versions()).map(v => project.release(v)));
-    const candidates = existing.filter(r => r.source.toSha === evidence.source.fromSha);
+    const candidates = existing.filter(r => r.source.toSha === source.fromSha);
     if (candidates.length === 1) previous = candidates[0];
     else if (existing.length) throw new Error('Previous release is ambiguous. Specify --previous, or --first-release for an independent release line.');
   }
   if (previous) {
-    checkPrevious(project.root, previous, evidence);
+    checkPrevious(project.root, previous, source);
     await project.history(previous.version, 1);
   }
   const release = releaseSchema.parse({
     schemaVersion: 1, version, releasedAt: options.date ?? new Date().toISOString().slice(0, 10),
-    previous: previous?.version ?? null, status: 'draft', source: evidence.source,
+    previous: previous?.version ?? null, status: 'draft', source,
     sourceLocale: config.sourceLocale, locales: config.locales, visuals: config.visuals,
     notes: [], emptyReason: null, contentHash: null,
   });
   await project.save(release);
-  await write(await project.releaseFile(version, 'evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
-  await write(await project.releaseFile(version, 'changes.patch'), patch);
   return release;
 }

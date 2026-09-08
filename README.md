@@ -61,19 +61,26 @@ Start with the installed `releasekit-draft` skill. Example conversation with an 
 
 ```text
 You: Use releasekit-draft to draft 1.4.0 from v1.3.0 to v1.4.0.
-     Write Korean and English notes.
+AI:  Which language should the original notes use, and which
+     translations would you like? Current settings: Korean original,
+     English translation. A single language is also fine.
+You: Korean original and English translation.
 AI:  Created releasekit/releases/1.4.0/
      ✓ Pinned the Git range and collected change evidence
      ✓ Wrote release notes in ko-KR and en-US
+     Next: prepare the images required by these notes.
+     Choose: Prepare images (recommended), Review copy, or Stop for now.
 
-You: Add images for the notes.
+You: Prepare images.
 AI:  ✓ Generated dark/light explanations from shared scene briefs
      ✓ Reviewed and imported both variants for each generated graphic
      The product-detail image is pending; I need an approved capture
-     or photo. Translation work can continue while it is pending.
+     or photo. Next: provide that image, or review the completed copy
+     while it is pending.
 
 You: Use ./approved-capture.png for the product-detail note.
 AI:  ✓ Reviewed and imported it once for both viewer themes
+     Next: review and finalize 1.4.0, then export the release bundle.
 
 You: Review and finalize 1.4.0, then export up to three releases
      in English to ./release-output.
@@ -83,6 +90,8 @@ AI:  ✓ Validated notes, translations, and images
      ├── release-notes.json   ← Notes grouped by release
      └── assets/             ← Theme variants and shared supplied images
 ```
+
+The draft skill asks for the original language and optional translations before preparing or writing notes. Choices already supplied in the conversation are reused. The selection is saved for that release; future project defaults change only when requested.
 
 Invoke the skill with `$releasekit-draft` in Codex, `/releasekit-draft` in Claude Code, or the skill picker in Cursor. The agent runs the CLI, generates flat explanations, and requests approved source images when the actual product or content must be shown.
 
@@ -98,6 +107,10 @@ Git range → Release draft → Notes + images + translations → Validate → E
 | `releasekit-image` | Plan, generate or request, review, and import images. |
 | `releasekit-translate` | Translate notes and track source freshness. |
 | `releasekit-review` | Review content, evidence, images, and release readiness. |
+
+All four skills use the agent's native question picker when clarification is needed and the tool is available, with free-text input for another answer; otherwise they ask in chat. This covers language choices, image references, translation scope or terminology, and unresolved review/export choices. Existing decisions are reused, so a clear request proceeds without extra questions. Image uploads are requested through the conversation's attachment flow.
+
+After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation; you can also stop for now. If you already requested the remaining work, the agent continues without asking again. Completed steps are skipped, and missing images or translations stay visible until resolved.
 
 The agent handles editorial work, media selection, and image generation where appropriate. The CLI handles files, evidence, validation, and export. Finalizing a release marks local content ready; committing, publishing, and displaying it remain separate steps.
 
@@ -129,6 +142,7 @@ releasekit finalize 1.4.0
 releasekit export --current 1.4.0 --limit 3 --locale ko-KR --out ./release-output
 ```
 
+- Preparing creates only `release.yaml` with pinned Git boundaries. The agent reads commit history and relevant file diffs from Git as needed.
 - Use `--from-root` for an explicitly requested full-history first release.
 - `--to` defaults to `HEAD`; `--previous` can supply the comparison start.
 - Edit existing drafts in place. `prepare` never overwrites them.
@@ -215,13 +229,13 @@ releasekit/
 └── releases/
     └── 1.4.0/
         ├── release.yaml       # Metadata, note order, previous release
-        ├── evidence.json      # Pinned Git evidence
-        ├── changes.patch      # Net change for this release
         ├── notes/             # Markdown for each locale
         ├── visuals/           # Scene briefs, media sources, and variants
         ├── prompts/           # Prompts for pending generated variants
         └── assets/            # Selected raster images
 ```
+
+Releases store the comparison start and end SHAs in `release.yaml`, with relevant paths or commits attached to individual notes. They do not save a full patch or a separate changed-file index. Draft validation reads the pinned Git range; finalized releases can be validated and exported without Git history.
 
 Export follows explicit `previous` links, keeping each version's notes in a separate group. The default limit is **three releases, including the current one**. Similar notes in different versions remain separate.
 

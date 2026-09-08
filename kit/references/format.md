@@ -7,11 +7,12 @@ Within one release:
 | File | Purpose |
 | --- | --- |
 | `release.yaml` | Version, status, explicit previous link, pinned Git range, policy snapshot, ordered note metadata |
-| `evidence.json` and `changes.patch` | Commit/path evidence and the net change at the requested end revision |
 | `notes/<id>/<locale>.md` | Title, alt text, source fingerprint, and Markdown body |
 | `visuals/<id>.yaml` | Scene, image source choice, and imported variant metadata |
 | `prompts/<id>.<theme>.md` | Generation requests for pending generated variants; supplied images have no generation request |
 | `assets/` | Selected raster files with content-derived names |
+
+Preparation writes only `release.yaml`: `source` records the immutable Git boundaries, and each note later records its relevant commits or paths. No full patch or separate changed-file index is stored. Draft validation checks note references against the pinned Git range; finalization fingerprints the metadata, note text, and visual briefs. Ready content can be validated and exported without Git history.
 
 Notes are ordered by their entries in `release.yaml`. Note IDs are unique within a version and shared across locales. Their consumer identity is the pair `(version, note.id)`; never deduplicate different releases by note ID or title alone.
 
