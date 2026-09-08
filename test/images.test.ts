@@ -128,7 +128,7 @@ describe('image replacement', () => {
     expect(await exists(await p.releaseFile('1', previous.variants.dark!.file))).toBe(true);
     await finalize(p, '2');
     const output = await exportBundle(p, '2', { out: path.join(p.root, 'bundle') });
-    const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
     const exported = bundle.releases[0].notes[0].image.variants.dark.src;
     expect(exported).toBe(`assets/2/${path.posix.basename(selected.file)}`);
     expect(await fs.readFile(path.join(p.root, 'bundle', exported))).toEqual(bytes);

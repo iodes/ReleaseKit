@@ -36,6 +36,16 @@ export class Project {
     const entries = await fs.readdir(folder, { withFileTypes: true });
     return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
   }
+  async latestVersion(): Promise<string> {
+    const versions = await this.versions();
+    if (!versions.length) throw new Error('No releases to export. Prepare and finalize a release first.');
+    const releases = await Promise.all(versions.map(version => this.release(version)));
+    const predecessors = new Set(releases.map(release => release.previous));
+    const latest = releases.filter(release => !predecessors.has(release.version));
+    if (!latest.length) throw new Error('No latest release found: previous-release links contain a cycle.');
+    if (latest.length > 1) throw new Error(`Multiple latest releases found: ${latest.map(release => release.version).join(', ')}. Specify --current <version>.`);
+    return latest[0]!.version;
+  }
   async history(version: string, limit: number): Promise<Release[]> {
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new Error('History limit must be an integer from 1 to 100.');
     const chain: Release[] = [];

@@ -81,7 +81,7 @@ describe('shared and themed image transitions', () => {
     expect(await fs.readFile(source)).toEqual(bytes);
     await finalize(p, '1');
     const output = await exportBundle(p, '1', { out: path.join(p.root, 'bundle') });
-    const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
     expect(Object.keys(bundle.releases[0].notes[0].image.variants).sort()).toEqual([...configured].sort());
     expect(output.assets).toBe(configured.length);
   });
@@ -162,7 +162,7 @@ describe('shared and themed image transitions', () => {
     expect(await fs.readFile(manual)).toEqual(bytes);
     await finalize(p, '1');
     const output = await exportBundle(p, '1', { out: path.join(p.root, 'bundle') });
-    const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
     expect(bundle.releases[0].notes[0].image.fallbackTheme).toBe('shared');
     expect(Object.keys(bundle.releases[0].notes[0].image.variants)).toEqual(['shared']);
     expect(output.assets).toBe(1);

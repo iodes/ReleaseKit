@@ -69,7 +69,7 @@ describe('pinned Git evidence and history', () => {
     await release(p, '1.0.1', 'v1', '1.0'); await finalize(p, '1.0.1');
     expect((await p.history('1.0.1', 3)).map(r => r.version)).toEqual(['1.0.1', '1.0']);
     const result = await exportBundle(p, '1.0.1', { out: path.join(p.root, 'output') });
-    const data = JSON.parse(await fs.readFile(result.file, 'utf8'));
+    const data = JSON.parse(await fs.readFile(result.files[0]!, 'utf8'));
     expect(data.releases.map((r: {version: string}) => r.version)).toEqual(['1.0.1', '1.0']);
     expect(data.releases.map((r: {notes: {id: string}[]}) => r.notes[0]!.id)).toEqual(['queue', 'queue']);
     expect(() => collect(p.root, 'v2', 'fix')).toThrow('not an ancestor');
@@ -135,7 +135,7 @@ describe('theme-aware assets', () => {
     expect((await planImages(p, '1')).pendingAssets).toBe(0);
     await finalize(p, '1');
     const out = await exportBundle(p, '1', { out: path.join(p.root, 'bundle') });
-    const serialized = await fs.readFile(out.file, 'utf8');
+    const serialized = await fs.readFile(out.files[0]!, 'utf8');
     const note = JSON.parse(serialized).releases[0].notes[0];
     expect(Object.keys(note.image.variants)).toEqual(['dark', 'light']);
     expect(note.image.variants.dark.src).toMatch(/^assets\//);
@@ -150,7 +150,7 @@ describe('theme-aware assets', () => {
     expect((await planImages(p, '1')).requestedAssets).toBe(1);
     await finalize(p, '1');
     const out = await exportBundle(p, '1', { out: path.join(p.root, 'bundle') });
-    const data = JSON.parse(await fs.readFile(out.file, 'utf8'));
+    const data = JSON.parse(await fs.readFile(out.files[0]!, 'utf8'));
     expect(Object.keys(data.releases[0].notes[0].image.variants)).toEqual([mode]);
     expect(data.releases[0].notes[0].image.fallbackTheme).toBe(mode);
   });
@@ -286,11 +286,11 @@ describe('theme-aware assets', () => {
     await finalize(p, '1');
     const out = await exportBundle(p, '1', { out: path.join(p.root, 'provided-bundle') });
     expect(out.assets).toBe(1);
-    const bundle = JSON.parse(await fs.readFile(out.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(out.files[0]!, 'utf8'));
     const picture = bundle.releases[0].notes[0].image;
     expect(picture.fallbackTheme).toBe('shared');
     expect(Object.keys(picture.variants)).toEqual(['shared']);
-    expect(await fs.readFile(path.join(path.dirname(out.file), picture.variants.shared.src))).toEqual(bytes);
+    expect(await fs.readFile(path.join(path.dirname(out.files[0]!), picture.variants.shared.src))).toEqual(bytes);
   });
 
   it('supports distinct supplied theme captures without generating a missing counterpart', async () => {

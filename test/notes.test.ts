@@ -77,7 +77,7 @@ describe('draft note changes', () => {
     expect((await fs.readdir(await p.releaseDir('1'))).some(file => file.startsWith('.remove-'))).toBe(false);
     await finalize(p, '1');
     const output = await exportBundle(p, '1', { out: path.join(p.root, 'bundle') });
-    const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
     expect(bundle.releases[0].notes.map((note: { id: string }) => note.id)).toEqual(['retained']);
     expect(output.assets).toBe(0);
   });

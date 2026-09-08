@@ -114,7 +114,7 @@ describe('adopting ReleaseKit in an existing project', () => {
     expect(path.dirname(unavailableDirectory)).toBe(p.root);
     await fs.rename(gitDirectory, unavailableDirectory);
     const output = await exportBundle(p, 'next', { out: path.join(p.root, 'output') });
-    const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
     expect(bundle.releases.map((r: { version: string }) => r.version)).toEqual(['next', 'baseline']);
     expect(bundle.releases.every((r: object) => !('source' in r) && !('initialContent' in r))).toBe(true);
     const tampered = await p.release('baseline');

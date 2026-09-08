@@ -24,7 +24,7 @@ describe('release language selection', () => {
     await expect(markTranslation(p, '1', 'queue', 'ko-KR')).rejects.toThrow('configured translation');
     expect((await finalize(p, '1')).valid).toBe(true);
     const output = await exportBundle(p, '1', { out: path.join(p.root, 'output') });
-    const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+    const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
     expect(bundle.locale).toBe('en-US');
     expect(bundle.releases[0].notes[0].bodyMarkdown).toBe(source.body);
   });
@@ -56,7 +56,7 @@ describe('release language selection', () => {
     expect((await finalize(p, '1')).valid).toBe(true);
     for (const [language, text] of Object.entries(copy)) {
       const output = await exportBundle(p, '1', { locale: language, out: path.join(p.root, `output-${language}`) });
-      const bundle = JSON.parse(await fs.readFile(output.file, 'utf8'));
+      const bundle = JSON.parse(await fs.readFile(output.files[0]!, 'utf8'));
       expect(bundle.locale).toBe(language);
       expect(bundle.releases[0].notes[0].bodyMarkdown).toBe(text.body);
     }

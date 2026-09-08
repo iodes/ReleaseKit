@@ -100,8 +100,8 @@ You: Use releasekit-finalize for 1.4.0, then export up to three releases
 AI:  ✓ Validated notes, translations, and images
      ✓ Marked release 1.4.0 ready
      Exported release-output/
-     ├── release-notes.json   ← Notes grouped by release
-     └── assets/             ← Theme variants and shared supplied images
+     ├── release-notes.en-US.json ← English notes grouped by release
+     └── assets/                  ← Theme variants and shared supplied images
 ```
 
 The agent resolves the version and Git range from your request, saved releases, repository tags, and release metadata. It reports a clear scope and proceeds without a tag-selection or confirmation step. If inspection leaves materially different scopes, it asks which work to cover in ordinary language. You can still supply explicit refs to select a particular interval.
@@ -183,8 +183,9 @@ releasekit image import 1.4.0 queue-action --theme light --file ./selected-light
 # Review facts, copy, translations, and selected images, then finalize.
 releasekit validate 1.4.0
 releasekit finalize 1.4.0
+
 # Export when requested.
-releasekit export --current 1.4.0 --limit 3 --locale en-US --out ./release-output
+releasekit export --out ./release-output
 ```
 
 - Preparing creates only `release.yaml` with pinned Git boundaries. The agent reads commit history and relevant file diffs from Git as needed.
@@ -194,7 +195,9 @@ releasekit export --current 1.4.0 --limit 3 --locale en-US --out ./release-outpu
 - Notes include images by default. Use `note add --no-image` only for an explicit text-only choice. Adding a note clears any previous `emptyReason`.
 - Use `releasekit note remove <version> <id>` to exclude a draft note. It removes the note folder, translations, visual brief, prompts, and unused managed images, including older imports. Images referenced by remaining visuals and source originals are preserved. The result lists removed paths and retained shared assets. Removing the last note leaves the draft pending until you add notes or supply a factual `emptyReason`.
 - Add `--json` for structured results or `--cwd` to select a project directory.
-- Export to a new directory; an existing destination is never overwritten.
+- Only `--out` is required for export. Omit `--current` to select the release with no successor in the saved `previous` links; multiple release lines require an explicit `--current`. The selected release must be ready. Omit `--limit` to use `history.limit` from `releasekit/config.yaml` (initially 3).
+- Omit `--locale` to export every locale saved in the current release as `release-notes.<locale>.json`, such as `release-notes.en-US.json` and `release-notes.ko-KR.json`. Add `--locale en-US` for only the English file. All files share the same `assets/` directory. Each selected version must contain the requested locales; missing or stale translations stop the export before output is created.
+- Export to a new directory; an existing destination is never overwritten. The command result lists generated JSON paths in `files`, the number of version groups in `releases`, and the number of shared image files in `assets`.
 
 See the [agent workflow](kit/references/workflow.md) for ancestry rules and continuing existing releases.
 

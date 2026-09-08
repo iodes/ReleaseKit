@@ -84,11 +84,11 @@ program.command('validate [version]').description('Validate one release or all r
 program.command('finalize <version>').description('Validate and mark local release content ready')
   .action(async (version: string) => emit(await finalize(project(), version)));
 program.command('export').description('Export recent version groups and selected image variants')
-  .requiredOption('--current <version>', 'current release version')
-  .option('--limit <count>', 'number of version groups, including current', value => Number(value))
-  .option('--locale <locale>', 'output language, defaults to the project source language')
+  .option('--current <version>', 'current release version, defaults to the release with no successor')
+  .option('--limit <count>', 'number of version groups, including current, defaults to project history.limit (initially 3)', value => Number(value))
+  .option('--locale <locale>', 'output language, defaults to all locales saved in the current release')
   .requiredOption('--out <directory>', 'new output directory')
-  .action(async (options: { current: string; limit?: number; locale?: string; out: string }) => emit(await exportBundle(project(), options.current, { ...options, out: path.resolve(program.opts<{ cwd: string }>().cwd, options.out) })));
+  .action(async (options: { current?: string; limit?: number; locale?: string; out: string }) => emit(await exportBundle(project(), options.current, { ...options, out: path.resolve(program.opts<{ cwd: string }>().cwd, options.out) })));
 
 async function main() {
   const [major, minor] = process.versions.node.split('.').map(Number);
