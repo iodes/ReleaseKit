@@ -96,6 +96,16 @@ This preserves selected files and schedules only the newly required or stale var
 
 See [the file contract](kit/references/format.md) and the generated [JSON schemas](schemas). Export contains display data and relative assets, excluding Git evidence, prompts, and private source paths. Consumers select `image.variants[theme]` or `image.variants[image.fallbackTheme]` and safely render `bodyMarkdown`.
 
+## Releasing this package
+
+The `Publish` workflow runs manually on a `release/x.y.z` branch and automatically calculates the next npm patch version. The branch selects the major/minor release line and its starting patch. Versions use three numeric components without leading zeros.
+
+For `release/0.1.0`, the first version is `0.1.0` if neither Git nor npm has released it. If `0.1.0` already exists in either place, the next run publishes `0.1.1` with tag `v0.1.1`; later runs advance to `0.1.2`, `0.1.3`, and so on. Existing versions are compared numerically across both Git tags and npm, and a newer major/minor release line blocks publishing from an older line. Registry errors stop the workflow instead of assuming the package is new.
+
+Once `publish.yml` is on the default branch and the release branch, open **Actions → Publish → Run workflow**, select the release branch, and run it. The workflow pins the selected commit, calculates the version, restores dependencies, and uses `npm version --no-git-tag-version` to update the package and lockfile in the runner. The CLI reads this package version for `--version`. The branch does not need a version-bump commit before each release.
+
+After checks, tests, build, and package preview pass, the workflow creates the new tag and publishes to npm through the trusted publisher configured for `publish.yml`. It never moves existing tags. Every run calculates a fresh version, even for the same commit; if a previous attempt already created a tag or published a package, a rerun advances to the next patch. Tag pushes do not start publishing.
+
 ## Development checks
 
 ```sh

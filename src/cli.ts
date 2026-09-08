@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Project, prepare } from './project.js';
 import { initProject, installSkills } from './install.js';
@@ -9,8 +10,9 @@ import { validate, finalize } from './validate.js';
 import { exportBundle } from './export.js';
 import { configSchema, noteMetaSchema, theme, type ProjectConfig } from './model.js';
 
+const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
 const program = new Command();
-program.name('releasekit').description('Git-based visual release content and agent skills').version('0.1.0')
+program.name('releasekit').description('Git-based visual release content and agent skills').version(version)
   .option('--cwd <directory>', 'project working directory', process.cwd())
   .option('--json', 'print machine-readable results');
 const project = () => Project.find(path.resolve(program.opts<{ cwd: string }>().cwd));

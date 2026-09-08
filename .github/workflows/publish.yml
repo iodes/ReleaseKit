@@ -1,12 +1,11 @@
-name: Publish npm
+name: Publish
+run-name: Publish ${{ github.ref_name }}
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 concurrency:
@@ -17,23 +16,101 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
           package-manager-cache: false
-      - name: Verify release version
+      - name: Validate release branch and calculate version
+        id: version
+        env:
+          NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org/'
         run: |
-          node --input-type=module -e "
-            import fs from 'node:fs';
-            const { version } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('Only stable releases are supported');
-            if (process.env.GITHUB_REF_NAME !== 'v' + version) throw new Error('Tag must match package version');
-          "
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+
+          const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
+          const stable = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
+          try {
+            // 1. Require a release/* branch, with a three-part base version and no leading zeros.
+            const branch = process.env.GITHUB_REF_NAME;
+            const baseVersion = branch?.startsWith('release/') ? branch.slice('release/'.length) : '';
+            if (process.env.GITHUB_REF_TYPE !== 'branch' || process.env.GITHUB_EVENT_NAME !== 'workflow_dispatch' || !stable.test(baseVersion)) {
+              throw new Error('Run Publish on a release/x.y.z branch with no leading zeros');
+            }
+            const [major, minor, basePatch] = baseVersion.split('.').map(BigInt);
+            const sha = git('rev-parse', 'HEAD^{commit}');
+            if (sha !== git('rev-parse', process.env.GITHUB_SHA + '^{commit}')) {
+              throw new Error('Checkout must match the selected workflow commit');
+            }
+
+            // 2. Read existing Git tags and npm versions, including releases published before tagging was added.
+            const manifest = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const tags = git('tag', '--list').split('\n').map(tag => tag.replace(/^v/, ''));
+            const response = await fetch(new URL(encodeURIComponent(manifest.name), process.env.NPM_CONFIG_REGISTRY), {
+              headers: { Accept: 'application/vnd.npm.install-v1+json' },
+              signal: AbortSignal.timeout(30_000),
+            });
+            let published = [];
+            if (response.status !== 404) {
+              if (!response.ok) throw new Error('Cannot read npm versions: HTTP ' + response.status);
+              const metadata = await response.json();
+              if (!metadata.versions || typeof metadata.versions !== 'object' || Array.isArray(metadata.versions)) {
+                throw new Error('Invalid npm version metadata');
+              }
+              published = Object.keys(metadata.versions);
+            }
+            const versions = [...new Set([...tags, ...published])].filter(version => stable.test(version));
+
+            // 3. Refuse an older release line once a newer major/minor line has been released.
+            for (const version of versions) {
+              const [otherMajor, otherMinor] = version.split('.').map(BigInt);
+              if (otherMajor > major || (otherMajor === major && otherMinor > minor)) {
+                throw new Error('A newer release line already exists: ' + version);
+              }
+            }
+
+            // 4. Increment the highest patch in this major/minor line, starting at the branch's base patch.
+            let nextPatch = basePatch;
+            for (const version of versions) {
+              const [otherMajor, otherMinor, patch] = version.split('.').map(BigInt);
+              if (otherMajor === major && otherMinor === minor && patch >= nextPatch) nextPatch = patch + 1n;
+            }
+            const version = [major, minor, nextPatch].join('.');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'version=' + version + '\ntag=v' + version + '\n');
+            console.log('Calculated target version: ' + version);
+          } catch (error) {
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '### Publish failed\n\n' + error.message + '\n');
+            throw error;
+          }
+          NODE
       - run: npm ci
+      - name: Apply release version
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: npm version "$RELEASE_VERSION" --no-git-tag-version --allow-same-version --ignore-scripts
       - run: npm run check
       - run: npm test
       - run: npm run build
       - run: npm pack --dry-run
-      - run: npm publish --access public
+      - name: Create release tag
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git tag "$RELEASE_TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$RELEASE_TAG"
+      - name: Publish package
+        run: npm publish --access public
+      - name: Write job summary
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          printf '### Published %s\n\nGit tag: %s\n' "$RELEASE_VERSION" "$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
