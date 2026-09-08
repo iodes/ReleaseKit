@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "fromRef": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fromSha": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toRef": {
+          "type": "string"
+        },
+        "toSha": {
+          "type": "string",
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+        }
+      },
+      "required": [
+        "fromRef",
+        "fromSha",
+        "toRef",
+        "toSha"
+      ],
+      "additionalProperties": false
+    },
+    "commits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sha": {
+            "type": "string",
+            "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+          },
+          "subject": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sha",
+          "subject"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "oldPath": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "source",
+    "commits",
+    "files"
+  ],
+  "additionalProperties": false,
+  "$id": "urn:releasekit:evidence:1"
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alt": {
+      "type": "string"
+    },
+    "sourceHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "alt",
+    "sourceHash"
+  ],
+  "additionalProperties": false,
+  "$id": "urn:releasekit:note:1"
+}

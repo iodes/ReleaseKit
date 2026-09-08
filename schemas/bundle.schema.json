@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "currentVersion": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+          },
+          "releasedAt": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "feature",
+                    "improvement",
+                    "fix",
+                    "security"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "bodyMarkdown": {
+                  "type": "string"
+                },
+                "image": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "alt": {
+                          "type": "string"
+                        },
+                        "fallbackTheme": {
+                          "type": "string",
+                          "enum": [
+                            "dark",
+                            "light"
+                          ]
+                        },
+                        "variants": {
+                          "type": "object",
+                          "properties": {
+                            "dark": {
+                              "type": "object",
+                              "properties": {
+                                "src": {
+                                  "type": "string"
+                                },
+                                "width": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "height": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "src",
+                                "width",
+                                "height"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "light": {
+                              "type": "object",
+                              "properties": {
+                                "src": {
+                                  "type": "string"
+                                },
+                                "width": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "height": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "src",
+                                "width",
+                                "height"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "alt",
+                        "fallbackTheme",
+                        "variants"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "category",
+                "title",
+                "bodyMarkdown",
+                "image"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "version",
+          "releasedAt",
+          "previous",
+          "notes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "currentVersion",
+    "locale",
+    "releases"
+  ],
+  "additionalProperties": false,
+  "$id": "urn:releasekit:bundle:1"
+}

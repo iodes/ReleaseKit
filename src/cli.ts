@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+import path from 'node:path';
+import { Command, Option } from 'commander';
+import { Project, prepare } from './project.js';
+import { initProject, installSkills } from './install.js';
+import { addNote, markTranslation, syncImagePolicy } from './content.js';
+import { planImages, importImage } from './images.js';
+import { validate, finalize } from './validate.js';
+import { exportBundle } from './export.js';
+import { configSchema, noteMetaSchema, theme, type ProjectConfig } from './model.js';
+
+const program = new Command();
+program.name('releasekit').description('Git-based visual release content and agent skills').version('0.1.0')
+  .option('--cwd <directory>', 'project working directory', process.cwd())
+  .option('--json', 'print machine-readable results');
+const project = () => Project.find(path.resolve(program.opts<{ cwd: string }>().cwd));
+function emit(value: unknown, summary?: string) {
+  console.log(program.opts().json || !summary ? JSON.stringify(value, null, 2) : summary);
+}
+
+program.command('init').description('Initialize content and install project skills')
+  .option('--product <name>', 'product name')
+  .option('--tools <tools>', 'comma-separated codex,claude,cursor')
+  .addOption(new Option('--themes <policy>', 'project image variants').choices(['both', 'dark', 'light']))
+  .action(async (options: { product?: string; tools?: string; themes?: ProjectConfig['visuals']['themes'] }) => {
+    const tools = options.tools === undefined ? undefined : configSchema.shape.tools.parse(options.tools.split(',').map(s => s.trim()).filter(Boolean));
+    emit(await initProject(project(), { ...options, tools }));
+  });
+program.command('update').description('Refresh managed skills while preserving user edits')
+  .action(async () => { const result = await installSkills(project()); emit(result); if (result.conflicts.length) process.exitCode = 1; });
+program.command('prepare <version>').description('Create a draft from pinned Git commits')
+  .option('--from <ref>', 'comparison start commit or tag')
+  .option('--to <ref>', 'comparison end commit or tag', 'HEAD')
+  .option('--previous <version>', 'explicit previous release')
+  .option('--from-root', 'explicitly include the whole history')
+  .option('--first-release', 'start an independent release line')
+  .option('--date <YYYY-MM-DD>', 'release date, defaults to the current UTC date')
+  .action(async (version: string, options: Parameters<typeof prepare>[2]) => emit(await prepare(project(), version, options)));
+
+const note = program.command('note').description('Manage individual release notes');
+note.command('add <version> <id>').description('Scaffold a note and its locale files')
+  .addOption(new Option('--category <category>', 'note category').choices(['feature', 'improvement', 'fix', 'security']).default('feature'))
+  .option('--no-image', 'make this note intentionally text-only')
+  .action(async (version: string, id: string, options: { category: string; image: boolean }) => {
+    await addNote(project(), version, id, noteMetaSchema.shape.category.parse(options.category), options.image);
+    emit({ version, note: id, status: 'draft' });
+  });
+const images = program.command('image').description('Plan themed illustrations and register selected files');
+images.command('plan <version>').description('Write pending prompts and report asset counts without calling a model')
+  .option('--sync-config', 'apply current project image settings to this draft')
+  .action(async (version: string, options: { syncConfig?: boolean }) => {
+    const instance = project();
+    if (options.syncConfig) await syncImagePolicy(instance, version);
+    emit(await planImages(instance, version));
+  });
+images.command('import <version> <note>').description('Import a selected raster variant')
+  .addOption(new Option('--theme <theme>', 'variant to register').choices(['dark', 'light']).makeOptionMandatory())
+  .requiredOption('--file <file>', 'selected local PNG, JPEG, or WebP')
+  .action(async (version: string, id: string, options: { theme: string; file: string }) => emit(await importImage(project(), version, id, theme.parse(options.theme), path.resolve(program.opts<{ cwd: string }>().cwd, options.file))));
+const translation = program.command('translation').description('Track source freshness for reviewed translations');
+translation.command('mark <version> <note>').description('Mark an already reviewed translation current')
+  .requiredOption('--locale <locale>', 'translation language code')
+  .action(async (version: string, id: string, options: { locale: string }) => emit({ sourceHash: await markTranslation(project(), version, id, options.locale) }));
+program.command('validate [version]').description('Validate one release or all releases')
+  .action(async (version?: string) => {
+    const instance = project();
+    const versions = version ? [version] : await instance.versions();
+    const results = await Promise.all(versions.map(v => validate(instance, v)));
+    emit(results);
+    if (results.some(r => !r.valid)) process.exitCode = 1;
+  });
+program.command('finalize <version>').description('Validate and mark local release content ready')
+  .action(async (version: string) => emit(await finalize(project(), version)));
+program.command('export').description('Export recent version groups and selected image variants')
+  .requiredOption('--current <version>', 'current release version')
+  .option('--limit <count>', 'number of version groups, including current', value => Number(value))
+  .option('--locale <locale>', 'output language, defaults to the project source language')
+  .requiredOption('--out <directory>', 'new output directory')
+  .action(async (options: { current: string; limit?: number; locale?: string; out: string }) => emit(await exportBundle(project(), options.current, { ...options, out: path.resolve(program.opts<{ cwd: string }>().cwd, options.out) })));
+
+async function main() {
+  const [major, minor] = process.versions.node.split('.').map(Number);
+  if (major! < 22 || major === 22 && minor! < 12) throw new Error('ReleaseKit requires Node.js 22.12 or later.');
+  await program.parseAsync();
+}
+main().catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(program.opts().json ? JSON.stringify({ error: message }) : message);
+  process.exitCode = 1;
+});

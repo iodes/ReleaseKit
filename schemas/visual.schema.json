@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "scene": {
+      "type": "object",
+      "properties": {
+        "archetype": {
+          "type": "string",
+          "enum": [
+            "icon-tile",
+            "symbol-pair",
+            "ui-detail",
+            "device-view",
+            "object-detail",
+            "spatial-view",
+            "data-view",
+            "editorial-scene"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "focus": {
+          "type": "string",
+          "minLength": 1
+        },
+        "composition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context": {
+          "type": "string"
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "preserve": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "text": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "archetype",
+        "subject",
+        "message",
+        "focus",
+        "composition",
+        "context",
+        "elements",
+        "preserve",
+        "avoid",
+        "text",
+        "references"
+      ],
+      "additionalProperties": false
+    },
+    "variants": {
+      "type": "object",
+      "properties": {
+        "dark": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "sceneHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "width": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "height": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "sceneHash",
+            "width",
+            "height"
+          ],
+          "additionalProperties": false
+        },
+        "light": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "sceneHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "width": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "height": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "sceneHash",
+            "width",
+            "height"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "scene",
+    "variants"
+  ],
+  "additionalProperties": false,
+  "$id": "urn:releasekit:visual:1"
+}

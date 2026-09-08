@@ -1,0 +1,31 @@
+archetype: ui-detail
+subject: A saved-item list with an exposed queue action
+message: A saved item can be added to the queue with one swipe.
+focus: The single action revealed behind the middle row
+composition: >-
+  A landscape 8:5 canvas with a straight-on crop of three broad horizontal list rows.
+  The list occupies about 76 percent of the canvas width and 64 percent of its height.
+  All rows have the same height and rounded corners. The middle row is shifted slightly
+  right, exposing one blue action tile behind its left edge. Keep that tile fully visible.
+  Each row contains one simple square thumbnail and two neutral horizontal bars.
+  The right end of the rows intentionally extends beyond the crop of the list panel,
+  while the full illustration retains quiet outer margins. No phone or outer application frame.
+context: >-
+  A fictional productivity interface used to demonstrate the illustration recipe.
+  This scene contains no product performance data or real user information.
+elements:
+  - Three matching horizontal list rows
+  - One exposed accent-colored action tile with a simple queue glyph
+  - One neutral square thumbnail and two label bars in each row
+preserve:
+  - Exact row count, positions, dimensions, spacing, and crop
+  - Middle-row swipe offset and the revealed action tile
+  - Thumbnail positions and neutral label-bar lengths
+  - Straight-on camera and blue interaction accent
+avoid:
+  - Photographic thumbnails or imagery inside the list rows
+  - Hands, arrows, or gesture trails
+  - Device frame, app header, or release-note viewer
+  - Additional action buttons or unreadable text
+text: []
+references: []

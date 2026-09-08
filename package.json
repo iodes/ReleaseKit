@@ -1,0 +1,40 @@
+{
+  "name": "@iodes/releasekit",
+  "version": "0.1.0",
+  "description": "Git-based visual release notes and portable agent skills",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "releasekit": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "kit",
+    "schemas",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node dist/schema-export.js",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "tsx src/cli.ts",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "commander": "^15.0.0",
+    "sharp": "^0.35.4",
+    "yaml": "^2.9.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}

@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+    },
+    "releasedAt": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+    },
+    "previous": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "fromRef": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fromSha": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toRef": {
+          "type": "string"
+        },
+        "toSha": {
+          "type": "string",
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+        }
+      },
+      "required": [
+        "fromRef",
+        "fromSha",
+        "toRef",
+        "toSha"
+      ],
+      "additionalProperties": false
+    },
+    "sourceLocale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
+    },
+    "locales": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
+      }
+    },
+    "visuals": {
+      "type": "object",
+      "properties": {
+        "themes": {
+          "type": "string",
+          "enum": [
+            "both",
+            "dark",
+            "light"
+          ]
+        },
+        "preset": {
+          "type": "string",
+          "const": "quiet-product"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 256,
+          "maximum": 4096
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 256,
+          "maximum": 4096
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "dark": {
+          "type": "object",
+          "properties": {
+            "canvas": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "surface": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "raised": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "primary": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "secondary": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "divider": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            }
+          },
+          "required": [
+            "canvas",
+            "surface",
+            "raised",
+            "primary",
+            "secondary",
+            "divider"
+          ],
+          "additionalProperties": false
+        },
+        "light": {
+          "type": "object",
+          "properties": {
+            "canvas": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "surface": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "raised": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "primary": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "secondary": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "divider": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            }
+          },
+          "required": [
+            "canvas",
+            "surface",
+            "raised",
+            "primary",
+            "secondary",
+            "divider"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "themes",
+        "preset",
+        "width",
+        "height",
+        "accent",
+        "dark",
+        "light"
+      ],
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "feature",
+              "improvement",
+              "fix",
+              "security"
+            ]
+          },
+          "commits": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+            }
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "commits",
+          "paths",
+          "image"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "emptyReason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "contentHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "version",
+    "releasedAt",
+    "previous",
+    "status",
+    "source",
+    "sourceLocale",
+    "locales",
+    "visuals",
+    "notes",
+    "emptyReason",
+    "contentHash"
+  ],
+  "additionalProperties": false,
+  "$id": "urn:releasekit:release:1"
+}
