@@ -3,7 +3,7 @@ import { Project, editable } from './project.js';
 import { canonical, digest, readNote, noteHash, identifier } from './files.js';
 import { readVisual, checkReferenceFiles } from './content.js';
 import { validateImages } from './images.js';
-import { checkPrevious, collect } from './git.js';
+import { checkPrevious, collect, collectSnapshot } from './git.js';
 
 export interface Validation { version: string; valid: boolean; errors: string[]; warnings: string[]; contentHash: string | null }
 
@@ -22,8 +22,14 @@ export async function validate(project: Project, version: string): Promise<Valid
   let hash: string | null = null;
   try {
     const release = await project.release(version);
-    // Drafts inspect the pinned Git range. Ready releases rely on their finalized fingerprint.
-    const evidence = release.status === 'draft' ? collect(project.root, release.source.fromSha, release.source.toSha) : null;
+    if (release.initialContent && (release.source.fromSha !== null || release.source.fromRef !== null || release.previous !== null)) {
+      errors.push('Initial content requires a root baseline with no previous release.');
+    }
+    // Summaries inspect only the baseline snapshot; ready releases use their finalized fingerprint.
+    const summary = release.initialContent === 'summary';
+    const evidence = release.status !== 'draft' ? null : summary
+      ? collectSnapshot(project.root, release.source.toSha)
+      : collect(project.root, release.source.fromSha, release.source.toSha);
     if (!release.locales.includes(release.sourceLocale) || new Set(release.locales).size !== release.locales.length) errors.push('Release locales must be unique and include the source locale.');
     if (new Set(release.notes.map(n => n.id)).size !== release.notes.length) errors.push('Note IDs must be unique within a release.');
     if (!release.notes.length && !release.emptyReason?.trim()) errors.push('No notes yet. Write the notes or explain the absence of user-visible changes in emptyReason.');
@@ -32,8 +38,8 @@ export async function validate(project: Project, version: string): Promise<Valid
     const changedPaths = new Set(evidence?.files.flatMap(f => [f.path, ...(f.oldPath ? [f.oldPath] : [])]));
     for (const note of release.notes) {
       identifier(note.id);
-      if (!note.commits.length && !note.paths.length) errors.push(`${note.id}: attach at least one changed path or commit as evidence.`);
-      if (evidence && (note.commits.some(c => !commits.has(c)) || note.paths.some(p => !changedPaths.has(p)))) errors.push(`${note.id}: evidence points outside the prepared Git range.`);
+      if (!note.commits.length && !note.paths.length) errors.push(`${note.id}: attach at least one ${summary ? 'snapshot path or the baseline commit' : 'changed path or commit'} as evidence.`);
+      if (evidence && (note.commits.some(c => !commits.has(c)) || note.paths.some(p => !changedPaths.has(p)))) errors.push(`${note.id}: evidence points outside the ${summary ? 'baseline snapshot' : 'prepared Git range'}.`);
       try {
         const source = await readNote(await project.releaseFile(version, `notes/${note.id}/${release.sourceLocale}.md`));
         if (!source.body.trim()) errors.push(`${note.id}: source body is empty.`);

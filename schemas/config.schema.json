@@ -29,6 +29,93 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 100
+        },
+        "start": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha": {
+                  "type": "string",
+                  "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+                },
+                "past": {
+                  "type": "string",
+                  "const": "summary"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+                }
+              },
+              "required": [
+                "ref",
+                "sha",
+                "past",
+                "version"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha": {
+                  "type": "string",
+                  "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+                },
+                "past": {
+                  "type": "string",
+                  "const": "history"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+                }
+              },
+              "required": [
+                "ref",
+                "sha",
+                "past",
+                "version"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha": {
+                  "type": "string",
+                  "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+                },
+                "past": {
+                  "type": "string",
+                  "const": "skip"
+                },
+                "version": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "ref",
+                "sha",
+                "past",
+                "version"
+              ],
+              "additionalProperties": false
+            }
+          ]
         }
       },
       "required": [

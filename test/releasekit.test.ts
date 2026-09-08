@@ -118,6 +118,7 @@ describe('pinned Git evidence and history', () => {
 describe('theme-aware assets', () => {
   it('plans both themes once per note, not once per translation, and reuses an imported counterpart', async () => {
     const p = await fixture();
+    const config = await p.config(); config.locales.push('ko-KR'); await writeYaml(await p.content('config.yaml'), config);
     await commit(p.root, 'queue\n', 'Add queue');
     await release(p, '1', 'v0', undefined, true);
     const visual = await readVisual(p, '1', 'queue');
@@ -325,13 +326,15 @@ describe('theme-aware assets', () => {
 
 describe('content, installation, and command-line behavior', () => {
   it('detects stale translations and edits after finalization', async () => {
-    const p = await fixture(); await commit(p.root, 'queue\n', 'Add queue'); await release(p, '1', 'v0');
-    const file = await p.releaseFile('1', 'notes/queue/ko-KR.md');
-    const text = await readNote(file); text.body += '\n추가 설명입니다.'; await writeNote(file, text);
+    const p = await fixture();
+    const config = await p.config(); config.locales.push('ko-KR'); await writeYaml(await p.content('config.yaml'), config);
+    await commit(p.root, 'queue\n', 'Add queue'); await release(p, '1', 'v0');
+    const file = await p.releaseFile('1', 'notes/queue/en-US.md');
+    const text = await readNote(file); text.body += '\nAdditional details.'; await writeNote(file, text);
     expect((await validate(p, '1')).errors.join()).toContain('stale');
-    await markTranslation(p, '1', 'queue', 'en-US'); await finalize(p, '1');
-    const englishFile = await p.releaseFile('1', 'notes/queue/en-US.md');
-    const english = await readNote(englishFile); english.body += ' Another sentence.'; await writeNote(englishFile, english);
+    await markTranslation(p, '1', 'queue', 'ko-KR'); await finalize(p, '1');
+    const koreanFile = await p.releaseFile('1', 'notes/queue/ko-KR.md');
+    const korean = await readNote(koreanFile); korean.body += ' 추가 설명입니다.'; await writeNote(koreanFile, korean);
     expect((await validate(p, '1')).errors.join()).toContain('content changed');
     const out = path.join(p.root, 'invalid-output');
     await expect(exportBundle(p, '1', { out })).rejects.toThrow(); expect(await exists(out)).toBe(false);
@@ -339,7 +342,9 @@ describe('content, installation, and command-line behavior', () => {
 
   it('installs shared skills once, preserves custom edits, and retains project settings', async () => {
     const p = await fixture('light');
-    const config = await p.config(); config.tools = ['codex', 'claude', 'cursor']; await writeYaml(await p.content('config.yaml'), config);
+    const config = await p.config(); config.tools = ['codex', 'claude', 'cursor'];
+    config.sourceLocale = 'ko-KR'; config.locales = ['ko-KR', 'en-US'];
+    await writeYaml(await p.content('config.yaml'), config);
     const installed = await installSkills(p);
     expect(installed.conflicts).toEqual([]);
     expect(await exists(path.join(p.root, '.cursor', 'skills'))).toBe(false);
@@ -349,8 +354,8 @@ describe('content, installation, and command-line behavior', () => {
     expect(updated.conflicts).toContain('.agents/skills/releasekit-image/SKILL.md');
     expect(await fs.readFile(skill, 'utf8')).toContain('Project-specific instructions.');
     await expect(initProject(p, { themes: 'both' })).rejects.toThrow('already initialized');
-    expect((await p.config()).visuals.themes).toBe('light');
-    for (const root of ['.agents', '.claude']) for (const name of ['draft', 'image', 'translate', 'review']) {
+    expect(await p.config()).toEqual(config);
+    for (const root of ['.agents', '.claude']) for (const name of ['draft', 'image', 'finalize']) {
       expect(await exists(path.join(p.root, root, 'skills', `releasekit-${name}`, 'references', 'theme-pairing.md'))).toBe(true);
     }
   });

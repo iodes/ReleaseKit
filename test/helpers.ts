@@ -48,15 +48,21 @@ export async function fillNote(project: Project, version: string, image = true) 
   const release = await project.release(version);
   release.notes[0]!.paths = ['app.txt'];
   await project.save(release);
-  await writeNote(await project.releaseFile(version, 'notes/queue/ko-KR.md'), {
-    title: `대기열 ${version}`, body: '저장한 항목을 오른쪽으로 스와이프해 대기열에 추가할 수 있습니다.',
-    alt: image ? '가운데 행에서 드러난 대기열 버튼' : '', sourceHash: null,
-  });
-  await writeNote(await project.releaseFile(version, 'notes/queue/en-US.md'), {
-    title: `Queue ${version}`, body: 'Swipe a saved item to the right to add it to the queue.',
-    alt: image ? 'A queue action revealed behind the middle row' : '', sourceHash: null,
-  });
-  await markTranslation(project, version, 'queue', 'en-US');
+  if (release.locales.includes('en-US')) {
+    await writeNote(await project.releaseFile(version, 'notes/queue/en-US.md'), {
+      title: `Queue ${version}`, body: 'Swipe a saved item to the right to add it to the queue.',
+      alt: image ? 'A queue action revealed behind the middle row' : '', sourceHash: null,
+    });
+  }
+  if (release.locales.includes('ko-KR')) {
+    await writeNote(await project.releaseFile(version, 'notes/queue/ko-KR.md'), {
+      title: `대기열 ${version}`, body: '저장한 항목을 오른쪽으로 스와이프해 대기열에 추가할 수 있습니다.',
+      alt: image ? '가운데 행에서 드러난 대기열 버튼' : '', sourceHash: null,
+    });
+  }
+  for (const language of release.locales) {
+    if (language !== release.sourceLocale) await markTranslation(project, version, 'queue', language);
+  }
   if (image) {
     await writeYaml(await project.releaseFile(version, 'visuals/queue.yaml'), { schemaVersion: 1, scene: sampleScene, variants: {} });
     for (const variant of themes(release.visuals)) {

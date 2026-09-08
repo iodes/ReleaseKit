@@ -53,22 +53,23 @@ Run inside your product's Git repository:
 releasekit init --tools codex,claude,cursor --themes both
 ```
 
-Choose the tools you use: `codex`, `claude`, `cursor`, or a comma-separated list. Then edit `releasekit/config.yaml` to set your product name, source language, locales, and visual settings. Setup prints the skill invocation hints for each tool.
+Choose the tools you use: `codex`, `claude`, `cursor`, or a comma-separated list. New projects use English (`en-US`) as the original language, with no translations enabled until selected. Edit `releasekit/config.yaml` to set your product name, intentional language overrides, and visual settings. Setup prints the skill invocation hints for each tool.
 
 ### 3. Ask your agent
 
-Start with the installed `releasekit-draft` skill. Example conversation with an image tool available:
+Start with the installed `releasekit-draft` skill. Example conversation with a Korean-speaking user, shown here in English, and an image tool available:
 
 ```text
-You: Use releasekit-draft to draft 1.4.0 from v1.3.0 to v1.4.0.
-AI:  Which language should the original notes use, and which
-     translations would you like? Current settings: Korean original,
-     English translation. A single language is also fine.
-You: Korean original and English translation.
-AI:  Created releasekit/releases/1.4.0/
-     ✓ Pinned the Git range and collected change evidence
-     ✓ Wrote release notes in ko-KR and en-US
-     Next: prepare the images required by these notes.
+You: Use releasekit-draft to draft 1.4.0.
+AI:  I'll use English for the original notes. Add Korean, your current
+     language, as a translation (recommended), or use English only?
+     You can also enter additional languages together.
+You: Korean and Japanese translations.
+AI:  Found v1.4.0 and its preceding release tag v1.3.0 on this line.
+     Created releasekit/releases/1.4.0/
+     ✓ Pinned v1.3.0 → v1.4.0 and collected change evidence
+     ✓ Wrote English originals with Korean and Japanese translations
+     Next: use releasekit-image for the images required by these notes.
      Choose: Prepare images (recommended), Review copy, or Stop for now.
 
 You: Prepare images.
@@ -80,9 +81,9 @@ AI:  ✓ Generated dark/light explanations from shared scene briefs
 
 You: Use ./approved-capture.png for the product-detail note.
 AI:  ✓ Reviewed and imported it once for both viewer themes
-     Next: review and finalize 1.4.0, then export the release bundle.
+     Next: use releasekit-finalize to check and confirm 1.4.0.
 
-You: Review and finalize 1.4.0, then export up to three releases
+You: Use releasekit-finalize for 1.4.0, then export up to three releases
      in English to ./release-output.
 AI:  ✓ Validated notes, translations, and images
      ✓ Marked release 1.4.0 ready
@@ -91,28 +92,54 @@ AI:  ✓ Validated notes, translations, and images
      └── assets/             ← Theme variants and shared supplied images
 ```
 
-The draft skill asks for the original language and optional translations before preparing or writing notes. Choices already supplied in the conversation are reused. The selection is saved for that release; future project defaults change only when requested.
+The agent resolves the version and Git range from your request, saved releases, repository tags, and release metadata. It reports a clear scope and proceeds without a tag-selection or confirmation step. If inspection leaves materially different scopes, it asks which work to cover in ordinary language. You can still supply explicit refs to select a particular interval.
+
+The draft skill defaults the original language to English and suggests the user's current language for optional translation. Its question accepts additional language names or locale codes through free-text input, as well as an English-only choice. An English-speaking user is not offered a duplicate English translation. Explicit source choices and existing release selections are reused. The selection is saved for that release; future project defaults change only when requested. The draft includes the source and those selected translations. Use the same draft skill later to add a language or refresh translations.
 
 Invoke the skill with `$releasekit-draft` in Codex, `/releasekit-draft` in Claude Code, or the skill picker in Cursor. The agent runs the CLI, generates flat explanations, and requests approved source images when the actual product or content must be shown.
+
+## Adopting ReleaseKit later
+
+You can start after your product has already shipped. Ask the draft skill to set a starting point; it finds a relevant release tag or commit from the repository and asks how to handle the earlier period when that choice is unresolved. Regular notes begin **after** the selected baseline commit.
+
+| Earlier history | Result |
+| --- | --- |
+| **Product introduction** (recommended for an established product) | A concise overview of capabilities at the baseline, grounded in that snapshot without reconstructing every old commit. |
+| **Analyze history** | Notes based on the repository's beginning through the baseline. |
+| **Skip** | No earlier entry; start recording subsequent changes. |
+
+An introduction does not assume that adopting ReleaseKit was the product's launch. Version, date, and product claims should reflect the actual product. The agent reuses choices already made in the conversation or saved setup.
+
+For example, introduce the product at `v1.3.0`, then record changes from there:
+
+```sh
+releasekit start --at v1.3.0 --past summary --baseline-version 1.3.0
+releasekit prepare 1.3.0
+# Ask the agent to write, review, and finalize the baseline introduction.
+releasekit prepare 1.4.0 --previous 1.3.0 --to v1.4.0
+```
+
+Use `--past history` to analyze earlier commits instead. With `--past skip`, omit `--baseline-version`; the first regular `prepare` uses the saved boundary. You can save `HEAD` as the start now and prepare the first draft when later commits exist. Setup pins the SHA, so moving a tag or adding commits cannot shift the boundary.
+
+`start` saves the choice and creates no notes. Summary/history baselines become ordinary draft releases when prepared and follow the same draft (including translations), image, and finalization workflow. They count as one release in exported history; skipping creates no extra group. Existing releases keep their current workflow. See the [first-use guide](kit/references/adoption.md).
 
 ## Workflow
 
 ```text
-Git range → Release draft → Notes + images + translations → Validate → Export
+Git range → Draft source + translations → Images → Finalize → Optional export
 ```
 
 | Skill | Purpose |
 | --- | --- |
-| `releasekit-draft` | Create or revise notes from a Git range. |
-| `releasekit-image` | Plan, generate or request, review, and import images. |
-| `releasekit-translate` | Translate notes and track source freshness. |
-| `releasekit-review` | Review content, evidence, images, and release readiness. |
+| `releasekit-draft` | Choose a first-use baseline, write and revise source notes and selected translations, or refresh translations alone. |
+| `releasekit-image` | Plan, generate or request, review, and import required images. |
+| `releasekit-finalize` | Review copy, evidence, translations, and images; validate and mark the release ready; export when requested. |
 
-All four skills use the agent's native question picker when clarification is needed and the tool is available, with free-text input for another answer; otherwise they ask in chat. This covers language choices, image references, translation scope or terminology, and unresolved review/export choices. Existing decisions are reused, so a clear request proceeds without extra questions. Image uploads are requested through the conversation's attachment flow.
+All three skills use the agent's native question picker when clarification is needed and the tool is available, with free-text input for another answer; otherwise they ask in chat. This covers language choices, image references, translation scope or terminology, and unresolved finalization/export choices. Existing decisions are reused, and routine technical parameters are resolved through repository inspection. Required CLI flags do not become a questionnaire. Once a question is asked, dependent work waits for your submitted answer; a default selection, elapsed time, or a closed picker does not count as a choice. The agent keeps an asynchronous picker open while waiting, or asks in chat if the environment cannot support that wait. Image uploads are requested through the conversation's attachment flow.
 
-After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation; you can also stop for now. If you already requested the remaining work, the agent continues without asking again. Completed steps are skipped, and missing images or translations stay visible until resolved.
+After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation; you can also stop for now. If you already requested the remaining work, the agent continues without asking again. When source and translations are complete, the next step is images; when required images are complete, it is finalization. Text-only releases go directly to finalization. Completed steps are skipped, and missing images or translations stay visible until resolved.
 
-The agent handles editorial work, media selection, and image generation where appropriate. The CLI handles files, evidence, validation, and export. Finalizing a release marks local content ready; committing, publishing, and displaying it remain separate steps.
+The agent handles editorial work, media selection, and image generation where appropriate. The CLI handles files, evidence, validation, and export. Finalization includes review and marks local content ready with a content fingerprint. Export is optional; committing, publishing, and displaying it remain separate steps.
 
 <details>
 <summary><strong>Step-by-step CLI workflow</strong></summary>
@@ -121,9 +148,15 @@ Replace the sample version, Git refs, and note ID with your own. If release `1.3
 
 ```sh
 releasekit prepare 1.4.0 --from v1.3.0 --to v1.4.0
+# Save selected languages in release.yaml before adding notes.
+# This example uses sourceLocale: en-US and locales: [en-US, ko-KR].
 releasekit note add 1.4.0 queue-action
 
-# Fill the notes, evidence references, and visual brief.
+# Write the source and selected translations, then attach evidence.
+# Review each translation before marking it current.
+releasekit translation mark 1.4.0 queue-action --locale ko-KR
+
+# Complete the visual brief for image work.
 # Choose an archetype and set scene.source to generated for this example.
 releasekit image plan 1.4.0
 
@@ -135,16 +168,16 @@ releasekit image plan 1.4.0
 # Generate and review the matching light image, then import it.
 releasekit image import 1.4.0 queue-action --theme light --file ./selected-light.png
 
-# Review the completed translation before marking it current.
-releasekit translation mark 1.4.0 queue-action --locale en-US
+# Review facts, copy, translations, and selected images, then finalize.
 releasekit validate 1.4.0
 releasekit finalize 1.4.0
-releasekit export --current 1.4.0 --limit 3 --locale ko-KR --out ./release-output
+# Export when requested.
+releasekit export --current 1.4.0 --limit 3 --locale en-US --out ./release-output
 ```
 
 - Preparing creates only `release.yaml` with pinned Git boundaries. The agent reads commit history and relevant file diffs from Git as needed.
 - Use `--from-root` for an explicitly requested full-history first release.
-- `--to` defaults to `HEAD`; `--previous` can supply the comparison start.
+- `--to` defaults to the pinned SHA when preparing a saved baseline, and to `HEAD` otherwise; `--previous` can supply the comparison start.
 - Edit existing drafts in place. `prepare` never overwrites them.
 - Use `note add --no-image` for an intentionally text-only note.
 - Add `--json` for structured results or `--cwd` to select a project directory.
@@ -235,7 +268,7 @@ releasekit/
         └── assets/            # Selected raster images
 ```
 
-Releases store the comparison start and end SHAs in `release.yaml`, with relevant paths or commits attached to individual notes. They do not save a full patch or a separate changed-file index. Draft validation reads the pinned Git range; finalized releases can be validated and exported without Git history.
+Releases store the comparison start and end SHAs in `release.yaml`, with relevant paths or commits attached to individual notes. They do not save a full patch or a separate changed-file index. Draft validation reads the pinned Git range, or the baseline snapshot for a product introduction; finalized releases can be validated and exported without Git history.
 
 Export follows explicit `previous` links, keeping each version's notes in a separate group. The default limit is **three releases, including the current one**. Similar notes in different versions remain separate.
 
@@ -249,7 +282,8 @@ Translations track source fingerprints, and finalized releases record content fi
 
 | Guide | What it covers |
 | --- | --- |
-| [Agent workflow](kit/references/workflow.md) | Git boundaries, drafts, review, and export. |
+| [First use in an existing product](kit/references/adoption.md) | Starting points, product introductions, historical analysis, and skipped history. |
+| [Agent workflow](kit/references/workflow.md) | Git boundaries, drafts and translations, images, finalization, and export. |
 | [Writing and translation](kit/references/writing.md) | Product copy, evidence, and locale freshness. |
 | [Visual language](kit/references/visual-language.md) | Composition, hierarchy, materials, and acceptance checks. |
 | [Choosing generated or supplied media](kit/references/media-sources.md) | Source selection, pending captures, and shared assets. |
@@ -274,7 +308,7 @@ npm run build
 npm pack --dry-run
 ```
 
-CI runs on Windows and Linux with Node.js 22 and 24. Tests cover Git ranges, release history, image integrity, theme policies, supplied media and shared assets, translation freshness, finalization, installation conflicts, and CLI behavior.
+CI runs on Windows and Linux with Node.js 22 and 24. Tests cover first-use setup, snapshot summaries, Git ranges, release history, image integrity, theme policies, supplied media and shared assets, translation freshness, finalization, installation conflicts, and CLI behavior.
 
 <details>
 <summary><strong>Install from a local checkout</strong></summary>

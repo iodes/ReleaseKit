@@ -21,10 +21,16 @@ export const visualPolicySchema = z.strictObject({
   light: paletteSchema,
 });
 export type VisualPolicy = z.infer<typeof visualPolicySchema>;
+export const historyStartSchema = z.discriminatedUnion('past', [
+  z.strictObject({ ref: z.string().min(1), sha, past: z.literal('summary'), version: segment }),
+  z.strictObject({ ref: z.string().min(1), sha, past: z.literal('history'), version: segment }),
+  z.strictObject({ ref: z.string().min(1), sha, past: z.literal('skip'), version: z.null() }),
+]);
+export type HistoryStart = z.infer<typeof historyStartSchema>;
 export const configSchema = z.strictObject({
   schemaVersion: z.literal(1), product: z.string().min(1),
   sourceLocale: locale, locales: z.array(locale).min(1),
-  history: z.strictObject({ limit: z.number().int().min(1).max(100) }),
+  history: z.strictObject({ limit: z.number().int().min(1).max(100), start: historyStartSchema.optional() }),
   visuals: visualPolicySchema,
   tools: z.array(z.enum(['codex', 'claude', 'cursor'])),
 });
@@ -41,7 +47,8 @@ export type NoteMeta = z.infer<typeof noteMetaSchema>;
 export const releaseSchema = z.strictObject({
   schemaVersion: z.literal(1), version: segment, releasedAt: z.iso.date(),
   previous: segment.nullable(), status: z.enum(['draft', 'ready']),
-  source: sourceSchema, sourceLocale: locale, locales: z.array(locale).min(1),
+  source: sourceSchema, initialContent: z.enum(['summary', 'history']).optional(),
+  sourceLocale: locale, locales: z.array(locale).min(1),
   visuals: visualPolicySchema, notes: z.array(noteMetaSchema),
   emptyReason: z.string().nullable(), contentHash: z.string().nullable(),
 });
@@ -118,7 +125,7 @@ export function activeVariants(visual: Visual, policy: VisualPolicy): AssetVaria
 
 export function defaultConfig(product: string): ProjectConfig {
   return {
-    schemaVersion: 1, product, sourceLocale: 'ko-KR', locales: ['ko-KR', 'en-US'],
+    schemaVersion: 1, product, sourceLocale: 'en-US', locales: ['en-US'],
     history: { limit: 3 }, tools: ['codex', 'claude', 'cursor'],
     visuals: {
       themes: 'both', preset: 'quiet-product', width: 1280, height: 800, accent: '#4678ED',

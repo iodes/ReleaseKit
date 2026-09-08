@@ -2,7 +2,7 @@
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { Command, Option } from 'commander';
-import { Project, prepare } from './project.js';
+import { Project, prepare, startProject } from './project.js';
 import { initProject, installSkills } from './install.js';
 import { addNote, markTranslation, syncImagePolicy } from './content.js';
 import { planImages, importImage } from './images.js';
@@ -30,9 +30,15 @@ program.command('init').description('Initialize content and install project skil
   });
 program.command('update').description('Refresh managed skills while preserving user edits')
   .action(async () => { const result = await installSkills(project()); emit(result); if (result.conflicts.length) process.exitCode = 1; });
+program.command('start').description('Save the first-use Git boundary and treatment of earlier history')
+  .requiredOption('--at <ref>', 'baseline commit or tag; subsequent notes begin after this commit')
+  .addOption(new Option('--past <mode>', 'summarize the baseline, analyze history, or skip earlier notes').choices(['summary', 'history', 'skip']).makeOptionMandatory())
+  .option('--baseline-version <version>', 'baseline release ID, required for summary or history')
+  .action(async (options: { at: string; past: Parameters<typeof startProject>[1]['past']; baselineVersion?: string }) =>
+    emit(await startProject(project(), { at: options.at, past: options.past, version: options.baselineVersion })));
 program.command('prepare <version>').description('Create a draft from pinned Git commits')
   .option('--from <ref>', 'comparison start commit or tag')
-  .option('--to <ref>', 'comparison end commit or tag', 'HEAD')
+  .option('--to <ref>', 'comparison end commit or tag, defaults to the saved baseline or HEAD')
   .option('--previous <version>', 'explicit previous release')
   .option('--from-root', 'explicitly include the whole history')
   .option('--first-release', 'start an independent release line')

@@ -7,7 +7,7 @@ import { configSchema, defaultConfig, type ProjectConfig } from './model.js';
 import { exists, within, write, writeYaml, digest } from './files.js';
 
 const resources = fileURLToPath(new URL('../kit/', import.meta.url));
-const names = ['releasekit-draft', 'releasekit-image', 'releasekit-translate', 'releasekit-review'];
+const names = ['releasekit-draft', 'releasekit-image', 'releasekit-finalize'];
 const managedSchema = z.record(z.string(), z.string().regex(/^[a-f0-9]{64}$/));
 
 export async function installSkills(project: Project) {
@@ -40,8 +40,8 @@ export async function installSkills(project: Project) {
   }
   await write(marker, JSON.stringify(managed, null, 2) + '\n');
   return { tools: config.tools, written, conflicts, hints: {
-    codex: 'Use $releasekit-draft, $releasekit-image, $releasekit-translate, or $releasekit-review.',
-    claude: 'Use /releasekit-draft, /releasekit-image, /releasekit-translate, or /releasekit-review.',
+    codex: 'Use $releasekit-draft, $releasekit-image, or $releasekit-finalize.',
+    claude: 'Use /releasekit-draft, /releasekit-image, or /releasekit-finalize.',
     cursor: 'Use the installed releasekit-* skills from the agent skill picker or name them in your request.',
   } };
 }

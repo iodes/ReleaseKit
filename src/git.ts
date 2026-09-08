@@ -60,6 +60,15 @@ export function collect(root: string, from: string | null, to: string): GitChang
   }
   return { source, commits, files };
 }
+export function collectSnapshot(root: string, to: string): GitChanges {
+  const source = resolveRange(root, null, to);
+  const subject = git(root, ['show', '--no-show-signature', '--no-patch', '--format=%s', source.toSha, '--']).trimEnd();
+  const paths = git(root, ['ls-tree', '-r', '--name-only', '-z', source.toSha, '--']);
+  return {
+    source, commits: [{ sha: source.toSha, subject }],
+    files: paths.split('\0').filter(Boolean).map(path => ({ status: 'A', path })),
+  };
+}
 export function checkPrevious(root: string, previous: Release, source: Release['source']): void {
   const boundary = source.fromSha;
   if (!boundary || !isAncestor(root, previous.source.toSha, boundary)) {

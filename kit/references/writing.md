@@ -4,6 +4,8 @@ Write for the person using the product, using its actual terminology and the con
 
 Group commits into user-visible changes. Let the final diff and target revision establish what shipped. A merged commit can have been reverted; a feature can have been renamed; internal maintenance can have no useful user-facing announcement. Do not translate each commit subject into a separate card.
 
+For a first-use product introduction (`initialContent: summary`), describe the product and useful capabilities present at the pinned baseline. Read supporting snapshot files without reconstructing the historical commit sequence. Avoid “new,” “now available,” or “initial launch” unless that timing is established by the user or product evidence. Use [the adoption guide](adoption.md) for the selected scope and evidence rules.
+
 Keep source evidence with each note. Do not invent performance percentages, privacy claims, security guarantees, supported platforms, eligibility, enabled-by-default behavior, or menu locations. If evidence is incomplete, explain the uncertainty to the author and keep the affected statement out of finalized copy until resolved.
 
 Avoid hype, congratulations, “we are excited,” vague “various enhancements,” engineering implementation details with no user consequence, and repeated starts that make every note sound the same. Use active statements about the product's behavior. A small fix can be one precise sentence.
@@ -21,6 +23,8 @@ Title: 대기열에 항목 추가
 Only use that second sentence if the behavior is established by the product evidence. An example is not permission to add a similar claim to another product.
 
 ## Translation
+
+Selected translations are part of `releasekit-draft`. Use that skill for translation-only additions or refreshes as well; follow [the translation workflow](workflow.md#translate-selected-locales) for language scope and source fingerprints.
 
 Use the same note ID in every configured locale. Translate user meaning, not word order. Keep product names supplied by the user, supported menu paths, requirements, and numbers consistent. Raster illustrations are shared; localize their alt text separately. Alt text describes the feature-bearing visual rather than the style or color palette.
 
