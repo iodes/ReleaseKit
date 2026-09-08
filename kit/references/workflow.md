@@ -8,8 +8,8 @@ Use the installed `releasekit` CLI, or the repository's compiled CLI when develo
 2. For a new release, identify the requested version and Git boundaries. A tag or commit is acceptable. `--to` defaults to `HEAD`; `--previous` supplies a default start. A first release requires `--from` or explicit `--from-root`. Use `--first-release` for a deliberately independent line when existing releases make its ancestry ambiguous.
 3. Run `releasekit prepare`. Read the resulting `evidence.json` and `changes.patch`. Read additional files at the recorded end SHA, for example `git show <sha>:<path>`, rather than taking the current working tree as historical evidence.
 4. Add notes with `releasekit note add <version> <id>`. Fill their Markdown and attach changed paths or commit SHAs to `release.yaml`. A note can be text-only with `--no-image` when that is the intended editorial choice.
-5. Complete the shared visual brief for each image-enabled note. Use the visual language and the selected recipe; generate prompts with `releasekit image plan`.
-6. Generate or hand off pending assets according to the configured themes. Import selected local files. Preserve accepted images and manual edits.
+5. Choose generated or supplied media and complete the visual brief for each image-enabled note. Use `releasekit image plan` to obtain generation prompts or supplied-image requests.
+6. Handle each request by its action. Generate configured variants for `generate`; find or request an approved capture/image for `provide`. Import selected local files, using one shared supplied asset when appropriate. Preserve accepted images and manual edits.
 7. Translate configured locales and mark reviewed translations current. Validate, resolve errors, review warnings, and finalize when the user's request includes completing the release.
 8. Export the requested current version and recent history to a new output directory. Finalization is a local content operation; it does not tag, commit, push, deploy, or publish anything.
 

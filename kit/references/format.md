@@ -9,13 +9,15 @@ Within one release:
 | `release.yaml` | Version, status, explicit previous link, pinned Git range, policy snapshot, ordered note metadata |
 | `evidence.json` and `changes.patch` | Commit/path evidence and the net change at the requested end revision |
 | `notes/<id>/<locale>.md` | Title, alt text, source fingerprint, and Markdown body |
-| `visuals/<id>.yaml` | Shared scene specification and imported variant metadata |
-| `prompts/<id>.<theme>.md` | Reproducible generation requests for pending variants |
+| `visuals/<id>.yaml` | Scene, image source choice, and imported variant metadata |
+| `prompts/<id>.<theme>.md` | Generation requests for pending generated variants; supplied images have no generation request |
 | `assets/` | Selected raster files with content-derived names |
 
 Notes are ordered by their entries in `release.yaml`. Note IDs are unique within a version and shared across locales. Their consumer identity is the pair `(version, note.id)`; never deduplicate different releases by note ID or title alone.
 
-Frontmatter fields are `title`, `alt`, and `sourceHash`. The source locale normally uses `sourceHash: null`. Translation marking records a fingerprint of the source title, alt text, and body. An image-free note can use empty alt text. An image-enabled note requires a complete visual brief and every configured theme before finalization. Its scaffold leaves `archetype` unselected; the authoring agent chooses the representation from the note and product evidence before planning images.
+Frontmatter fields are `title`, `alt`, and `sourceHash`. The source locale normally uses `sourceHash: null`. Translation marking records a fingerprint of the source title, alt text, and body. An image-free note can use empty alt text. An image-enabled note requires a complete visual brief and its active image assets before finalization. Its scaffold leaves `archetype` and `source` unselected; the authoring agent chooses both from the note and product evidence.
+
+`scene.source` is `generated` or `provided`. Legacy briefs may omit it: `object-detail` and `editorial-scene` use supplied media; other categories default to generated graphics. Those two supplied-only categories reject an explicit `generated` choice. For generated media, `variants` contains the configured dark/light pair or single theme. Supplied media can contain just `shared`, or distinct dark/light entries following project policy. Do not mix shared and themed entries. The shared slot retains native dimensions and bytes, does not depend on presentation palettes, and exports as one asset with `fallbackTheme: shared`. Missing supplied inputs remain pending. See [media sources](media-sources.md).
 
 `releasekit finalize` checks references and content, then records `status: ready` and a content fingerprint. A later edit invalidates that fingerprint. Reopen the draft before changing content; publishing is a separate user-controlled workflow.
 

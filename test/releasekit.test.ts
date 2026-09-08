@@ -233,6 +233,7 @@ describe('theme-aware assets', () => {
       const requests = plan.requests.filter(request => request.note === entry.id);
       expect(requests.map(request => request.theme)).toEqual(['dark', 'light']);
       for (const request of requests) {
+        if (request.action !== 'generate') throw new Error('These abstract feature briefs should request generation.');
         const prompt = await fs.readFile(request.promptFile, 'utf8');
         expect(prompt).toContain(entry.scene.message);
         expect(prompt).toContain(entry.scene.composition);
@@ -241,6 +242,75 @@ describe('theme-aware assets', () => {
         expect(prompt).not.toMatch(/\b(queue|swipe|backplate)\b/i);
       }
     }
+  });
+
+  it.each(['object-detail', 'editorial-scene'] as const)('requests supplied media for %s without a generation prompt', async archetype => {
+    const p = await fixture(); await commit(p.root, 'media feature\n', 'Add media feature');
+    await release(p, '1', 'v0', undefined, true);
+    const visual = await readVisual(p, '1', 'queue');
+    visual.scene.archetype = archetype;
+    visual.scene.references = ['not-yet-supplied.png'];
+    visual.variants = {};
+    await writeYaml(await p.releaseFile('1', 'visuals/queue.yaml'), visual);
+    const plan = await planImages(p, '1');
+    expect(plan.generationRequests).toBe(0);
+    expect(plan.providedRequests).toBe(1);
+    expect(plan.requests).toMatchObject([{ action: 'provide', theme: 'shared', promptFile: null }]);
+    expect(await exists(await p.releaseFile('1', 'prompts/queue.dark.md'))).toBe(false);
+    const policy = (await p.config()).visuals;
+    expect(() => imagePrompt(visual.scene, policy, 'dark')).toThrow('supplied image');
+    await expect(finalize(p, '1')).rejects.toThrow('shared image is pending');
+    visual.scene.source = 'generated';
+    await writeYaml(await p.releaseFile('1', 'visuals/queue.yaml'), visual);
+    await expect(planImages(p, '1')).rejects.toThrow('requires a supplied');
+  });
+
+  it('imports one supplied capture for both viewer themes without recoloring or duplicating it', async () => {
+    const p = await fixture(); await commit(p.root, 'capture feature\n', 'Add capture feature');
+    await release(p, '1', 'v0', undefined, true);
+    const visual = await readVisual(p, '1', 'queue');
+    visual.scene.source = 'provided'; visual.variants = {};
+    visual.scene.references = ['incoming.png'];
+    await writeYaml(await p.releaseFile('1', 'visuals/queue.yaml'), visual);
+    const incoming = path.join(p.root, 'incoming.png');
+    const bytes = await png('#aa9977', 320, 480); await fs.writeFile(incoming, bytes);
+    await importImage(p, '1', 'queue', 'shared', incoming);
+    await fs.unlink(incoming);
+    const config = await p.config(); config.visuals.dark.canvas = '#303030';
+    await writeYaml(await p.content('config.yaml'), config); await syncImagePolicy(p, '1');
+    const plan = await planImages(p, '1');
+    expect(plan.readyAssets).toBe(1); expect(plan.pendingAssets).toBe(0);
+    expect((await validate(p, '1')).warnings).toEqual([]);
+    await finalize(p, '1');
+    const out = await exportBundle(p, '1', { out: path.join(p.root, 'provided-bundle') });
+    expect(out.assets).toBe(1);
+    const bundle = JSON.parse(await fs.readFile(out.file, 'utf8'));
+    const picture = bundle.releases[0].notes[0].image;
+    expect(picture.fallbackTheme).toBe('shared');
+    expect(Object.keys(picture.variants)).toEqual(['shared']);
+    expect(await fs.readFile(path.join(path.dirname(out.file), picture.variants.shared.src))).toEqual(bytes);
+  });
+
+  it('supports distinct supplied theme captures without generating a missing counterpart', async () => {
+    const p = await fixture(); await commit(p.root, 'capture feature\n', 'Add capture feature');
+    await release(p, '1', 'v0', undefined, true);
+    const visual = await readVisual(p, '1', 'queue');
+    visual.scene.source = 'provided'; visual.variants = {};
+    await writeYaml(await p.releaseFile('1', 'visuals/queue.yaml'), visual);
+    await importImage(p, '1', 'queue', 'dark', path.join(p.root, 'dark.png'));
+    const plan = await planImages(p, '1');
+    expect(plan.requests).toMatchObject([{ action: 'provide', theme: 'light', promptFile: null }]);
+    expect(plan.generationRequests).toBe(0);
+    await expect(importImage(p, '1', 'queue', 'shared', path.join(p.root, 'dark.png'))).rejects.toThrow('themed variant');
+    await importImage(p, '1', 'queue', 'light', path.join(p.root, 'light.png'));
+    await finalize(p, '1');
+    expect((await validate(p, '1')).valid).toBe(true);
+  });
+
+  it('does not allow generated mode to use a shared supplied-image slot', async () => {
+    const p = await fixture(); await commit(p.root, 'feature\n', 'Add feature');
+    await release(p, '1', 'v0', undefined, true);
+    await expect(importImage(p, '1', 'queue', 'shared', path.join(p.root, 'dark.png'))).rejects.toThrow('Only supplied');
   });
 
   it.each(['jpeg', 'webp'] as const)('decodes and measures actual %s images', async format => {

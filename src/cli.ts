@@ -8,7 +8,7 @@ import { addNote, markTranslation, syncImagePolicy } from './content.js';
 import { planImages, importImage } from './images.js';
 import { validate, finalize } from './validate.js';
 import { exportBundle } from './export.js';
-import { configSchema, noteMetaSchema, theme, type ProjectConfig } from './model.js';
+import { configSchema, noteMetaSchema, assetVariant, type ProjectConfig } from './model.js';
 
 const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
 const program = new Command();
@@ -48,7 +48,7 @@ note.command('add <version> <id>').description('Scaffold a note and its locale f
     emit({ version, note: id, status: 'draft' });
   });
 const images = program.command('image').description('Plan themed illustrations and register selected files');
-images.command('plan <version>').description('Write pending prompts and report asset counts without calling a model')
+images.command('plan <version>').description('Plan generation or supplied-image requests without calling a model')
   .option('--sync-config', 'apply current project image settings to this draft')
   .action(async (version: string, options: { syncConfig?: boolean }) => {
     const instance = project();
@@ -56,9 +56,9 @@ images.command('plan <version>').description('Write pending prompts and report a
     emit(await planImages(instance, version));
   });
 images.command('import <version> <note>').description('Import a selected raster variant')
-  .addOption(new Option('--theme <theme>', 'variant to register').choices(['dark', 'light']).makeOptionMandatory())
+  .addOption(new Option('--theme <theme>', 'variant to register; shared is for supplied images').choices(['dark', 'light', 'shared']).makeOptionMandatory())
   .requiredOption('--file <file>', 'selected local PNG, JPEG, or WebP')
-  .action(async (version: string, id: string, options: { theme: string; file: string }) => emit(await importImage(project(), version, id, theme.parse(options.theme), path.resolve(program.opts<{ cwd: string }>().cwd, options.file))));
+  .action(async (version: string, id: string, options: { theme: string; file: string }) => emit(await importImage(project(), version, id, assetVariant.parse(options.theme), path.resolve(program.opts<{ cwd: string }>().cwd, options.file))));
 const translation = program.command('translation').description('Track source freshness for reviewed translations');
 translation.command('mark <version> <note>').description('Mark an already reviewed translation current')
   .requiredOption('--locale <locale>', 'translation language code')

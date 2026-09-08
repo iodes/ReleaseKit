@@ -22,7 +22,7 @@ Use a straight-on, simplified interface with a small number of layered surfaces.
 Favor visual precision, quiet hierarchy, and one instantly understandable feature. Small-screen clarity takes priority over decorative detail. Treat the specified element inventory as complete. Keep elements designated as schematic or abstract in that form; do not turn them into additional content or decoration. Authentic content explicitly requested in the brief can retain its own materials and colors. Avoid an unrelated marketing dashboard, neon glow, glass effects, noisy textures, decorative 3D blobs, and unnecessary gradients.
 
 ## Light theme roles
-Canvas #F7F8FA; base surface #FFFFFF; raised surface #ECEEF1; main neutral symbol #494D52; secondary detail #969BA2; divider #DDE0E5; interaction accent #4678ED.
+Canvas #F7F8FA; base surface #FFFFFF; raised surface #ECEEF1; main neutral symbol #494D52; secondary detail #969BA2; divider #DDE0E5; interaction accent #4678ED. Use the accent only when the scene assigns it a functional meaning.
 Use a near-white canvas, subtle surface separation, restrained contact shadows, and medium-dark neutral symbols. Avoid both flat white-on-white disappearance and thick dark outlines.
 Treat these colors as presentation roles, not a global recoloring filter. Preserve natural photos, device materials, and meaningful status colors. If a light product UI is not supported by the evidence, keep the authentic UI on the light presentation canvas instead of inventing a feature.
 

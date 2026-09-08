@@ -1,0 +1,30 @@
+archetype: object-detail
+subject: The ribbed adjustment dial of a fictional desktop timer
+message: The desktop timer gains a ribbed adjustment dial that is easier to
+  locate by touch.
+focus: Shallow vertical grip ribs around one physical dial
+composition: "Close three-quarter studio view from slightly above of a fictional
+  compact timer: a low warm-gray matte rounded rectangular base, with exactly
+  one broad cylindrical dial attached vertically to its top. Base occupies about
+  52 percent of canvas width, centered slightly below mid-height. Dial diameter
+  about half the base width; low cylindrical height; evenly spaced shallow
+  vertical ribs around its side. A single small blue index notch on the top of
+  the dial at the front. The entire base and dial remain visible. No display,
+  cable, buttons, markings or extra parts. Soft studio light makes the ribs
+  readable."
+context: Original fictional example. The written scene is the complete product
+  specification for this example, not evidence of a shipped product.
+elements:
+  - One warm-gray matte rounded rectangular timer base
+  - One attached low cylindrical dial with shallow vertical ribs
+  - One small blue index notch on the dial top
+preserve:
+  - Base and dial assembly, contact and relative scale
+  - Ribbed circumference and single blue index notch
+  - Camera and natural warm-gray material in both themes
+avoid:
+  - Floating or detached dial
+  - Additional buttons, display, cables or measurements
+  - Glossy chrome or invented physical components
+text: []
+references: []

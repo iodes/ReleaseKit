@@ -75,7 +75,8 @@
                           "type": "string",
                           "enum": [
                             "dark",
-                            "light"
+                            "light",
+                            "shared"
                           ]
                         },
                         "variants": {
@@ -106,6 +107,30 @@
                               "additionalProperties": false
                             },
                             "light": {
+                              "type": "object",
+                              "properties": {
+                                "src": {
+                                  "type": "string"
+                                },
+                                "width": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "height": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "src",
+                                "width",
+                                "height"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "shared": {
                               "type": "object",
                               "properties": {
                                 "src": {

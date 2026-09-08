@@ -1,5 +1,5 @@
 import * as fs from 'node:fs/promises';
-import { locale, noteMetaSchema, visualSchema, type NoteMeta } from './model.js';
+import { locale, noteMetaSchema, visualSchema, imageSource, type NoteMeta } from './model.js';
 import { identifier, writeYaml, writeNote, readNote, noteHash, exists, readYaml } from './files.js';
 import { Project, editable } from './project.js';
 
@@ -17,7 +17,7 @@ export async function addNote(project: Project, version: string, id: string, cat
   if (image) {
     await writeYaml(await project.releaseFile(version, `visuals/${id}.yaml`), {
       schemaVersion: 1,
-      scene: { archetype: '', subject: '', message: '', focus: '', composition: '', context: '', elements: [], preserve: [], avoid: [], text: [], references: [] },
+      scene: { archetype: '', source: '', subject: '', message: '', focus: '', composition: '', context: '', elements: [], preserve: [], avoid: [], text: [], references: [] },
       variants: {},
     });
   }
@@ -52,7 +52,9 @@ export async function syncImagePolicy(project: Project, version: string): Promis
 }
 
 export async function readVisual(project: Project, version: string, id: string) {
-  return readYaml(await project.releaseFile(version, `visuals/${identifier(id)}.yaml`), visualSchema);
+  const visual = await readYaml(await project.releaseFile(version, `visuals/${identifier(id)}.yaml`), visualSchema);
+  imageSource(visual.scene);
+  return visual;
 }
 
 export async function checkReferenceFiles(project: Project, references: string[]): Promise<void> {

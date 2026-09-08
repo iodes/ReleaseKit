@@ -1,0 +1,31 @@
+archetype: icon-tile
+subject: One flat closed-padlock glyph inside a compact rounded square tile
+message: Local backup files can be saved with encryption enabled.
+focus: The closed shackle and simple keyhole of the monochrome padlock glyph
+composition: >-
+  A uniform 8:5 landscape canvas with one small flat rounded-square tile centered
+  exactly in the canvas. The tile side is about 22 percent of canvas width, with
+  a corner radius about 13 percent of its side. Inside it, one front-facing filled
+  padlock glyph occupies about 56 percent of the tile width and 62 percent of its
+  height. Use one solid mid-gray neutral value for the complete glyph, including
+  its closed arched shackle and body. A simple keyhole is negative space in the
+  body. Keep broad uninterrupted canvas around the tile. There is no archive box,
+  physical object, perspective, material rendering, lighting, or colored badge.
+context: >-
+  Fictional capability illustration, not a shipped product claim. The flat lock
+  represents encryption of local backup files only. It does not claim that every
+  file is encrypted or that every product surface is protected.
+elements:
+  - One flat rounded-square background tile
+  - One solid monochrome closed-padlock glyph with a negative-space keyhole
+preserve:
+  - Tile and glyph dimensions, optical center, and corner treatment
+  - Closed shackle and recognizable negative-space keyhole
+  - Completely flat monochrome graphic treatment in both themes
+avoid:
+  - Perspective, extrusion, bevels, gradients, texture, highlights, or shadows
+  - A physical archive box, metallic lock, or separate floating badge
+  - Decorative accent color or glow
+  - Open shackle, success mark, text, or additional controls
+text: []
+references: []

@@ -5,6 +5,8 @@ export const sha = z.string().regex(/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/);
 export const locale = z.string().regex(/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/);
 export const theme = z.enum(['dark', 'light']);
 export type Theme = z.infer<typeof theme>;
+export const assetVariant = z.enum(['dark', 'light', 'shared']);
+export type AssetVariant = z.infer<typeof assetVariant>;
 const color = z.string().regex(/^#[a-fA-F0-9]{6}$/);
 export const paletteSchema = z.strictObject({
   canvas: color, surface: color, raised: color, primary: color, secondary: color, divider: color,
@@ -54,6 +56,7 @@ export const archetypeSchema = z.enum([
 ]);
 export const sceneSchema = z.strictObject({
   archetype: archetypeSchema,
+  source: z.enum(['generated', 'provided']).optional(),
   subject: z.string().min(1), message: z.string().min(1),
   focus: z.string().min(1), composition: z.string().min(1),
   context: z.string(), elements: z.array(z.string()),
@@ -68,7 +71,7 @@ export const assetSchema = z.strictObject({
 });
 export const visualSchema = z.strictObject({
   schemaVersion: z.literal(1), scene: sceneSchema,
-  variants: z.strictObject({ dark: assetSchema.optional(), light: assetSchema.optional() }),
+  variants: z.strictObject({ dark: assetSchema.optional(), light: assetSchema.optional(), shared: assetSchema.optional() }),
 });
 export type Visual = z.infer<typeof visualSchema>;
 export const evidenceSchema = z.strictObject({
@@ -87,8 +90,8 @@ export const bundleSchema = z.strictObject({
     notes: z.array(z.strictObject({
       id: segment, category: noteMetaSchema.shape.category, title: z.string(), bodyMarkdown: z.string(),
       image: z.strictObject({
-        alt: z.string(), fallbackTheme: theme,
-        variants: z.strictObject({ dark: exportedImage.optional(), light: exportedImage.optional() }),
+        alt: z.string(), fallbackTheme: assetVariant,
+        variants: z.strictObject({ dark: exportedImage.optional(), light: exportedImage.optional(), shared: exportedImage.optional() }),
       }).nullable(),
     })),
   })),
@@ -97,6 +100,26 @@ export type Bundle = z.infer<typeof bundleSchema>;
 
 export function themes(policy: VisualPolicy): Theme[] {
   return policy.themes === 'both' ? ['dark', 'light'] : [policy.themes];
+}
+
+export function imageSource(scene: Scene): 'generated' | 'provided' {
+  if (scene.archetype === 'object-detail' || scene.archetype === 'editorial-scene') {
+    if (scene.source === 'generated') throw new Error(`${scene.archetype} requires a supplied capture, photograph, or content image. Set source to provided.`);
+    return 'provided';
+  }
+  return scene.source ?? 'generated';
+}
+
+export function activeVariants(visual: Visual, policy: VisualPolicy): AssetVariant[] {
+  const provided = imageSource(visual.scene) === 'provided';
+  const { dark, light, shared } = visual.variants;
+  if (shared) {
+    if (!provided) throw new Error('Only supplied images can use a shared asset.');
+    if (dark || light) throw new Error('Choose a shared supplied image or distinct theme variants; do not mix both.');
+    return ['shared'];
+  }
+  if (provided && !dark && !light) return ['shared'];
+  return themes(policy);
 }
 
 export function defaultConfig(product: string): ProjectConfig {

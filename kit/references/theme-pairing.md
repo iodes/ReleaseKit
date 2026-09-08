@@ -4,6 +4,8 @@
 
 `visuals.themes` in `releasekit/config.yaml` accepts `both`, `dark`, or `light`. The recommended default is `both`. Single-theme projects request only that variant. Image count depends on image-enabled notes and missing or stale variants; it does not multiply by the number of translations.
 
+This generation policy does not require inventing a second appearance for supplied media. A capture or approved content image can use one `shared` asset in either viewer theme. See [media sources](media-sources.md) for supplied-image requests and importing one source or distinct genuine theme captures.
+
 `releasekit image plan <version>` writes pending prompt files and reports requested, ready, and pending asset counts. It never calls an image service. These counts are work units, not currency estimates or a guarantee about provider billing. Editing a provider's existing image can still cost money. Do not advertise automatic theme conversion as a free second generation.
 
 Policy is captured in each release when it is prepared. Editing the project default affects new releases. To apply the current project policy to an existing draft, run `releasekit image plan <version> --sync-config`. Previously selected files are retained; themes disabled by the new policy are not exported. Ready releases must be reopened before their policy changes.
@@ -27,7 +29,7 @@ Do not invert pixels or shift brightness globally. A black lens remains a black 
 ## Generation sequence
 
 1. Complete the shared brief and inspect its product references.
-2. Read the image plan and the project's requested themes. Reuse existing current assets.
+2. Read the image plan and the project's requested themes. Reuse existing current assets. The following rendering steps apply to `action: generate`; handle `action: provide` through the supplied-image workflow.
 3. Generate one requested variant using its prompt. Select and inspect the result.
 4. Import it. Re-run the image plan; a valid approved counterpart is now offered as a composition reference for the other theme.
 5. When the available tool supports image references or edits, use the counterpart for a constrained theme edit. Otherwise repeat the exact scene contract and inspect for layout drift. Never claim pixel-identical geometry from independent stochastic generations.
@@ -44,10 +46,10 @@ releasekit image import 1.4.0 queue-action --theme dark --file ./selected-dark.p
 releasekit image import 1.4.0 queue-action --theme light --file ./selected-light.png
 ```
 
-Only configured themes are required. A missing theme in a two-theme project remains pending and blocks finalization. Do not create SVG stand-ins, placeholders, automatic inversion, or a duplicate of the existing file to satisfy validation.
+For generated illustrations, only configured themes are required. A missing theme in a two-theme project remains pending and blocks finalization. Supplied media can instead use one genuine shared source. Do not create placeholders, automatic inversion, or duplicate files to satisfy validation.
 
 ## Consumer behavior
 
-Exported image data includes `variants` and `fallbackTheme`. A consumer selects the requested theme if present, otherwise the explicitly exported fallback. A single-theme project therefore uses one file in both viewer themes by choice; the bundle does not pretend a second asset exists. Consumers should not invert or recolor raster assets.
+Exported image data includes `variants` and `fallbackTheme`. A consumer selects the requested theme if present, otherwise the explicitly exported fallback. The fallback can be `dark`, `light`, or `shared`. A supplied shared asset therefore appears once as `variants.shared`, with `fallbackTheme: shared`; the bundle does not pretend a second asset exists. Consumers should not invert or recolor raster assets.
 
 The file validator checks format, actual decoding, dimensions, content digest, scene freshness, and configured themes. It rejects identical files masquerading as a pair. The image review checks composition and meaning; a hash cannot establish either.

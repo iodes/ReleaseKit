@@ -22,6 +22,13 @@
             "editorial-scene"
           ]
         },
+        "source": {
+          "type": "string",
+          "enum": [
+            "generated",
+            "provided"
+          ]
+        },
         "subject": {
           "type": "string",
           "minLength": 1
@@ -126,6 +133,41 @@
           "additionalProperties": false
         },
         "light": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "sceneHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "width": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "height": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "sceneHash",
+            "width",
+            "height"
+          ],
+          "additionalProperties": false
+        },
+        "shared": {
           "type": "object",
           "properties": {
             "file": {

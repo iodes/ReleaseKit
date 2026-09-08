@@ -6,6 +6,8 @@ Keep the CLI deterministic. The user's coding agent performs editorial work and 
 
 Project image generation defaults to both dark and light. Respect a project's explicit single-theme choice. A pair shares one scene specification; preserve geometry, feature meaning, and semantic colors between variants. Never manufacture a second variant through color inversion or claim that a pending image is ready.
 
+Generate restrained flat explanatory graphics. Icons use compact monochrome filled glyphs, quiet flat tiles, and broad margins; do not turn them into sculpted objects or decorative 3D illustrations. Real physical details and content previews require supplied captures, photographs, or approved artwork. If that input is absent, request it and keep the image pending. One supplied image can be a shared asset across viewer themes without recoloring or duplication.
+
 Store changes per release. Follow explicit previous-release links when assembling recent history, preserving version boundaries and entries with similar names. Resolve Git references to immutable commits before analyzing them.
 
 Use Node.js 22.12 or later; develop with Node.js 24. Run `npm run check`, `npm test`, and `npm run build` for implementation changes. Tests should verify observable behavior, data integrity, and useful failure cases, rather than exact editorial wording. Keep documentation and public JSON schemas aligned with behavior.

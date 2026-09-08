@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
-import { type Theme, type Visual, themes, theme } from './model.js';
+import { type AssetVariant, type Visual, themes, assetVariant, imageSource, activeVariants } from './model.js';
 import { Project, editable } from './project.js';
 import { readVisual, checkReferenceFiles } from './content.js';
 import { digest, identifier, exists, write, writeYaml } from './files.js';
@@ -23,20 +23,21 @@ export async function inspectImage(bytes: Buffer) {
   };
 }
 
-export interface ImageRequest {
-  note: string; theme: Theme; reason: 'missing' | 'stale'; promptFile: string;
-  compositionReference: string | null;
-}
+export type ImageRequest = {
+  note: string; theme: AssetVariant; reason: 'missing' | 'stale';
+} & ({ action: 'generate'; promptFile: string; compositionReference: string | null }
+  | { action: 'provide'; promptFile: null; compositionReference: null; instruction: string });
 export async function planImages(project: Project, version: string) {
   const release = await project.release(version);
   const requests: ImageRequest[] = [];
   let ready = 0;
   for (const note of release.notes.filter(n => n.image)) {
     const visual = await readVisual(project, version, note.id);
+    const source = imageSource(visual.scene);
     const pair = visual.variants;
     const invalidPair = release.visuals.themes === 'both' && pair.dark && pair.light &&
       (pair.dark.sha256 === pair.light.sha256 || pair.dark.width !== pair.light.width || pair.dark.height !== pair.light.height);
-    for (const variant of themes(release.visuals)) {
+    for (const variant of activeVariants(visual, release.visuals)) {
       const expected = sceneHash(visual.scene, release.visuals, variant);
       const asset = visual.variants[variant];
       const file = asset && await project.releaseFile(version, asset.file);
@@ -44,6 +45,15 @@ export async function planImages(project: Project, version: string) {
       const current = !!asset && present && asset.sceneHash === expected && digest(await fs.readFile(file!)) === asset.sha256 && !(invalidPair && variant === 'light');
       if (current) { ready++; continue; }
       editable(release);
+      if (source === 'provided') {
+        requests.push({
+          note: note.id, theme: variant, reason: present ? 'stale' : 'missing', action: 'provide',
+          promptFile: null, compositionReference: null,
+          instruction: `Use an existing approved image or ask for a capture, photograph, or content asset for "${visual.scene.subject}". Import the selected file with --theme ${variant}. Do not synthesize a replacement.`,
+        });
+        continue;
+      }
+      if (variant === 'shared') throw new Error('Generated images require a dark or light variant.');
       await checkReferenceFiles(project, visual.scene.references);
       const promptFile = await project.releaseFile(version, `prompts/${note.id}.${variant}.md`);
       await write(promptFile, imagePrompt(visual.scene, release.visuals, variant));
@@ -54,22 +64,31 @@ export async function planImages(project: Project, version: string) {
         const reference = await project.releaseFile(version, other.file);
         if (await exists(reference) && digest(await fs.readFile(reference)) === other.sha256) compositionReference = reference;
       }
-      requests.push({ note: note.id, theme: variant, reason: present ? 'stale' : 'missing', promptFile, compositionReference });
+      requests.push({ note: note.id, theme: variant, reason: present ? 'stale' : 'missing', action: 'generate', promptFile, compositionReference });
     }
   }
   return {
     version, configuredThemes: themes(release.visuals), requestedAssets: ready + requests.length,
     readyAssets: ready, pendingAssets: requests.length, requests,
+    generationRequests: requests.filter(request => request.action === 'generate').length,
+    providedRequests: requests.filter(request => request.action === 'provide').length,
     costNote: 'Counts describe required output assets, not provider prices or a guarantee of one tool call per asset. No image service was called.',
   };
 }
 
-export async function importImage(project: Project, version: string, noteId: string, variant: Theme, source: string) {
+export async function importImage(project: Project, version: string, noteId: string, variant: AssetVariant, source: string) {
   const release = await project.release(version);
-  editable(release); identifier(noteId); theme.parse(variant);
+  editable(release); identifier(noteId); assetVariant.parse(variant);
   if (!release.notes.some(n => n.id === noteId && n.image)) throw new Error(`No image-enabled note named ${noteId}.`);
-  if (!themes(release.visuals).includes(variant)) throw new Error(`Theme ${variant} is not enabled for this release. Update the project setting and sync the draft first.`);
   const visual = await readVisual(project, version, noteId);
+  const provided = imageSource(visual.scene) === 'provided';
+  if (variant === 'shared') {
+    if (!provided) throw new Error('Only supplied images can use a shared asset.');
+    if (visual.variants.dark || visual.variants.light) throw new Error('Remove the themed variant entries before switching to one shared supplied image.');
+  } else {
+    if (!themes(release.visuals).includes(variant)) throw new Error(`Theme ${variant} is not enabled for this release. Update the project setting and sync the draft first.`);
+    if (visual.variants.shared) throw new Error('Remove the shared variant entry before switching to distinct supplied theme variants.');
+  }
   const bytes = await fs.readFile(path.resolve(project.root, source));
   const inspected = await inspectImage(bytes);
   const file = `assets/${noteId}.${variant}.${inspected.sha256.slice(0, 12)}.${inspected.extension}`;
@@ -87,7 +106,7 @@ export async function importImage(project: Project, version: string, noteId: str
 
 export async function validateImages(project: Project, version: string, noteId: string, visual: Visual, errors: string[], warnings: string[]): Promise<void> {
   const release = await project.release(version);
-  for (const variant of themes(release.visuals)) {
+  for (const variant of activeVariants(visual, release.visuals)) {
     const expected = sceneHash(visual.scene, release.visuals, variant);
     const asset = visual.variants[variant];
     if (!asset) { errors.push(`${noteId}: ${variant} image is pending.`); continue; }
@@ -98,7 +117,7 @@ export async function validateImages(project: Project, version: string, noteId: 
         errors.push(`${noteId}: ${variant} asset changed after import; import the selected file again.`);
       }
       const requestedRatio = release.visuals.width / release.visuals.height;
-      if (Math.abs(actual.width / actual.height / requestedRatio - 1) > 0.05) {
+      if (imageSource(visual.scene) === 'generated' && Math.abs(actual.width / actual.height / requestedRatio - 1) > 0.05) {
         warnings.push(`${noteId}: ${variant} aspect ratio differs from the project target; review its framing.`);
       }
     } catch (error) { errors.push(`${noteId}/${variant}: ${error instanceof Error ? error.message : error}`); }

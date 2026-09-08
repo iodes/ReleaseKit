@@ -2,25 +2,25 @@
 
 Choose an archetype from the feature's explanatory need. Numeric occupancy ranges below are starting points, not replacements for the scene brief.
 
-The rules below are conditional on the selected subject. Choose a new scene for each release note. A worked brief demonstrates one feature's constraints; its objects, coordinates, gestures, or data relationships must not become defaults for unrelated notes.
+The rules below are conditional on the selected subject. Choose the [media source](media-sources.md) first. These are eight presentation categories; physical details and content previews require supplied media. A worked brief demonstrates one feature's constraints; its objects, coordinates, gestures, or data relationships must not become defaults for unrelated notes.
 
 | Archetype | Use when | Starting composition | Common failure |
 | --- | --- | --- | --- |
-| `icon-tile` | A capability or status is recognizable through one symbol | Symbol or tile about 16–24% of canvas width, optically centered | An enormous generic icon or empty decorative symbolism |
+| `icon-tile` | A capability or status is recognizable through one symbol | Flat tile about 20–24% of canvas width; monochrome filled glyph about 50–65% of tile width | A sculpted 3D object, colored decorative badge, or oversized glyph |
 | `symbol-pair` | Two capabilities are connected | Two equally weighted symbols, a short subtle divider, broad empty space | Unequal weights or an arrow implying a direction that does not exist |
 | `ui-detail` | A specific interaction or setting changed | One enlarged fragment occupying about 55–85% of width | A complete invented dashboard with the useful control too small |
 | `device-view` | The device or cross-device context matters | One unobtrusive front-facing display, around 28–48% of width | Decorative device mockups unrelated to the workflow |
-| `object-detail` | A real physical part explains the feature | Close crop with one consistent camera and quiet depth | An invented product silhouette or excessive glossy modeling |
-| `spatial-view` | Topology, route, location, or layout is the subject | Top-down or elevated scene, often filling the frame | Competing map layers, unreadable lines, impossible spatial relationships |
+| `object-detail` | A real physical part explains the feature | Supplied photograph or capture, with a useful crop | Inventing a physical product or generating a 3D substitute |
+| `spatial-view` | Topology, route, location, or layout is the subject | One appropriate scale and viewpoint; fine subdued context around a clear route or selection | An oversized toy street grid, competing map layers, or impossible spatial relationships |
 | `data-view` | A new view of information is the feature | One dominant chart or metric panel plus sparse support | Fake improvement numbers or decorative chart noise |
-| `editorial-scene` | The announced content or experience is the subject | One coherent scene with feature-appropriate materials and color | A marketing banner for an ordinary fix |
+| `editorial-scene` | The announced content or experience is the subject | Supplied content artwork or screenshot, with original colors | Inventing a still life or decorative illustration |
 
 ## Decision sequence
 
 1. Does the reader need to understand where or how to act? Prefer `ui-detail`; use `device-view` only when device context carries meaning.
-2. Is spatial topology or a real physical part essential? Choose `spatial-view` or `object-detail`.
+2. Is spatial topology essential? Choose `spatial-view`. Is a real physical part essential? Choose `object-detail` and request or reuse its image.
 3. Is the new information display itself the change? Choose `data-view`.
-4. Is this an experience whose content is inherently visual? Choose `editorial-scene`.
+4. Is the actual announced content the subject? Choose `editorial-scene` and request or reuse its artwork or capture.
 5. Otherwise, use `icon-tile` for one concept or `symbol-pair` for one relationship.
 
 ## Correctness checks by subject
@@ -34,7 +34,7 @@ Select only the relevant checks and make them concrete in the note's `compositio
 | `ui-detail` | Control meaning, hierarchy, containment, alignment, and state are correct; any transition identifies fixed and changing elements |
 | `device-view` | Device identity, count, screen content, and cross-device relationships match the feature |
 | `object-detail` | Shape, scale, assembly, contact points, and materials preserve the physical feature |
-| `spatial-view` | Positions, connections, direction, and layer meanings form a consistent spatial model |
+| `spatial-view` | Positions, connections, direction, and layer meanings form a consistent spatial model; the focal layer reads first at small size |
 | `data-view` | Categories, values, proportions, units, legends, and selected filters agree wherever present |
 | `editorial-scene` | The depicted experience matches the announced content without added capabilities or unrelated subjects |
 
@@ -62,12 +62,28 @@ Message: users can see an activity breakdown in a new panel.
 
 Choose `data-view`. One panel contains a dominant simple chart and two supporting rows. If actual values are not available, omit literal numbers and avoid a rising curve that implies a performance gain. Make the new view, not an invented result, the focus. Use a selected segment or one active filter to establish hierarchy if that interaction is supported.
 
+## Map hierarchy within spatial views
+
+Choose the level of abstraction from the feature. A relationship diagram can be sparse; a map preview usually needs recognizable cartographic context. Simplify a map by reducing the contrast of minor detail before removing its structure. Use thin, connected local streets, a slightly stronger major network, and quiet flat land or water values. Avoid replacing a regional map with a few broad roads, lane dashes, padded blocks, or a raised checkerboard.
+
+Make the route or selected area the first read at roughly 350 pixels wide. Supporting detail may merge into a quiet texture at that size, while the focal path and its meaningful endpoints remain legible. Give the active path a clear stroke hierarchy without making it a glowing cable. Keep geographic context planar; do not add bevels, modeled terrain, grain, or studio lighting for polish.
+
+Choose the crop and amount of negative space from the feature. A supported summary can occupy a quiet area beside a map, with a local fade that suppresses background detail behind it. A full-frame map or a focused spatial diagram can be more appropriate for other notes. Do not require a left summary, a right map, a water body, or any particular route shape across this archetype.
+
+Marker shapes carry meaning. Saved waypoints, a current-position arrow, a destination pin, traffic, and a route alternative are different states; include only the ones established by the note. A route follows traversable connections, with a bridge or other supported connection wherever needed. For an actual location, path, or coverage claim, request an approved map capture or verified source instead of inventing geography. A fictional gallery scene must state that its geography is illustrative.
+
+## Worked brief: a saved route preview
+
+Message: the route preview connects two selected saved waypoints. Choose `spatial-view`. For this fictional example, use an original irregular city network with many fine, quiet streets and one continuous blue path. Place a compact abstract summary beside the map when that summary is part of the chosen scene. Use neutral endpoints rather than introducing an unsupported live-navigation state. The map's detail supports recognition; its route supplies the meaning.
+
+Before pairing, check continuity, endpoint attachment, meaningful scale, and route priority at mobile size. Preserve the land boundary, primary street structure, route bends, endpoint positions, summary alignment, crop, and semantic route color between themes. If exact real-world geography matters, switch to supplied media. These are feature-derived checks; they do not prescribe this example's layout for every spatial note.
+
 ## Worked brief: a focused object
 
 Message: a new control is available on an existing physical interface.
 
-Choose `object-detail` only with product evidence. Crop closely enough to make the control recognizable, retain surrounding context, and use one soft highlight or local accent. Lock the actual geometry. Do not introduce a generic vehicle, appliance, robot, or headset into an unrelated software product.
+Choose `object-detail` with `source: provided`. Request a photograph or capture of the actual control if an approved image is not already available. Use a crop that preserves surrounding context and the real geometry. Do not synthesize a product from a written fictional specification or introduce an unrelated appliance, robot, or headset. This note stays pending until an appropriate image is supplied.
 
 ## Exceptions with a reason
 
-A genuine content preview can be photographic or colorful. A real icon may include gradients. A broad spatial view may reach every edge. An editorial introduction may use a different aspect ratio chosen in project settings. These exceptions follow the subject; they do not replace the quiet presentation language for other notes.
+A supplied content preview can retain its authentic photography, artwork, materials, and colors. A broad spatial view may reach every edge when its relationships require it. Original supplied media can retain its aspect ratio. These are source-preservation choices, not permission to invent a decorative illustration or physical rendering.

@@ -1,0 +1,22 @@
+archetype: object-detail
+source: provided
+subject: The actual product control described by the release note
+message: Show the changed control using an approved product image.
+focus: The control as it appears in the real product
+composition: >-
+  Preserve the supplied image's product geometry, appearance, and native colors.
+  Select a useful crop only after inspecting the source. Do not invent the control
+  shape, viewpoint, surrounding assembly, or product materials.
+context: >-
+  Authoring example awaiting a real source. No screenshot, photograph, or approved
+  product image is supplied here. The planned asset must remain pending.
+elements:
+  - One approved capture or photograph of the actual product detail
+preserve:
+  - Authentic product appearance and relevant surrounding context
+  - Original source colors and feature meaning across viewer themes
+avoid:
+  - Generating a substitute physical object or 3D illustration
+  - Inventing geometry from a written description
+text: []
+references: []

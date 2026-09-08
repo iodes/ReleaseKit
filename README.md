@@ -20,7 +20,7 @@
 
 </div>
 
-ReleaseKit pairs a deterministic CLI with portable agent skills. Your agent writes the notes and creates illustrations; the CLI collects Git evidence, prepares image prompts, validates content, and exports JSON with local assets.
+ReleaseKit pairs a deterministic CLI with portable agent skills. Your agent writes the notes and selects or creates images; the CLI collects Git evidence, prepares image requests, validates content, and exports JSON with local assets.
 
 | Dark | Light |
 | :---: | :---: |
@@ -90,7 +90,7 @@ Git range → Release draft → Notes + images + translations → Validate → E
 | Skill | Purpose |
 | --- | --- |
 | `releasekit-draft` | Create or revise notes from a Git range. |
-| `releasekit-image` | Plan, generate, review, and import illustrations. |
+| `releasekit-image` | Plan, generate or request, review, and import images. |
 | `releasekit-translate` | Translate notes and track source freshness. |
 | `releasekit-review` | Review content, evidence, images, and release readiness. |
 
@@ -153,6 +153,10 @@ visuals:
 
 `releasekit image plan <version>` reports pending and reusable assets before generation. Current imported assets are reused; pending prompts stay available for an external tool. Single-theme exports contain one real asset and an explicit fallback.
 
+Plan requests distinguish `action: generate` from `action: provide`; the CLI never calls a model API. A supplied-image request has no generation prompt. The agent reuses an approved image or asks for the required capture and keeps it pending. Physical product details and actual content previews require supplied media.
+
+Supplied captures, photos, and approved content images can use one unchanged `shared` asset across both viewer themes. They do not require two generations or duplicate files. Choose `scene.source: provided` and import with `releasekit image import <version> <note> --theme shared --file <file>`. If actual dark/light captures exist, import them as separate theme variants instead.
+
 <details>
 <summary><strong>Applying changed settings to an existing draft</strong></summary>
 
@@ -197,12 +201,15 @@ Translations track source fingerprints, and finalized releases record content fi
 | [Agent workflow](kit/references/workflow.md) | Git boundaries, drafts, review, and export. |
 | [Writing and translation](kit/references/writing.md) | Product copy, evidence, and locale freshness. |
 | [Visual language](kit/references/visual-language.md) | Composition, hierarchy, materials, and acceptance checks. |
-| [Composition recipes](kit/references/composition-recipes.md) | Eight ways to match an illustration to a feature. |
+| [Choosing generated or supplied media](kit/references/media-sources.md) | Source selection, pending captures, and shared assets. |
+| [Composition recipes](kit/references/composition-recipes.md) | Eight presentation categories matched to the feature and its source. |
 | [Theme pairs and cost](kit/references/theme-pairing.md) | Shared geometry, single-theme policies, and reuse. |
 | [File contract](kit/references/format.md) · [JSON schemas](schemas) | Authoring files and the public export format. |
-| [Worked examples](examples/README.md) | Paired illustrations, independent briefs, and three-release bundles. |
+| [Worked examples](examples/README.md) | Paired illustrations, supplied-image workflow, independent briefs, and three-release bundles. |
 
 Visual guidance uses independent, brand-neutral descriptions. Each illustration should communicate the actual feature through its own scene. Worked examples demonstrate the process; each note gets its own composition.
+
+The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat monochrome glyphs. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
 
 ## Development
 

@@ -1,0 +1,26 @@
+archetype: symbol-pair
+subject: An adjustment glyph associated with a saved location pin
+message: Preferences can be saved for an individually selected location.
+focus: A balanced association between preferences and one location
+composition: Two equal optical-weight symbols centered as a group on one
+  horizontal axis. A three-slider adjustment glyph on the left and a simple
+  location pin on the right, each about 16 percent of canvas width, separated by
+  a short thin neutral vertical divider. The pin uses a restrained blue accent;
+  the adjustment glyph is neutral. Broad empty space. Flat precise shapes with
+  gently softened material depth.
+context: Original fictional example. The written scene is the complete product
+  specification for this example, not evidence of a shipped product.
+elements:
+  - One three-slider adjustment glyph
+  - One blue location pin with a circular cutout
+  - One short neutral vertical divider
+preserve:
+  - Left adjustment glyph and right location pin with equal optical weight
+  - Three slider tracks and their knob positions
+  - Non-directional association; blue stays on the pin
+avoid:
+  - Arrows, routes, transfer or synchronization cues
+  - Geofencing rings or automatic location triggers
+  - Extra symbols or interface panels
+text: []
+references: []

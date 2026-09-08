@@ -8,6 +8,8 @@ Read the end-state diff and the product context. Write a one-sentence visual mes
 
 Select the simplest useful archetype in [composition-recipes.md](composition-recipes.md). A release can mix archetypes while sharing the same canvas treatment and restraint. A UI workflow deserves a UI fragment; a generic shield cannot explain a new selection interaction. Conversely, a routine status notice rarely needs a complete application dashboard.
 
+Choose [generated or supplied media](media-sources.md) before rendering. Generate restrained flat explanations; use actual captures, photographs, or approved artwork when the appearance itself is the subject. Physical details and content previews require supplied images. A missing source stays pending; a fictional written scene is not a replacement for an actual product or content capture.
+
 For each note, derive the scene from that feature independently. Describe the relevant state and relationships: a control's state, two capabilities' association, a physical assembly, spatial connections, data proportions, or the announced content. Record supported facts and limits in `context`; write concrete correctness constraints in `composition`, `preserve`, and `avoid`. Those constraints are local to the note. A worked example supplies a reasoning pattern, not a layout to apply to other features. The agent chooses the representation and reviews its meaning; the CLI compiles the chosen brief and validates files.
 
 ## Composition grammar
@@ -20,6 +22,7 @@ For each note, derive the scene from that feature independently. Describe the re
 - Preserve the relationships that make this feature correct. Specify containment and selected state for controls, fixed and changing parts for transitions, assembly and contact for objects, connections for spatial views, and quantitative relationships for charts. Apply only relationships relevant to the actual subject.
 - Treat the scene's visible-element inventory as complete. Keep schematic elements abstract; do not invent additional content or decoration. Include authentic photographic or detailed content when the brief calls for it.
 - An authentic photo, product material, map layer, or content preview can keep natural detail and color. Most surrounding interface scaffolding should remain quiet.
+- Quiet does not always mean sparse. A map may retain many fine streets at low contrast so its subject still reads as geography; establish hierarchy through value and line weight before removing useful structure. Use the selected recipe's scale and density, not a universal icon-like simplification.
 - Use one viewpoint. UI crops are normally straight-on; spatial relationships can use an orthographic or elevated camera; a physical detail can use a restrained three-quarter angle.
 
 ## Value, depth, and materials
@@ -28,15 +31,15 @@ Separate the canvas, base surface, raised surface, primary symbol, secondary det
 
 On dark backgrounds, distinguish charcoal layers and use mid-light neutral symbols. Do not crush a dark object into the canvas or turn every small glyph pure white. On light backgrounds, use near-white space, subtle gray separation, and darker neutral symbols. A dark device or natural photo may stay dark in a light presentation.
 
-Prefer filled silhouettes and consistent medium-weight strokes that survive reduction. A symbol may sit on a rounded tile, stand alone, or carry one small status badge. Keep corner radii and line weights related across a release.
+For icons, use a compact flat rounded-square tile with a monochrome filled glyph and clear negative space. A typical tile occupies 20–24% of the canvas width, with the glyph around 50–65% of the tile width. Keep broad margins, uniform background fills, and related corner radii. Use color only when the feature gives it a functional meaning. Do not default to a colored badge, physical object, or modeled icon.
 
-Use soft contact shadows where they explain separation. Restrained gradient modeling can clarify a lens, button, material, or native application icon. Avoid decorative glass, broad atmospheric gradients, cinematic glow, heavy bevels, and glossy objects that have no relationship to the feature.
+Flat icons and symbol pairs have no perspective, extrusion, material texture, gradients, lighting, or shadows. Simplified interfaces may use restrained layer separation where it explains the actual control hierarchy. Preserve shading already present in supplied media. Do not add sculpted objects, decorative 3D, studio lighting, glass, glow, or bevels to generated release illustrations.
 
 ## Color has a job
 
 Use the project accent for the changed control, selected item, active route, or direct interaction cue. Do not color every surface. Preserve established meanings such as warnings, completed states, traffic or map semantics, and authentic content colors between themes.
 
-Limited color is a default for interface explanation, not a prohibition on colorful features. A newly announced creative tool can show colorful output. A spatial view can require several functional colors. A content or seasonal experience can support a full scene. The color should belong to the feature, rather than decorate a routine release card.
+Limited color is a default for interface explanation, not a prohibition on colorful features. A supplied capture of a creative tool can retain its colorful output. A spatial view can require several functional colors. Actual content artwork retains its original appearance. The color should belong to the feature, rather than decorate a routine release card.
 
 ## Language independence
 
@@ -49,6 +52,7 @@ The generator may use neutral bars in place of labels, but it must preserve the 
 Each image-enabled note has one shared scene in `visuals/<note>.yaml`:
 
 - `archetype`: the selected recipe.
+- `source`: `generated` for a flat explanation or `provided` for an existing capture/image; physical details and content previews require `provided`.
 - `subject`: the actual feature or its justified visual metaphor.
 - `message`: the user-visible change, in one sentence.
 - `focus`: the exact part a reader should notice first.

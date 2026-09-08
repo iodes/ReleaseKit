@@ -1,0 +1,30 @@
+archetype: editorial-scene
+subject: A preview of a paper garden craft lesson
+message: A new craft lesson shows how to assemble a small paper garden.
+focus: One handmade paper flower standing in a folded paper pot
+composition: One coherent tabletop still life, softly lit from upper left, with
+  a single coral five-petal paper flower and warm yellow circular center on one
+  green paper stem with exactly two folded green leaves. The stem stands inside
+  one small warm terracotta-colored folded paper pot resting on the tabletop.
+  Flower and pot centered as one vertical subject, occupying about 64 percent of
+  canvas height. Two spare flat paper pieces, one coral and one green, rest
+  quietly on the tabletop to the right of the pot. Tactile paper folds and cut
+  edges, natural paper colors. A seamless quiet backdrop changes presentation
+  theme only. No interface frame.
+context: Original fictional example. The written scene is the complete product
+  specification for this example, not evidence of a shipped product.
+elements:
+  - One five-petal coral paper flower with yellow center
+  - One green stem and two folded leaves
+  - One terracotta-colored folded paper pot
+  - Two spare paper pieces on the tabletop
+preserve:
+  - Five petals, two leaves, single stem and pot assembly
+  - Natural coral, yellow, green and terracotta paper colors
+  - Two loose pieces, camera, object placement and contact shadows
+avoid:
+  - Extra flowers, tools, hands or tutorial step panels
+  - Living plants or unrelated seasonal scenery
+  - Text, logos or product promises
+text: []
+references: []

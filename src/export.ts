@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { Project } from './project.js';
-import { type Bundle, bundleSchema, themes, locale } from './model.js';
+import { type Bundle, bundleSchema, activeVariants, locale } from './model.js';
 import { validate } from './validate.js';
 import { exists, readNote, write } from './files.js';
 import { readVisual } from './content.js';
@@ -23,8 +23,9 @@ export async function exportBundle(project: Project, current: string, options: {
       const exported: typeof entry.notes[number] = { id: note.id, category: note.category, title: text.title, bodyMarkdown: text.body, image: null };
       if (note.image) {
         const visual = await readVisual(project, release.version, note.id);
-        exported.image = { alt: text.alt, fallbackTheme: themes(release.visuals)[0]!, variants: {} };
-        for (const variant of themes(release.visuals)) {
+        const variants = activeVariants(visual, release.visuals);
+        exported.image = { alt: text.alt, fallbackTheme: variants[0]!, variants: {} };
+        for (const variant of variants) {
           const asset = visual.variants[variant]!;
           const relative = `assets/${release.version}/${path.posix.basename(asset.file)}`;
           exported.image.variants[variant] = { src: relative, width: asset.width, height: asset.height };

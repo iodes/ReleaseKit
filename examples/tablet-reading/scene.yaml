@@ -1,0 +1,29 @@
+archetype: device-view
+subject: A single tablet displaying a focused reading layout
+message: A tablet reading view keeps a saved article in one spacious column.
+focus: One generous single-column article layout on a tablet screen
+composition: "One front-facing portrait tablet centered on the canvas, occupying
+  34 percent of canvas width and 84 percent of canvas height. Thin matte
+  graphite hardware bezel, modest rounded corners, no logo, camera ornament or
+  stand. Screen is always near-white in BOTH themes: the fictional reader
+  supports only a light reading surface. Inside the screen one short dark
+  heading bar, one muted blue rectangular abstract article image, and six
+  neutral body bars in one column with generous equal side padding. The first
+  five body bars are equally long and the last is shorter. No other controls.
+  Natural subtle contact shadow below device."
+context: Original fictional example. The written scene is the complete product
+  specification for this example, not evidence of a shipped product.
+elements:
+  - One matte graphite portrait tablet
+  - One near-white single-column screen
+  - One heading bar, one muted blue image rectangle, six body bars
+preserve:
+  - Hardware material and light screen in both presentation themes
+  - One device, exact screen layout, six body bars and their lengths
+  - Straight-on camera, centered position and crop
+avoid:
+  - Second device or connection cues
+  - Invented dark reading UI
+  - Readable article text, numbers, logos or extra controls
+text: []
+references: []

@@ -27,6 +27,8 @@
     "kit",
     "schemas",
     "examples",
+    "!examples/tactile-dial/**",
+    "!examples/paper-garden/**",
     "README.md",
     "LICENSE"
   ],

@@ -1,5 +1,5 @@
 import * as fs from 'node:fs/promises';
-import { type Release } from './model.js';
+import { imageSource, type Release } from './model.js';
 import { Project, editable } from './project.js';
 import { canonical, digest, readNote, noteHash, identifier } from './files.js';
 import { readVisual, checkReferenceFiles } from './content.js';
@@ -48,7 +48,7 @@ export async function validate(project: Project, version: string): Promise<Valid
       if (note.image) {
         try {
           const visual = await readVisual(project, version, note.id);
-          if (release.status === 'draft') await checkReferenceFiles(project, visual.scene.references);
+          if (release.status === 'draft' && imageSource(visual.scene) === 'generated') await checkReferenceFiles(project, visual.scene.references);
           await validateImages(project, version, note.id, visual, errors, warnings);
         } catch (error) { errors.push(`${note.id}: ${error instanceof Error ? error.message : error}`); }
       }

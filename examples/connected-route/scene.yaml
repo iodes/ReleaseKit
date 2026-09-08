@@ -1,0 +1,59 @@
+archetype: spatial-view
+source: generated
+subject: A saved route preview on an illustrative city map
+message: The route preview connects the selected start and destination through
+  the path network.
+focus: One continuous blue route between two neutral saved-waypoint markers
+composition: >-
+  Flat top-down cartography, landscape 8:5. The right two-thirds contain an
+  original fictional inland city beside a broad gently curving river along
+  the right edge. Its irregular shoreline and small connected neighborhood
+  streets form dozens of small blocks drawn as fine subdued lines, with a few
+  slightly stronger major connections. Keep land and water planar and neutral
+  gray in both themes, without building extrusions, block shading, or colored
+  park patches. Blue belongs only to the route. Avoid a uniform grid: vary block
+  sizes and street directions while keeping a coherent connected network.
+  The left third is quiet canvas; map detail fades locally before reaching
+  three short left-aligned neutral
+  bars representing incidental route-summary labels. These bars sit near the
+  vertical center, begin at x=5%, and are approximately 18%, 13%, and 21% of the
+  canvas wide, with small corner radii and restrained weight. They are not a
+  card, heading, statistic, or control. One medium-blue route follows a major
+  street entirely on the left bank of the river: from a hollow neutral start
+  circle near (74%,78%), up-left through (69%,63%), (61%,53%), and (61%,46%),
+  then up-right through (62%,40%) and (69%,31%) to a neutral destination pin
+  near (68%,16%).
+  Join these anchors with connected, gently irregular street-following bends,
+  not angular shortcuts. The route is approximately 0.45% of the canvas width;
+  supporting streets are much finer and lower contrast. Each small endpoint
+  marker is about 2.6% of the canvas width and touches its path endpoint. The
+  destination is a compact flat teardrop pin with a negative-space circular
+  cutout showing the map behind it; its point overlaps the upper route end
+  with no gap. Blue is used only for the route. Both markers remain inside the map crop. Preserve
+  broad uninterrupted space around the summary and quiet context around the
+  focal path; let incidental map detail reach the top, right, and bottom edges.
+context: >-
+  Original fictional authoring example. Its geography and route are explicitly
+  illustrative, not a real location, computed navigation result, or evidence
+  of a shipped product. The scene specifies a static saved-route preview with
+  an incidental abstract summary; it does not show live navigation.
+elements:
+  - Flat land and one irregular river boundary with water along the right edge
+  - Fine connected neighborhood streets and a few stronger major streets
+  - One continuous blue route on the land side, without a river crossing
+  - One hollow neutral start circle and one compact neutral destination pin
+  - Three short aligned neutral route-summary bars in the quiet left area
+preserve:
+  - Map crop, river boundary, street structure, and flat top-down viewpoint
+  - Route continuity, bends, endpoint attachment, and land-side placement
+  - Hollow start at the lower end and destination pin joined to the upper end
+  - Summary bar count, alignment, sizes, spacing, and surrounding negative space
+  - Blue route meaning and its visual priority over the neutral street network
+avoid:
+  - Broad toy roads, lane dashes, padded checkerboard blocks, and building relief
+  - A route that crosses water without a bridge or cuts across street blocks
+  - A current-position arrow, live traffic, alternate routes, or navigation controls
+  - Geographic labels, real place identity, distances, durations, or invented numbers
+  - A floating map card, hard split panel, glow, shadows, grain, or scenic lighting
+text: []
+references: []
