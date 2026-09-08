@@ -70,6 +70,8 @@ There is no built-in model API, viewer, hosted database, automatic Git commit, o
 
 The built-in guidance goes beyond a style adjective. It includes eight composition recipes, feature-to-image selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, external generation handoff, and visual acceptance checks.
 
+For each note, the agent derives the visual message from its evidence, selects the appropriate archetype, and writes feature-specific relationships and correctness constraints. The CLI combines that scene with common presentation rules, only the selected recipe, and the requested theme. Review first checks what the image claims, then visual clarity, then theme correspondence. Worked examples do not set the layout for other notes.
+
 - [Visual language](kit/references/visual-language.md)
 - [Composition recipes](kit/references/composition-recipes.md)
 - [Theme pairs and cost](kit/references/theme-pairing.md)

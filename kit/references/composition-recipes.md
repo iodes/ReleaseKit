@@ -2,6 +2,8 @@
 
 Choose an archetype from the feature's explanatory need. Numeric occupancy ranges below are starting points, not replacements for the scene brief.
 
+The rules below are conditional on the selected subject. Choose a new scene for each release note. A worked brief demonstrates one feature's constraints; its objects, coordinates, gestures, or data relationships must not become defaults for unrelated notes.
+
 | Archetype | Use when | Starting composition | Common failure |
 | --- | --- | --- | --- |
 | `icon-tile` | A capability or status is recognizable through one symbol | Symbol or tile about 16–24% of canvas width, optically centered | An enormous generic icon or empty decorative symbolism |
@@ -21,13 +23,32 @@ Choose an archetype from the feature's explanatory need. Numeric occupancy range
 4. Is this an experience whose content is inherently visual? Choose `editorial-scene`.
 5. Otherwise, use `icon-tile` for one concept or `symbol-pair` for one relationship.
 
+## Correctness checks by subject
+
+Select only the relevant checks and make them concrete in the note's `composition`, `preserve`, and `avoid` fields before generating.
+
+| Archetype | Check against the release note and product evidence |
+| --- | --- |
+| `icon-tile` | The symbol conveys the announced capability or status without suggesting an unsupported guarantee |
+| `symbol-pair` | The association and any direction are accurate; no invented transfer, synchronization, or automation |
+| `ui-detail` | Control meaning, hierarchy, containment, alignment, and state are correct; any transition identifies fixed and changing elements |
+| `device-view` | Device identity, count, screen content, and cross-device relationships match the feature |
+| `object-detail` | Shape, scale, assembly, contact points, and materials preserve the physical feature |
+| `spatial-view` | Positions, connections, direction, and layer meanings form a consistent spatial model |
+| `data-view` | Categories, values, proportions, units, legends, and selected filters agree wherever present |
+| `editorial-scene` | The depicted experience matches the announced content without added capabilities or unrelated subjects |
+
+Review correctness before visual polish and theme correspondence. If a detail is unsupported, reduce specificity to a justified abstraction or resolve it before rendering. A successful theme pair can still repeat the same incorrect feature depiction.
+
 ## Worked brief: list interaction
 
 Message: a saved item can be added to a queue with one swipe.
 
-Choose `ui-detail`. Three broad horizontal list rows extend slightly past the right crop. The middle row is displaced just enough to expose one accent-colored action behind its left edge. Represent incidental text as two or three neutral bars with consistent padding. Keep the action icon recognizable and the entire interaction inside the safe margin. One interaction, one accent, no floating hand, arrow trail, extra feature, or surrounding app navigation.
+Choose `ui-detail`. Three broad horizontal list rows extend slightly past the right crop. Define the resting list left boundary as `L` and the exposed action width as `D`. The top and bottom row backgrounds and the middle row's action backplate all start at `L`. For this rightward swipe, only the middle foreground row starts at `L + D`; its thumbnail and label bars move with it and retain their original padding. The action occupies the space revealed inside the original row bounds. Its left edge must not protrude outside the resting list. Do not shift the entire list or compress the active row to make room.
 
-For the theme pair, lock row dimensions, offset, action width, bars, crop, and selected state. Change only canvas and surface roles, neutral label values, and local shadows. A second view that selects another row is a failed pair.
+Represent incidental text as two or three neutral bars with consistent padding. Keep the action icon recognizable and the entire interaction inside the safe margin. This is a horizontal reveal gesture, not a vertical reorder drag: the rows keep their order and vertical positions. One interaction, one accent, no floating hand, arrow trail, extra feature, or surrounding app navigation.
+
+Before pairing, check that the resting rows and action backplate share a left boundary, the foreground displacement equals the revealed action width, and its contents moved as one unit. For the theme pair, lock row dimensions, offset, action width, bars, crop, and selected state. Change only canvas and surface roles, neutral label values, and local shadows. A second view that selects another row is a failed pair. Two matching images can still share the same interaction error, so correspondence alone is insufficient.
 
 ## Worked brief: a saved-location preference
 

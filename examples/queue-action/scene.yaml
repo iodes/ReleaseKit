@@ -4,12 +4,18 @@ message: A saved item can be added to the queue with one swipe.
 focus: The single action revealed behind the middle row
 composition: >-
   A landscape 8:5 canvas with a straight-on crop of three broad horizontal list rows.
-  The list occupies about 76 percent of the canvas width and 64 percent of its height.
-  All rows have the same height and rounded corners. The middle row is shifted slightly
-  right, exposing one blue action tile behind its left edge. Keep that tile fully visible.
-  Each row contains one simple square thumbnail and two neutral horizontal bars.
-  The right end of the rows intentionally extends beyond the crop of the list panel,
-  while the full illustration retains quiet outer margins. No phone or outer application frame.
+  Define a fixed list left boundary L at 17 percent of canvas width. The first and third
+  resting row backgrounds start at L. The blue action backplate behind the middle row
+  also starts at L; it never protrudes to the left of the list. Its exposed width D is
+  about 13 percent of canvas width. Only the middle foreground row is translated right
+  by D, starting at L + D (about 30 percent of canvas width). Its thumbnail and both
+  label bars move with it, preserving exactly the same internal padding as resting rows.
+  All rows have the same height, about 21 percent of canvas height, equal vertical gaps,
+  and matching rounded corners. The row tops sit at about 14, 38, and 62 percent of canvas
+  height. Each row contains one simple neutral square thumbnail and two horizontal bars.
+  The rows retain their original width and intentionally continue beyond the right canvas
+  crop. Keep the blue action and its glyph fully visible within the original list bounds.
+  No phone or outer application frame.
 context: >-
   A fictional productivity interface used to demonstrate the illustration recipe.
   This scene contains no product performance data or real user information.
@@ -19,7 +25,9 @@ elements:
   - One neutral square thumbnail and two label bars in each row
 preserve:
   - Exact row count, positions, dimensions, spacing, and crop
-  - Middle-row swipe offset and the revealed action tile
+  - Shared left boundary of the two resting rows and the blue action backplate
+  - Middle foreground row displaced right by exactly the exposed action width
+  - Thumbnail and label bars translated with their foreground row, without changing padding
   - Thumbnail positions and neutral label-bar lengths
   - Straight-on camera and blue interaction accent
 avoid:
@@ -27,5 +35,7 @@ avoid:
   - Hands, arrows, or gesture trails
   - Device frame, app header, or release-note viewer
   - Additional action buttons or unreadable text
+  - Action tile or active row protruding left of the resting list boundary
+  - Moving the whole list, squeezing row contents, or depicting a reorder drag
 text: []
 references: []

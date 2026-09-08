@@ -15,7 +15,7 @@ Within one release:
 
 Notes are ordered by their entries in `release.yaml`. Note IDs are unique within a version and shared across locales. Their consumer identity is the pair `(version, note.id)`; never deduplicate different releases by note ID or title alone.
 
-Frontmatter fields are `title`, `alt`, and `sourceHash`. The source locale normally uses `sourceHash: null`. Translation marking records a fingerprint of the source title, alt text, and body. An image-free note can use empty alt text. An image-enabled note requires a complete visual brief and every configured theme before finalization.
+Frontmatter fields are `title`, `alt`, and `sourceHash`. The source locale normally uses `sourceHash: null`. Translation marking records a fingerprint of the source title, alt text, and body. An image-free note can use empty alt text. An image-enabled note requires a complete visual brief and every configured theme before finalization. Its scaffold leaves `archetype` unselected; the authoring agent chooses the representation from the note and product evidence before planning images.
 
 `releasekit finalize` checks references and content, then records `status: ready` and a content fingerprint. A later edit invalidates that fingerprint. Reopen the draft before changing content; publishing is a separate user-controlled workflow.
 

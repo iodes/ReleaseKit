@@ -17,7 +17,7 @@ export async function addNote(project: Project, version: string, id: string, cat
   if (image) {
     await writeYaml(await project.releaseFile(version, `visuals/${id}.yaml`), {
       schemaVersion: 1,
-      scene: { archetype: 'ui-detail', subject: '', message: '', focus: '', composition: '', context: '', elements: [], preserve: [], avoid: [], text: [], references: [] },
+      scene: { archetype: '', subject: '', message: '', focus: '', composition: '', context: '', elements: [], preserve: [], avoid: [], text: [], references: [] },
       variants: {},
     });
   }

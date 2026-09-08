@@ -8,11 +8,11 @@ import { collect, git } from '../src/git.js';
 import { validate, finalize } from '../src/validate.js';
 import { exportBundle } from '../src/export.js';
 import { planImages, importImage, inspectImage } from '../src/images.js';
-import { markTranslation, readVisual, syncImagePolicy } from '../src/content.js';
+import { addNote, markTranslation, readVisual, syncImagePolicy } from '../src/content.js';
 import { readNote, writeNote, writeYaml, exists, within, parseYaml } from '../src/files.js';
 import { initProject, installSkills } from '../src/install.js';
 import { imagePrompt } from '../src/prompts.js';
-import { configSchema } from '../src/model.js';
+import { configSchema, sceneSchema } from '../src/model.js';
 import { fixture, commit, release, fillNote, cleanup, png, sampleScene } from './helpers.js';
 
 afterEach(cleanup);
@@ -210,6 +210,37 @@ describe('theme-aware assets', () => {
     }
     expect(dark).toContain(policy.dark.canvas); expect(light).toContain(policy.light.canvas);
     expect(dark).not.toBe(light);
+  });
+
+  it('plans independent capability, setting, and data illustrations without carrying over the list example', async () => {
+    const source = parseYaml(await fs.readFile(new URL('../examples/feature-briefs.yaml', import.meta.url), 'utf8')) as Array<{
+      id: string; releaseNote: string; scene: unknown;
+    }>;
+    const cases = source.map(entry => ({ ...entry, scene: sceneSchema.parse(entry.scene) }));
+    const p = await fixture();
+    await commit(p.root, 'independent features\n', 'Add capabilities');
+    await prepare(p, 'mixed', { from: 'v0' });
+    for (const entry of cases) {
+      await addNote(p, 'mixed', entry.id, 'feature', true);
+      await writeYaml(await p.releaseFile('mixed', `visuals/${entry.id}.yaml`), {
+        schemaVersion: 1, scene: entry.scene, variants: {},
+      });
+    }
+    const plan = await planImages(p, 'mixed');
+    expect(plan.pendingAssets).toBe(cases.length * 2);
+    expect(plan.readyAssets).toBe(0);
+    for (const entry of cases) {
+      const requests = plan.requests.filter(request => request.note === entry.id);
+      expect(requests.map(request => request.theme)).toEqual(['dark', 'light']);
+      for (const request of requests) {
+        const prompt = await fs.readFile(request.promptFile, 'utf8');
+        expect(prompt).toContain(entry.scene.message);
+        expect(prompt).toContain(entry.scene.composition);
+        for (const constraint of entry.scene.preserve) expect(prompt).toContain(constraint);
+        for (const other of cases.filter(other => other.id !== entry.id)) expect(prompt).not.toContain(other.scene.subject);
+        expect(prompt).not.toMatch(/\b(queue|swipe|backplate)\b/i);
+      }
+    }
   });
 
   it.each(['jpeg', 'webp'] as const)('decodes and measures actual %s images', async format => {

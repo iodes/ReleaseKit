@@ -2,7 +2,9 @@
 
 This fictional list interaction demonstrates the shared scene contract and theme-specific prompts. It is not a screenshot or a claim about an existing product.
 
-`scene.yaml` is the author-controlled brief. `dark.prompt.md` and `light.prompt.md` are compiled from that same brief and the default project palette. The selected raster pair is checked for composition, visual hierarchy, and small-card readability.
+`scene.yaml` is the author-controlled brief. `dark.prompt.md` and `light.prompt.md` are compiled from that same brief and the default project palette. The selected raster pair is checked for interaction geometry, composition, visual hierarchy, and small-card readability.
+
+The resting rows and the blue action backplate share one fixed left boundary. Only the middle foreground row and its contents move to the right, by the width of the exposed action. This keeps the action inside the original list bounds. The [alignment edit prompt](alignment-edit.prompt.md) records the targeted correction to the earlier illustration.
 
 The generator is intentionally outside the CLI. In a real project, run `image plan`, generate the requested variants with the agent's available tool or an external service, inspect them, and use `image import` to record the selected files.
 

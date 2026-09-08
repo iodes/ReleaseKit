@@ -1,0 +1,89 @@
+- id: backup-encryption
+  releaseNote: Local backup files can now be encrypted before saving.
+  scene:
+    archetype: icon-tile
+    subject: A compact archive symbol with a closed padlock
+    message: Local backup files can be saved with encryption enabled.
+    focus: The closed padlock attached to the archive symbol
+    context: >-
+      Fictional capability illustration, not a shipped product claim. The lock represents
+      encryption of local backup files only; it does not claim protection of every product surface.
+    composition: >-
+      One compact archive silhouette occupies about 22 percent of an 8:5 canvas width,
+      centered optically. One small closed padlock overlaps its lower-right corner as a badge.
+      Keep the archive opening, lock body, and closed shackle distinguishable at small size.
+      Use neutral material values with one restrained accent on the lock. No surrounding interface.
+    elements:
+      - One archive silhouette
+      - One closed padlock badge
+    preserve:
+      - Closed shackle and attachment of the badge to the archive
+      - Relative symbol scale, overlap, and optical center
+    avoid:
+      - Open lock or a success badge implying that every file is already encrypted
+      - Additional devices, shields, or unrelated application controls
+    text: []
+    references: []
+
+- id: quiet-hours
+  releaseNote: Choose a daily time window to silence notifications.
+  scene:
+    archetype: ui-detail
+    subject: A quiet-hours setting with an enabled control and two time fields
+    message: Notifications can be silenced during a chosen daily time window.
+    focus: The enabled quiet-hours control and its associated start and end fields
+    context: >-
+      Fictional settings interface. The depicted state is enabled with a valid configured
+      interval. Exact hours are incidental and should be abstracted rather than invented.
+    composition: >-
+      A single straight-on settings panel occupies about 64 percent of an 8:5 canvas width.
+      A short abstract heading and one enabled toggle share the top group. Beneath them,
+      two equal-width time fields sit side by side inside the same panel, with consistent
+      padding and a clear gap. The left field represents the start and the right the end.
+      Use neutral bars for field labels and values. Accent only the enabled toggle.
+    elements:
+      - One settings panel
+      - One enabled toggle
+      - Two grouped time fields with abstract labels and values
+    preserve:
+      - Enabled toggle state and grouping with the time fields
+      - Start field on the left and end field on the right
+      - Equal field dimensions and containment inside the panel
+    avoid:
+      - Motion cues or unrelated gestures
+      - Literal hours or an extra scheduling capability absent from the note
+      - Disabled appearance while the control is enabled
+    text: []
+    references: []
+
+- id: storage-breakdown
+  releaseNote: View how saved files use storage by category.
+  scene:
+    archetype: data-view
+    subject: A storage breakdown with three categories
+    message: A category breakdown shows how saved files use storage.
+    focus: One stacked bar and its matching category legend
+    context: >-
+      Fictional view illustration. The proportions 20, 30, and 50 percent are explicitly
+      illustrative and are not measurements or a claim of improved storage efficiency.
+    composition: >-
+      A single panel occupies about 68 percent of an 8:5 canvas width. One horizontal
+      stacked bar contains three contiguous segments with lengths in the ratio 2:3:5.
+      Below it, three equally spaced legend items appear in the same order as the segments.
+      Each legend item has one matching swatch and an abstract label bar. The first two
+      categories use distinguishable neutral values; the largest category uses the accent.
+      Omit literal numbers, axes, trend lines, and unrelated controls.
+    elements:
+      - One panel
+      - One stacked bar containing exactly three contiguous segments
+      - Three matching legend swatches with abstract label bars
+    preserve:
+      - Three segment lengths in the ratio 2:3:5, accounting for the complete bar
+      - Left-to-right category order and one-to-one legend correspondence
+      - Accent assigned to the same largest category in both themes
+    avoid:
+      - Invented performance improvement or additional metrics
+      - Gaps, overlap, or proportions that disagree with the legend
+      - Category color changes between the bar and its legend
+    text: []
+    references: []

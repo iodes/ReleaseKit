@@ -8,6 +8,8 @@ Read the end-state diff and the product context. Write a one-sentence visual mes
 
 Select the simplest useful archetype in [composition-recipes.md](composition-recipes.md). A release can mix archetypes while sharing the same canvas treatment and restraint. A UI workflow deserves a UI fragment; a generic shield cannot explain a new selection interaction. Conversely, a routine status notice rarely needs a complete application dashboard.
 
+For each note, derive the scene from that feature independently. Describe the relevant state and relationships: a control's state, two capabilities' association, a physical assembly, spatial connections, data proportions, or the announced content. Record supported facts and limits in `context`; write concrete correctness constraints in `composition`, `preserve`, and `avoid`. Those constraints are local to the note. A worked example supplies a reasoning pattern, not a layout to apply to other features. The agent chooses the representation and reviews its meaning; the CLI compiles the chosen brief and validates files.
+
 ## Composition grammar
 
 - Use a landscape canvas, normally 1280 × 800 (8:5). This is an illustration asset, not a screenshot of the release-note viewer. Keep the heading, release number, paragraph, back navigation, and outer page chrome outside the image.
@@ -15,7 +17,8 @@ Select the simplest useful archetype in [composition-recipes.md](composition-rec
 - Center compact subjects optically. For an interaction, center the changed control or the gesture's result rather than a large irrelevant panel.
 - Keep essential content about 6% away from edges. A deliberate bottom crop of a device or side crop of a list can increase readability; accidental clipped icons, labels, and action targets cannot.
 - Reduce irrelevant UI labels to neutral bars of varied length. Keep alignment, padding, hierarchy, groupings, and interaction topology recognizable. Avoid uniform skeleton placeholders that obscure the actual action.
-- Treat the scene's visible-element inventory as complete. A neutral square thumbnail means a neutral square, not an invitation to invent a photograph, landscape, character, or decorative illustration. Include photographic content only when the brief specifically calls for it.
+- Preserve the relationships that make this feature correct. Specify containment and selected state for controls, fixed and changing parts for transitions, assembly and contact for objects, connections for spatial views, and quantitative relationships for charts. Apply only relationships relevant to the actual subject.
+- Treat the scene's visible-element inventory as complete. Keep schematic elements abstract; do not invent additional content or decoration. Include authentic photographic or detailed content when the brief calls for it.
 - An authentic photo, product material, map layer, or content preview can keep natural detail and color. Most surrounding interface scaffolding should remain quiet.
 - Use one viewpoint. UI crops are normally straight-on; spatial relationships can use an orthographic or elevated camera; a physical detail can use a restrained three-quarter angle.
 
@@ -57,10 +60,10 @@ Each image-enabled note has one shared scene in `visuals/<note>.yaml`:
 - `text`: the only literal labels permitted in the raster; normally empty.
 - `references`: portable project-relative files to inspect before generation.
 
-Make the brief concrete enough that another model can render the same scene. “Clean, modern, minimal” alone is not a useful composition specification. “Three stacked rows, the middle row shifted right to reveal one blue action; the action target entirely inside the safe margin” is.
+Make the brief concrete enough that another model can render the same scene. “Clean, modern, minimal” alone is not a useful composition specification. State the subject's anchors, grouping, relationships, and any allowed change in state, as well as the safe margin. A chart may need fixed category proportions; a device detail may need a preserved attachment point; a setting may need one enabled control with its associated fields. Read only the worked brief relevant to the current feature.
 
 ## Review the actual output
 
-Inspect the selected image at full resolution and at roughly 350 pixels wide. Ask whether the changed behavior reads in a moment, the focal object remains distinct, incidental detail stays subordinate, and no false UI or statistic was added. Check every explicit label and the actual crop.
+Inspect the selected image at full resolution and at roughly 350 pixels wide. First compare the image with the release note, product evidence, and scene-specific constraints; use the chosen recipe's correctness checks. Then assess whether the changed capability reads in a moment, the focal object remains distinct, incidental detail stays subordinate, and every explicit label and crop is correct. Attractive styling and theme similarity do not establish factual or structural correctness.
 
 For a pair, compare both outputs side by side using [theme-pairing.md](theme-pairing.md). Automated checks establish file integrity, dimensions, configured variants, and scene freshness; they do not prove visual correspondence or truthfulness. Correct a specific defect with a targeted edit instead of randomly regenerating every asset. Preserve accepted files and import the newly selected version.
