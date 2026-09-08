@@ -26,13 +26,13 @@ ReleaseKit pairs a deterministic CLI with portable agent skills. Your agent writ
 | :---: | :---: |
 | ![A blue queue action revealed behind a list row on a charcoal canvas](examples/queue-action/dark.png) | ![The same queue action and list geometry on a light canvas](examples/queue-action/light.png) |
 
-*One scene brief, two theme variants. Fictional feature illustrations. [Explore the scene, prompts, and review →](examples/queue-action/README.md)*
+*One scene brief, two theme variants. Fictional feature illustrations. [Browse the composition gallery →](examples/README.md#composition-gallery)*
 
 ## Why ReleaseKit?
 
 - **Grounded in Git.** Draft from tags or commits, pin the evidence, and keep each release's changes together.
 - **Works with your agent.** Use portable skills for Codex, Claude Code, and Cursor, plus the image tools already available to you.
-- **Visuals for both themes.** Create dark and light variants from one scene brief, or choose a single theme to reduce generation cost.
+- **Visuals for your feature.** Generate flat explanations in dark and light, or reuse an approved screenshot, photo, or content image across both viewer themes.
 - **Content you own.** Keep Markdown, translations, and images in your repository. Export JSON and local assets for your product to display.
 
 ## Quick start
@@ -66,9 +66,14 @@ AI:  Created releasekit/releases/1.4.0/
      ✓ Pinned the Git range and collected change evidence
      ✓ Wrote release notes in ko-KR and en-US
 
-You: Create dark and light illustrations for the notes.
-AI:  ✓ Built a shared scene brief for each illustrated note
-     ✓ Generated, reviewed, and imported both theme variants
+You: Add images for the notes.
+AI:  ✓ Generated dark/light explanations from shared scene briefs
+     ✓ Reviewed and imported both variants for each generated graphic
+     The product-detail image is pending; I need an approved capture
+     or photo. Translation work can continue while it is pending.
+
+You: Use ./approved-capture.png for the product-detail note.
+AI:  ✓ Reviewed and imported it once for both viewer themes
 
 You: Review and finalize 1.4.0, then export up to three releases
      in English to ./release-output.
@@ -76,10 +81,10 @@ AI:  ✓ Validated notes, translations, and images
      ✓ Marked release 1.4.0 ready
      Exported release-output/
      ├── release-notes.json   ← Notes grouped by release
-     └── assets/             ← Selected dark and light images
+     └── assets/             ← Theme variants and shared supplied images
 ```
 
-Invoke the skill with `$releasekit-draft` in Codex, `/releasekit-draft` in Claude Code, or the skill picker in Cursor. The agent runs the CLI and uses its image tool as the conversation progresses.
+Invoke the skill with `$releasekit-draft` in Codex, `/releasekit-draft` in Claude Code, or the skill picker in Cursor. The agent runs the CLI, generates flat explanations, and requests approved source images when the actual product or content must be shown.
 
 ## Workflow
 
@@ -94,7 +99,7 @@ Git range → Release draft → Notes + images + translations → Validate → E
 | `releasekit-translate` | Translate notes and track source freshness. |
 | `releasekit-review` | Review content, evidence, images, and release readiness. |
 
-The agent handles editorial work and image generation. The CLI handles files, evidence, validation, and export. Finalizing a release marks local content ready; committing, publishing, and displaying it remain separate steps.
+The agent handles editorial work, media selection, and image generation where appropriate. The CLI handles files, evidence, validation, and export. Finalizing a release marks local content ready; committing, publishing, and displaying it remain separate steps.
 
 <details>
 <summary><strong>Step-by-step CLI workflow</strong></summary>
@@ -105,11 +110,16 @@ Replace the sample version, Git refs, and note ID with your own. If release `1.3
 releasekit prepare 1.4.0 --from v1.3.0 --to v1.4.0
 releasekit note add 1.4.0 queue-action
 
-# Fill the note files, evidence references, and shared visual brief.
+# Fill the notes, evidence references, and visual brief.
+# Choose an archetype and set scene.source to generated for this example.
 releasekit image plan 1.4.0
 
-# Generate with your agent's image tool or an external tool, then import.
+# Generate and review the dark image with your agent or an external tool.
 releasekit image import 1.4.0 queue-action --theme dark --file ./selected-dark.png
+
+# Plan again to use the accepted dark image as a composition reference.
+releasekit image plan 1.4.0
+# Generate and review the matching light image, then import it.
 releasekit image import 1.4.0 queue-action --theme light --file ./selected-light.png
 
 # Review the completed translation before marking it current.
@@ -141,7 +151,14 @@ Codex and Cursor share `.agents/skills` to avoid duplicate discovery. Claude Cod
 
 ## Image themes
 
-**Dark and light are the default.** Both variants share one scene brief, preserving geometry, feature meaning, and semantic colors while surfaces and lighting adapt. Images are shared across locales.
+**Generated graphics default to dark and light.** Paired variants share one scene brief, preserving geometry, feature meaning, and semantic colors while presentation surfaces adapt. Images are shared across locales.
+
+Choose `scene.source` in each note's visual brief before planning:
+
+| Source | Use for | Theme handling |
+| --- | --- | --- |
+| `generated` | Flat glyphs, interface explanations, diagrams, and data graphics supported by the feature. | Separate images for the configured dark/light themes. |
+| `provided` | Approved screenshots, photographs, or content artwork. Required for `object-detail` and `editorial-scene`. | One unchanged `shared` asset, or distinct genuine theme captures. |
 
 Choose a single theme during setup with `--themes dark` or `--themes light`, or edit this field in the generated configuration while keeping the other visual settings:
 
@@ -151,11 +168,29 @@ visuals:
   themes: both # both | dark | light
 ```
 
-`releasekit image plan <version>` reports pending and reusable assets before generation. Current imported assets are reused; pending prompts stay available for an external tool. Single-theme exports contain one real asset and an explicit fallback.
+`releasekit image plan <version>` reports pending and reusable assets, with separate `generationRequests` and `providedRequests` counts. It reuses current imports and never calls a model API. Single-theme exports contain one real asset and an explicit fallback.
 
-Plan requests distinguish `action: generate` from `action: provide`; the CLI never calls a model API. A supplied-image request has no generation prompt. The agent reuses an approved image or asks for the required capture and keeps it pending. Physical product details and actual content previews require supplied media.
+Requests with `action: generate` include a prompt for the agent or an external tool. Requests with `action: provide` have `promptFile: null` and identify the needed source. Missing supplied media stays pending and blocks finalization; the agent can continue independent writing and translation work.
 
-Supplied captures, photos, and approved content images can use one unchanged `shared` asset across both viewer themes. They do not require two generations or duplicate files. Choose `scene.source: provided` and import with `releasekit image import <version> <note> --theme shared --file <file>`. If actual dark/light captures exist, import them as separate theme variants instead.
+<details>
+<summary><strong>Importing one supplied image for both themes</strong></summary>
+
+Complete the note's visual brief with `scene.source: provided`. This example uses the note ID `product-detail`:
+
+```sh
+releasekit image plan 1.4.0
+
+# Once an approved capture or photo is available, inspect it and import.
+releasekit image import 1.4.0 product-detail --theme shared --file ./approved-capture.png
+```
+
+The CLI keeps the original bytes, dimensions, and colors. One `shared` asset serves both viewer themes without generating or duplicating another file.
+
+If genuine dark/light captures exist, import them with `--theme dark` and `--theme light` instead. A note must use either `shared` or themed entries; remove the previous variant entries when switching. A missing configured capture remains a supplied-image request.
+
+Follow the current image plan even if older prompt files remain. See the [supplied-media example](examples/provided-media/README.md) and [media source guide](kit/references/media-sources.md) for pending inputs and older briefs.
+
+</details>
 
 <details>
 <summary><strong>Applying changed settings to an existing draft</strong></summary>
@@ -183,14 +218,16 @@ releasekit/
         ├── evidence.json      # Pinned Git evidence
         ├── changes.patch      # Net change for this release
         ├── notes/             # Markdown for each locale
-        ├── visuals/           # Shared scene briefs
-        ├── prompts/           # Compiled generation requests
+        ├── visuals/           # Scene briefs, media sources, and variants
+        ├── prompts/           # Prompts for pending generated variants
         └── assets/            # Selected raster images
 ```
 
 Export follows explicit `previous` links, keeping each version's notes in a separate group. The default limit is **three releases, including the current one**. Similar notes in different versions remain separate.
 
 The bundle contains display data and relative assets. Git evidence, prompts, and private source paths stay out of the export. Consumers safely render `bodyMarkdown` and select `image.variants[theme]`, falling back to `image.variants[image.fallbackTheme]` when needed. Text-only notes have `image: null`.
+
+`fallbackTheme` can be `dark`, `light`, or `shared`. A shared-image export contains one `image.variants.shared` entry with `fallbackTheme: shared`; the same consumer lookup displays it in either viewer theme. Preserve the supplied image's original appearance when displaying it.
 
 Translations track source fingerprints, and finalized releases record content fingerprints to detect later edits. See the [file contract](kit/references/format.md) and [JSON schemas](schemas) for the full structure.
 
@@ -223,7 +260,7 @@ npm run build
 npm pack --dry-run
 ```
 
-CI runs on Windows and Linux with Node.js 22 and 24. Tests cover Git ranges, release history, image integrity, theme policies, translation freshness, finalization, installation conflicts, and CLI behavior.
+CI runs on Windows and Linux with Node.js 22 and 24. Tests cover Git ranges, release history, image integrity, theme policies, supplied media and shared assets, translation freshness, finalization, installation conflicts, and CLI behavior.
 
 <details>
 <summary><strong>Install from a local checkout</strong></summary>
