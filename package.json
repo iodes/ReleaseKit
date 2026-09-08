@@ -4,6 +4,18 @@
   "description": "Git-based visual release notes and portable agent skills",
   "type": "module",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iodes/ReleaseKit.git"
+  },
+  "homepage": "https://github.com/iodes/ReleaseKit#readme",
+  "bugs": {
+    "url": "https://github.com/iodes/ReleaseKit/issues"
+  },
   "engines": {
     "node": ">=22.12.0"
   },

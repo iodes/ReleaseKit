@@ -1,0 +1,39 @@
+name: Publish npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Verify release version
+        run: |
+          node --input-type=module -e "
+            import fs from 'node:fs';
+            const { version } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('Only stable releases are supported');
+            if (process.env.GITHUB_REF_NAME !== 'v' + version) throw new Error('Tag must match package version');
+          "
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: npm pack --dry-run
+      - run: npm publish --access public
