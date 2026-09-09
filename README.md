@@ -53,11 +53,11 @@ Run inside your product's Git repository:
 releasekit init --tools codex,claude,cursor --themes both
 ```
 
-Choose the tools you use: `codex`, `claude`, `cursor`, or a comma-separated list. New projects use English (`en-US`) as the original language, with no translations enabled until selected. Edit `releasekit/config.yaml` to set your product name, intentional language overrides, and visual settings. Setup prints the skill invocation hints for each tool.
+Choose the tools you use: `codex`, `claude`, `cursor`, or a comma-separated list. New projects use English (`en-US`) as the original language, with no translations enabled until selected. Edit `releasekit/config.yaml` to set your product name, language defaults for new drafts, and visual settings. Setup prints the skill invocation hints for each tool.
 
 ### 3. Ask your agent
 
-Start with the installed `releasekit-draft` skill. Example conversation with a Korean-speaking user, shown here in English, and an image tool available:
+Start with the installed `releasekit-draft` skill. Example first-use conversation with a Korean-speaking user, shown here in English, and an image tool available:
 
 ```text
 You: Use releasekit-draft to draft 1.4.0.
@@ -65,7 +65,8 @@ AI:  I'll use English for the original notes. Add Korean, your current
      language, as a translation (recommended), or use English only?
      You can also enter additional languages together.
 You: Korean and Japanese translations.
-AI:  Found v1.4.0 and its preceding release tag v1.3.0 on this line.
+AI:  Saved these language defaults in releasekit/config.yaml.
+     Found v1.4.0 and its preceding release tag v1.3.0 on this line.
      Created releasekit/releases/1.4.0/
      ✓ Pinned v1.3.0 → v1.4.0 and collected change evidence
      ✓ Wrote English originals with Korean and Japanese translations
@@ -106,7 +107,7 @@ AI:  ✓ Validated notes, translations, and images
 
 The agent resolves the version and Git range from your request, saved releases, repository tags, and release metadata. It reports a clear scope and proceeds without a tag-selection or confirmation step. If inspection leaves materially different scopes, it asks which work to cover in ordinary language. You can still supply explicit refs to select a particular interval.
 
-The draft skill defaults the original language to English and suggests the user's current language for optional translation. Its question accepts additional language names or locale codes through free-text input, as well as an English-only choice. An English-speaking user is not offered a duplicate English translation. Explicit source choices and existing release selections are reused. The selection is saved for that release; future project defaults change only when requested. The draft includes the source and those selected translations. Use the same draft skill later to add a language or refresh translations.
+Language selection is a first-use decision. When it is still unresolved, the draft skill defaults the original to English, suggests the user's current language for optional translation, and accepts additional language names or locale codes as well as an English-only choice. Explicit choices and intentional project settings are reused. The first selection is saved in `releasekit/config.yaml` before preparing the draft, without a separate confirmation. Each new draft uses the current config's original language and complete translation set without asking again, even when previous releases used different languages. Existing drafts keep their saved selection. The draft includes the source and all selected translations; use the same skill to request a language change or refresh translations. Changing project defaults affects future drafts while earlier releases remain unchanged.
 
 Invoke the skill with `$releasekit-draft` in Codex, `/releasekit-draft` in Claude Code, or the skill picker in Cursor. The agent runs the CLI, generates flat explanations, and requests approved source images when the actual product or content must be shown.
 
@@ -156,12 +157,12 @@ The agent handles editorial work, media selection, and image generation where ap
 <details>
 <summary><strong>Step-by-step CLI workflow</strong></summary>
 
-Replace the sample version, Git refs, and note ID with your own. If release `1.3.0` already exists in ReleaseKit, add `--previous 1.3.0` to link its history.
+Replace the sample version, Git refs, and note ID with your own. Save first-use language choices in `releasekit/config.yaml` before preparation. If release `1.3.0` already exists in ReleaseKit, add `--previous 1.3.0` to link its history.
 
 ```sh
 releasekit prepare 1.4.0 --from v1.3.0 --to v1.4.0
-# Save selected languages in release.yaml before adding notes.
-# This example uses sourceLocale: en-US and locales: [en-US, ko-KR].
+# prepare copied sourceLocale and locales from the current config.yaml.
+# This example has sourceLocale: en-US and locales: [en-US, ko-KR].
 releasekit note add 1.4.0 queue-action
 
 # Write the source and selected translations, then attach evidence.
@@ -188,7 +189,7 @@ releasekit finalize 1.4.0
 releasekit export --out ./release-output
 ```
 
-- Preparing creates only `release.yaml` with pinned Git boundaries. The agent reads commit history and relevant file diffs from Git as needed.
+- Preparing creates only `release.yaml` with pinned Git boundaries. Its `sourceLocale` and `locales` always come from current project configuration. The agent reads commit history and relevant file diffs from Git as needed.
 - Use `--from-root` for an explicitly requested full-history first release.
 - `--to` defaults to the pinned SHA when preparing a saved baseline, and to `HEAD` otherwise; `--previous` can supply the comparison start.
 - Edit existing drafts in place. `prepare` never overwrites them.

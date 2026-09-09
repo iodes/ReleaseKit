@@ -1,12 +1,12 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { prepare } from '../src/project.js';
+import { prepare, startProject, type PrepareOptions } from '../src/project.js';
 import { addNote, markTranslation } from '../src/content.js';
-import { readNote, writeNote, noteHash } from '../src/files.js';
+import { readNote, writeNote, writeYaml, noteHash } from '../src/files.js';
 import { validate, finalize } from '../src/validate.js';
 import { exportBundle } from '../src/export.js';
-import { fixture, fillNote, cleanup } from './helpers.js';
+import { fixture, fillNote, commit, cleanup } from './helpers.js';
 
 afterEach(cleanup);
 
@@ -64,5 +64,66 @@ describe('release language selection', () => {
     expect((await p.release('1')).sourceLocale).toBe('en-US');
     const next = await prepare(p, 'independent', { fromRoot: true });
     expect(next).toMatchObject({ sourceLocale: 'en-US', locales: ['en-US'] });
+  });
+
+  it.each([
+    { sourceLocale: 'en-US', locales: ['en-US', 'ko-KR', 'ja-JP'] },
+    { sourceLocale: 'ko-KR', locales: ['ko-KR', 'en-US'] },
+    { sourceLocale: 'ja-JP', locales: ['ja-JP'] },
+  ])('uses saved $sourceLocale project languages to scaffold the first and subsequent drafts', async languages => {
+    const p = await fixture();
+    const config = await p.config();
+    Object.assign(config, languages);
+    await writeYaml(await p.content('config.yaml'), config);
+    const savedConfig = await fs.readFile(await p.content('config.yaml'), 'utf8');
+    const first = await prepare(p, '1', { fromRoot: true });
+    expect(first).toMatchObject(languages);
+    await addNote(p, '1', 'queue', 'feature', false);
+    const expectedFiles = languages.locales.map(locale => locale + '.md').sort();
+    expect(await fs.readdir(await p.releaseFile('1', 'notes/queue'))).toEqual(expectedFiles);
+    const savedFirst = await fs.readFile(await p.releaseFile('1', 'release.yaml'), 'utf8');
+    await commit(p.root, 'initial\nqueue\n', 'Add queue');
+
+    const next = await prepare(p, '2', { previous: '1' });
+    expect(next).toMatchObject({ previous: '1', ...languages });
+    expect(await p.release('2')).toEqual(next);
+    await addNote(p, '2', 'queue', 'feature', false);
+    expect(await fs.readdir(await p.releaseFile('2', 'notes/queue'))).toEqual(expectedFiles);
+    expect(await fs.readFile(await p.releaseFile('1', 'release.yaml'), 'utf8')).toBe(savedFirst);
+    expect(await fs.readFile(await p.content('config.yaml'), 'utf8')).toBe(savedConfig);
+  });
+
+  it.each<PrepareOptions>([{ previous: '1' }, { from: 'v0' }])('uses changed project languages instead of the predecessor selection: %j', async options => {
+    const p = await fixture();
+    const config = await p.config();
+    config.locales = ['en-US', 'ko-KR', 'ja-JP'];
+    await writeYaml(await p.content('config.yaml'), config);
+    await prepare(p, '1', { fromRoot: true });
+    const savedPrevious = await fs.readFile(await p.releaseFile('1', 'release.yaml'), 'utf8');
+    await commit(p.root, 'initial\nqueue\n', 'Add queue');
+    config.sourceLocale = 'ja-JP';
+    config.locales = ['ja-JP'];
+    await writeYaml(await p.content('config.yaml'), config);
+
+    const next = await prepare(p, '2', options);
+    expect(next).toMatchObject({ previous: '1', sourceLocale: 'ja-JP', locales: ['ja-JP'] });
+    await addNote(p, '2', 'queue', 'feature', false);
+    expect(await fs.readdir(await p.releaseFile('2', 'notes/queue'))).toEqual(['ja-JP.md']);
+    expect(await fs.readFile(await p.releaseFile('1', 'release.yaml'), 'utf8')).toBe(savedPrevious);
+    expect(await p.config()).toEqual(config);
+  });
+
+  it('uses current project languages when the previous release is resolved from history setup', async () => {
+    const p = await fixture();
+    await startProject(p, { at: 'v0', past: 'summary', version: 'baseline' });
+    const baseline = await prepare(p, 'baseline', {});
+    baseline.sourceLocale = 'ko-KR';
+    baseline.locales = ['ko-KR', 'en-US', 'ja-JP'];
+    await p.save(baseline);
+    await commit(p.root, 'initial\nqueue\n', 'Add queue');
+
+    const next = await prepare(p, 'next', {});
+    expect(next).toMatchObject({ previous: 'baseline', sourceLocale: 'en-US', locales: ['en-US'] });
+    expect(await p.release('baseline')).toEqual(baseline);
   });
 });
