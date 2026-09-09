@@ -6,8 +6,8 @@ The rules below are conditional on the selected subject. Choose the [media sourc
 
 | Archetype | Use when | Starting composition | Common failure |
 | --- | --- | --- | --- |
-| `icon-tile` | A capability or status is recognizable through one symbol | Flat tile about 20–24% of canvas width; monochrome filled glyph about 50–65% of tile width | A sculpted 3D object, colored decorative badge, or oversized glyph |
-| `symbol-pair` | Two capabilities are connected | Two equally weighted symbols, a short subtle divider, broad empty space | Unequal weights or an arrow implying a direction that does not exist |
+| `icon-tile` | A capability or status is recognizable through one symbol | Flat tile about 20–24% of canvas width; neutral monochrome filled glyph about 50–65% of tile width | A sculpted 3D object, colored decorative badge, or oversized glyph |
+| `symbol-pair` | Two capabilities are connected | Two equally weighted neutral symbols, a short subtle divider, broad empty space | Coloring one symbol merely for emphasis, unequal weights, or an unsupported direction |
 | `ui-detail` | A specific interaction or setting changed | One enlarged fragment occupying about 55–85% of width | A complete invented dashboard with the useful control too small |
 | `device-view` | The device or cross-device context matters | One unobtrusive front-facing display, around 28–48% of width | Decorative device mockups unrelated to the workflow |
 | `object-detail` | A real physical part explains the feature | Supplied photograph or capture, with a useful crop | Inventing a physical product or generating a 3D substitute |
@@ -46,7 +46,7 @@ Message: a saved item can be added to a queue with one swipe.
 
 Choose `ui-detail`. Three broad horizontal list rows extend slightly past the right crop. Define the resting list left boundary as `L` and the exposed action width as `D`. The top and bottom row backgrounds and the middle row's action backplate all start at `L`. For this rightward swipe, only the middle foreground row starts at `L + D`; its thumbnail and label bars move with it and retain their original padding. The action occupies the space revealed inside the original row bounds. Its left edge must not protrude outside the resting list. Do not shift the entire list or compress the active row to make room.
 
-Represent incidental text as two or three neutral bars with consistent padding. Keep the action icon recognizable and the entire interaction inside the safe margin. This is a horizontal reveal gesture, not a vertical reorder drag: the rows keep their order and vertical positions. One interaction, one accent, no floating hand, arrow trail, extra feature, or surrounding app navigation.
+Represent incidental text as two or three neutral bars with consistent padding. Keep the action icon recognizable and the entire interaction inside the safe margin. This is a horizontal reveal gesture, not a vertical reorder drag: the rows keep their order and vertical positions. Keep one interaction. The exposed action may use accent if color helps distinguish it; neutral value contrast is also valid. Do not add a floating hand, arrow trail, extra feature, or surrounding app navigation.
 
 Before pairing, check that the resting rows and action backplate share a left boundary, the foreground displacement equals the revealed action width, and its contents moved as one unit. For the theme pair, lock row dimensions, offset, action width, bars, crop, and selected state. Change only canvas and surface roles, neutral label values, and local shadows. A second view that selects another row is a failed pair. Two matching images can still share the same interaction error, so correspondence alone is insufficient.
 

@@ -322,7 +322,7 @@ Translations track source fingerprints, and finalized releases record content fi
 
 Visual guidance uses independent, brand-neutral descriptions. Each illustration should communicate the actual feature through its own scene. Worked examples demonstrate the process; standalone notes get their own composition, while minor groups reuse their common scene.
 
-The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat monochrome glyphs. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
+The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat neutral monochrome glyphs. Emphasis starts with composition and value contrast; the project accent is optional and reserved for a specific state, action, or information distinction that needs color. Entirely neutral images are complete outputs. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
 
 ## Development
 

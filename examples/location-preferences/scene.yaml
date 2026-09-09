@@ -4,23 +4,26 @@ message: Preferences can be saved for an individually selected location.
 focus: A balanced association between preferences and one location
 composition: Two equal optical-weight symbols centered as a group on one
   horizontal axis. A three-slider adjustment glyph on the left and a simple
-  location pin on the right, each about 16 percent of canvas width, separated by
-  a short thin neutral vertical divider. The pin uses a restrained blue accent;
-  the adjustment glyph is neutral. Broad empty space. Flat precise shapes with
-  gently softened material depth.
+  location pin on the right, each about 13 percent of canvas width, separated by
+  a short thin neutral vertical divider. Both complete glyphs use the same
+  uniform neutral gray. No accent is used because the scene shows an association,
+  without a selected item, enabled control, or live location state. Broad empty
+  space and crisp flat filled shapes; no shading or material depth.
 context: Original fictional example. The written scene is the complete product
   specification for this example, not evidence of a shipped product.
 elements:
   - One three-slider adjustment glyph
-  - One blue location pin with a circular cutout
+  - One neutral location pin with a circular cutout
   - One short neutral vertical divider
 preserve:
   - Left adjustment glyph and right location pin with equal optical weight
   - Three slider tracks and their knob positions
-  - Non-directional association; blue stays on the pin
+  - Non-directional association; both symbols share one neutral gray in each theme
+  - No accent color or implied active or selected state in either theme
 avoid:
   - Arrows, routes, transfer or synchronization cues
   - Geofencing rings or automatic location triggers
   - Extra symbols or interface panels
+  - Decorative accent color, gradients, texture, material depth, or shadows
 text: []
 references: []

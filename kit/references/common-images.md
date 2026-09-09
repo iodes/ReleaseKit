@@ -19,7 +19,7 @@ Store originals in `releasekit/common-images/<kind>/`, outside individual releas
 
 These files are agent-maintained source records. The CLI does not discover or select common images automatically. Publish only reviewed files with matching metadata; an absent theme remains missing. A directory, prompt, or unfinished image is not a reusable original.
 
-Use a stable, generic scene for the kind, normally a compact monochrome filled glyph on a quiet flat tile with broad margins. Keep release versions, titles, languages, bullet counts, individual fixes, and release-specific evidence out of the scene. The common scene must not depend on files belonging to its originating release. Do not imply a particular feature, a security guarantee, or that every possible bug is fixed. The note's text and evidence still describe that release's actual changes.
+Use a stable, generic scene for the kind, normally a compact neutral monochrome filled glyph on a quiet flat tile with broad margins. Generic fixes and improvements use no accent by default. Do not color the glyph or add a colored badge simply to announce maintenance; the note category is not a selected, active, or successful state. Keep release versions, titles, languages, bullet counts, individual fixes, and release-specific evidence out of the scene. The common scene must not depend on files belonging to its originating release. Do not imply a particular feature, a security guarantee, or that every possible bug is fixed. The note's text and evidence still describe that release's actual changes.
 
 ## Reuse before generation
 

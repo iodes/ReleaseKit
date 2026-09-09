@@ -14,6 +14,8 @@ Within one release:
 | `prompts/<id>.<theme>.md` | Generation requests for pending generated variants; supplied images have no generation request |
 | `assets/` | Selected raster files with content-derived names |
 
+`visuals.accent` makes a project color available for generated images; it does not require that color in every image. In the shared scene's `composition`, record no accent or the exact colored element and its supported state, action, or information meaning. Keep that assignment in `preserve`; neutral scenes remain neutral in both themes.
+
 Each `(version, note.id, variant)` has one selected image. Importing replaces the selected slot and then removes unused managed images belonging to this note, including obsolete shared or themed imports. Files referenced by any visual variant or scene in the project are retained, as are other notes' files and source originals outside the note's managed assets. Reimporting identical content reuses its file. Keep existing variant entries until the replacement import succeeds.
 
 Importing `--theme shared` replaces the note's dark/light entries with one shared entry. Importing `--theme dark` or `light` replaces a shared entry and keeps compatible themed entries. Optional `--source generated|provided` updates `scene.source` in the same save as the imported selection; omission preserves the current source. Shared imports require supplied media, and supplied-only subjects still reject generated media. The CLI validates the file before saving, so decoding or metadata-save failure preserves the previous source and selections. A missing configured counterpart stays pending after the first themed import and blocks finalization. See [image transitions](theme-pairing.md#switch-between-shared-and-themed-images).

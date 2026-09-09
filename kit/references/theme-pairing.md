@@ -22,7 +22,7 @@ An existing image reported as stale or invalid is unresolved, even though its fi
 
 ## One scene, two presentation treatments
 
-Both outputs share the same scene brief. Lock subject identity, geometry, object count, positions, scale, crop, camera, UI topology, action state, chart values, and any allowed literal labels. Change presentation surfaces, neutral values, lighting, shadows, and necessary edge separation. Preserve meaningful status colors and natural photographic or material colors.
+Both outputs share the same scene brief. Lock subject identity, geometry, object count, positions, scale, crop, camera, UI topology, action state, chart values, and any allowed literal labels. Change presentation surfaces, neutral values, lighting, shadows, and necessary edge separation. Preserve meaningful status colors and natural photographic or material colors. Lock the absence of accent for a neutral scene; when accent is justified, keep it on the same meaningful elements in both variants. A theme change does not introduce an accent.
 
 | Role | Dark treatment | Light treatment |
 | --- | --- | --- |
@@ -31,7 +31,7 @@ Both outputs share the same scene brief. Lock subject identity, geometry, object
 | Primary neutral symbol | Legible mid-light neutral | Legible mid-dark neutral |
 | Secondary detail | Subdued, still distinguishable | Subdued, still distinguishable |
 | Contact shadow | Soft, with enough local separation | Light, restrained, never muddy |
-| Interaction or status color | Preserve semantic hue | Preserve semantic hue |
+| Optional interaction or status color | Preserve assignment and semantic hue, or keep absent | Preserve assignment and semantic hue, or keep absent |
 | Photo or product material | Preserve authentic appearance | Preserve authentic appearance |
 
 Do not invert pixels or shift brightness globally. A black lens remains a black lens on a light canvas. A warning remains the same warning color. If the underlying application has only one authentic UI theme, retain that UI and adapt the surrounding presentation rather than claiming an unsupported application theme.

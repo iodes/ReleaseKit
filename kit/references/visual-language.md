@@ -31,15 +31,21 @@ Separate the canvas, base surface, raised surface, primary symbol, secondary det
 
 On dark backgrounds, distinguish charcoal layers and use mid-light neutral symbols. Do not crush a dark object into the canvas or turn every small glyph pure white. On light backgrounds, use near-white space, subtle gray separation, and darker neutral symbols. A dark device or natural photo may stay dark in a light presentation.
 
-For icons, use a compact flat rounded-square tile with a monochrome filled glyph and clear negative space. A typical tile occupies 20–24% of the canvas width, with the glyph around 50–65% of the tile width. Keep broad margins, uniform background fills, and related corner radii. Use color only when the feature gives it a functional meaning. Do not default to a colored badge, physical object, or modeled icon.
+For icons, use a compact flat rounded-square tile with a neutral monochrome filled glyph and clear negative space. A typical tile occupies 20–24% of the canvas width, with the glyph around 50–65% of the tile width. Keep broad margins, uniform background fills, and related corner radii. Use color only when the feature gives it a functional meaning. Do not default to a colored badge, physical object, or modeled icon.
 
 Flat icons and symbol pairs have no perspective, extrusion, material texture, gradients, lighting, or shadows. Simplified interfaces may use restrained layer separation where it explains the actual control hierarchy. Preserve shading already present in supplied media. Do not add sculpted objects, decorative 3D, studio lighting, glass, glow, or bevels to generated release illustrations.
 
 ## Color has a job
 
-Use the project accent for the changed control, selected item, active route, or direct interaction cue. Do not color every surface. Preserve established meanings such as warnings, completed states, traffic or map semantics, and authentic content colors between themes.
+Start with a fully neutral composition. Establish the focal point through placement, scale, shape, spacing, and value contrast. An image can be complete without any accent, and a release can contain many entirely neutral images. A new feature, an important capability, or the main subject does not by itself represent an active or selected state.
 
-Limited color is a default for interface explanation, not a prohibition on colorful features. A supplied capture of a creative tool can retain its colorful output. A spatial view can require several functional colors. Actual content artwork retains its original appearance. The color should belong to the feature, rather than decorate a routine release card.
+Treat the project accent as an available color, not an instruction to use it. Add it only when a specific supported state, action, or information distinction needs color to explain the change: for example, an enabled switch, a selected item, a revealed action, or an active route. Even an interaction can remain neutral when its geometry and value contrast already make it clear. Keep the colored area confined to that meaningful element; leave unrelated glyphs, tiles, and supporting surfaces neutral.
+
+In the shared scene's `composition`, explicitly state either that no accent is used or which element uses it and what it communicates. Preserve that assignment, including the absence of accent, in both themes. Do not invent a selection, badge, status dot, or secondary marker to justify color. For `icon-tile`, ordinary capability and maintenance symbols stay neutral. For `symbol-pair`, a simple association uses the same neutral treatment for both symbols.
+
+Preserve established meanings such as warnings, completed states, traffic or map semantics, chart categories, and authentic content colors between themes. These colors belong to supported information; a generic improvement or security note is not itself a success or protection status.
+
+Functional color remains available for colorful features. A supplied capture of a creative tool can retain its colorful output. A spatial view can require several functional colors. Actual content artwork retains its original appearance. The color should belong to the feature, rather than decorate a routine release card.
 
 ## Language independence
 
@@ -68,6 +74,6 @@ Make the brief concrete enough that another model can render the same scene. “
 
 ## Review the actual output
 
-Inspect the selected image at full resolution and at roughly 350 pixels wide. First compare the image with the release note, product evidence, and scene-specific constraints; use the chosen recipe's correctness checks. Then assess whether the changed capability reads in a moment, the focal object remains distinct, incidental detail stays subordinate, and every explicit label and crop is correct. Attractive styling and theme similarity do not establish factual or structural correctness.
+Inspect the selected image at full resolution and at roughly 350 pixels wide. First compare the image with the release note, product evidence, and scene-specific constraints; use the chosen recipe's correctness checks. Then assess whether the changed capability reads in a moment, the focal object remains distinct, incidental detail stays subordinate, and every explicit label and crop is correct. For each accent, identify the supported meaning that would become less clear without it; if there is none, remove it. Review the release images together for repeated decorative accents. Do not give every note one colored point or enforce a fixed quota of colored images. Attractive styling and theme similarity do not establish factual or structural correctness.
 
 For a pair, compare both outputs side by side using [theme-pairing.md](theme-pairing.md). Automated checks establish file integrity, dimensions, configured variants, and scene freshness; they do not prove visual correspondence or truthfulness. Correct a specific defect with a targeted edit instead of randomly regenerating every asset. Preserve unrelated accepted assets. Import a reviewed replacement into the same note and theme slot so unused older managed files are removed; keep the previous selection until that import succeeds.
