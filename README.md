@@ -215,7 +215,7 @@ Codex and Cursor share `.agents/skills` to avoid duplicate discovery. Claude Cod
 
 ## Image themes
 
-Image work covers **every drafted note** by default, including small fixes and improvements. Only an explicit text-only choice omits a note's image. Calling `releasekit-image` again fills missing images, including those for notes added later, and reuses existing valid images. Existing images that need corrections stay pending until the affected revision or replacement is requested.
+Image work covers **every drafted note** by default, including grouped minor fixes and improvements. A group uses one visual brief and the configured image variants; individual bullets do not require separate images. Only an explicit text-only choice omits a note's image. Calling `releasekit-image` again fills missing images, including those for notes added later, and reuses existing valid images. Existing images that need corrections stay pending until the affected revision or replacement is requested.
 
 After generation, review the images and ask the agent to revise anything you dislike or replace it with another approved image. When no image changes are needed and the content is complete, ask for `releasekit-finalize` to confirm the release.
 
@@ -290,6 +290,8 @@ releasekit/
         ├── prompts/           # Prompts for pending generated variants
         └── assets/            # Selected raster images
 ```
+
+Major capabilities and changes that warrant individual attention get standalone notes. Small user-visible corrections and conveniences are collected into separate **Minor Fixes** and **Minor Improvements** notes, each with a short bullet list, normally after the main notes in that release. Every bullet retains its supporting evidence and selected translations. See [note grouping](kit/references/writing.md#group-minor-changes).
 
 Releases store the comparison start and end SHAs in `release.yaml`, with relevant paths or commits attached to individual notes. They do not save a full patch or a separate changed-file index. Draft validation reads the pinned Git range, or the baseline snapshot for a product introduction; finalized releases can be validated and exported without Git history.
 
