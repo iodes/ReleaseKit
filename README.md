@@ -217,6 +217,8 @@ Codex and Cursor share `.agents/skills` to avoid duplicate discovery. Claude Cod
 
 Image work covers **every drafted note** by default, including grouped minor fixes and improvements. A group uses one visual brief and the configured image variants; individual bullets do not require separate images. Only an explicit text-only choice omits a note's image. Calling `releasekit-image` again fills missing images, including those for notes added later, and reuses existing valid images. Existing images that need corrections stay pending until the affected revision or replacement is requested.
 
+**Minor Fixes and Minor Improvements reuse common originals across releases.** The image skill first checks `releasekit/common-images/minor-fixes/` or `releasekit/common-images/minor-improvements/`, importing reviewed compatible images and creating only missing originals or themes. Each release keeps its own copies, so changes to the common design do not rewrite earlier releases. Bullet edits and translations do not require new pictures. The directories are created when reviewed originals become available; see [common images](kit/references/common-images.md).
+
 After generation, review the images and ask the agent to revise anything you dislike or replace it with another approved image. When no image changes are needed and the content is complete, ask for `releasekit-finalize` to confirm the release.
 
 **Generated graphics default to dark and light.** Paired variants share one scene brief, preserving geometry, feature meaning, and semantic colors while presentation surfaces adapt. Images are shared across locales.
@@ -314,10 +316,11 @@ Translations track source fingerprints, and finalized releases record content fi
 | [Choosing generated or supplied media](kit/references/media-sources.md) | Source selection, pending captures, and shared assets. |
 | [Composition recipes](kit/references/composition-recipes.md) | Eight presentation categories matched to the feature and its source. |
 | [Theme pairs and cost](kit/references/theme-pairing.md) | Shared geometry, single-theme policies, and reuse. |
+| [Common images](kit/references/common-images.md) | Reusing minor-group originals across releases, missing themes, and preserved release copies. |
 | [File contract](kit/references/format.md) · [JSON schemas](schemas) | Authoring files and the public export format. |
 | [Worked examples](examples/README.md) | Paired illustrations, supplied-image workflow, independent briefs, and three-release bundles. |
 
-Visual guidance uses independent, brand-neutral descriptions. Each illustration should communicate the actual feature through its own scene. Worked examples demonstrate the process; each note gets its own composition.
+Visual guidance uses independent, brand-neutral descriptions. Each illustration should communicate the actual feature through its own scene. Worked examples demonstrate the process; standalone notes get their own composition, while minor groups reuse their common scene.
 
 The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat monochrome glyphs. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
 

@@ -13,6 +13,8 @@ Use `provided` for another category whenever a real capture explains it better. 
 
 For a map, distinguish an illustrative spatial explanation from an actual place, computed route, or coverage claim. Exact geography and routing need an approved map capture or verified source. Request a supplied image when that evidence is missing. Generated fictional geography is suitable only when explicitly identified as illustrative; visual plausibility does not establish geographic accuracy.
 
+Grouped minor notes should first follow [common-image reuse](common-images.md). An already generated and reviewed original can be imported again with its generated source and matching theme policy; it does not need another generation or a change to `provided` merely because it is reused.
+
 ## Missing input
 
 `releasekit image plan <version>` returns `action: provide` with `promptFile: null` when supplied media is needed. The instruction identifies the subject and import slot. Reuse available approved project files first. Otherwise ask the user for the specific capture, photograph, or content image. Continue independent copy and translation work while the asset is pending. Do not treat a missing capture as permission to synthesize its content.
