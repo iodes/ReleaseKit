@@ -2,18 +2,25 @@
 
 ## Generation record
 
-Revised with the coding agent's built-in image tool. The CLI made no image-service calls. The dark variant is a constrained edit of the earlier dark example. The light counterpart uses that neutral dark output as its composition reference, followed by a slider-boundary correction and an output-size correction. No color inversion was used.
+This original fictional illustration was revised with the coding agent's built-in image tool. The CLI made no image-service calls. Earlier work used four [neutral-edit requests](neutral-edit-requests.md) and one [light-palette request](light-palette-edit.prompt.md).
 
-Four initial image-tool requests are recorded in [neutral-edit-requests.md](neutral-edit-requests.md). A fifth request applies the lighter neutral role palette to the selected light variant; its exact input is in [light-palette-edit.prompt.md](light-palette-edit.prompt.md). The shared scene and compiled dark/light prompts describe the current reusable composition. Earlier blue source PNGs are retained; the selected gallery assets are the neutral siblings.
+The independent theme treatment revision used four more requests:
+
+1. [Revise the dark treatment](dark-refinement.prompt.md). Reject this first candidate because it retained the oversized source geometry.
+2. [Reduce the symbol footprints](dark-size-correction.prompt.md). Inspect the smaller pair before making a counterpart. The solid pin still carries substantially more filled ink than the adjustment glyph.
+3. [Correct the pin's optical weight](dark-weight-correction.prompt.md), keeping the adjustment glyph and the left/right association. Select `dark-refined.png` after full-size and 350-pixel review. The selected arrangement retains centers near 37% and 63% of canvas width; the shared scene records that accepted geometry.
+4. Create the [light counterpart](light-refinement.prompt.md) from the reviewed dark selection, preserving the compact geometry and replacing only presentation fills with the light roles.
+
+Nine image-tool requests have been used in total. Two selected assets do not imply only two billable generations. Earlier PNGs remain revision sources. No color inversion or manual raster recoloring was used; the selected output bytes are retained.
 
 ## Selected output
 
-- Two distinct decoded PNGs, `dark-neutral.png` and `light-soft.png`, both 1586 × 992 pixels. Original selected output bytes and dimensions are retained.
-- Reviewed at full size and side by side at 350 pixels per image for feature meaning, neutral hierarchy, and theme correspondence.
-- Three slider tracks remain on the left with the same knob ordering; one pin with a circular cutout stays on the right. Both symbols use the same neutral treatment within each theme.
-- No accent is used. The image describes a static association, without a selected item, enabled control, live location, or extra status.
-- The updated light variant targets `primary: #999999`, `canvas: #F8F8F8`, and `divider: #D9D9D9`. Both glyphs read as the same medium-gray role, without the earlier charcoal weight. Fills were visually reviewed and spot-checked; raster values remain approximate.
-- The thin divider communicates association without an arrow, transfer, synchronization, or geofencing cue.
-- No readable text, logos, or surrounding release-note viewer.
+- Two distinct, fully decoded PNGs: `dark-refined.png` and `light-refined.png`, both 1584 × 993 pixels. The actual generator dimensions are recorded instead of claiming the requested default canvas size.
+- Reviewed at full size and side by side at 350 pixels per image, then alongside the queue interaction at the same widths within each theme.
+- Three slider tracks remain on the left with left/right/left knob ordering; one pin with a circular cutout stays on the right. Both glyphs share one neutral role within each theme.
+- Dark-image ink-bound diagnostics are approximately 138 × 134 pixels for the adjustment glyph and 93 × 131 for the pin. Their filled areas are comparable after correction. The solid symbol is narrower rather than forced to the same bounding-box width as the sparse symbol.
+- The dark treatment retains `canvas: #242527` and `primary: #B9BBBE`; the light treatment uses `canvas: #F8F8F8` and `primary: #999999`. Each divider uses its own theme's `divider`. Fills were visually reviewed; raster values remain approximate rather than exact palette swatches.
+- The small-card view preserves recognizable sliders, a pin, and a short divider with broad empty space. The symbols do not imply transfer, synchronization, geofencing, an active control, or live location.
+- No accent, readable text, logos, extra objects, or surrounding release viewer.
 
-The pair retains the same subject count, left/right arrangement, broad margins, and approximate scale. The constrained edits are not pixel-identical: small edge and position differences remain, and exact palette samples are not guaranteed. This fictional image is an authoring reference; review real product imagery against its own evidence before acceptance.
+The pair preserves the selected subject count, anchors, compact scale, and feature meaning. Constrained image edits are not pixel-identical: small edge and position differences remain. File validation establishes integrity and dimensions; the separate visual review establishes the interpretation and balance of this fictional scene.

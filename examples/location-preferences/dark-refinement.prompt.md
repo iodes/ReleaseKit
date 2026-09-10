@@ -1,4 +1,10 @@
-# Release illustration — light
+# Dark refinement request
+
+Actual built-in image-tool request. Edit target: dark-neutral.png. Candidate selection: dark-refined.png. See pair-review.md for the reviewed result.
+
+Use case: precise-object-edit. Input image 1 is the existing original DARK location-preferences illustration and is the edit target. Produce one PNG at exactly 1586 by 992 pixels. Revise only the symbol geometry and flatten the fills as specified below. Keep the adjustment-plus-location association, the three slider tracks with knobs left/right/left, the circular pin cutout, and the lack of accent. Make the symbols compact, separated, and optically balanced; the solid pin must not outweigh the sparse slider glyph. Each knob and its track form one uninterrupted flat fill, not a raised disc. Remove the existing cast shadows, highlights, texture, and seams. Use only the captured DARK role colors below. Do not import a light-theme gray or brighten everything. No text, extra objects, or comparison collage.
+
+# Release illustration — dark
 
 ## Intent
 Create one finished raster illustration for a product release note. Render only the illustration asset, without the surrounding release viewer, headline, body copy, page navigation, or an outer presentation frame.
@@ -9,9 +15,9 @@ Context: Original fictional example. The written scene is the complete product s
 
 ## Composition contract
 Archetype: symbol-pair
-Target canvas: 1280 × 800 pixels; landscape 1280:800. Produce a single image, not a dark/light collage.
-Place two compact symbols on one horizontal optical axis, centered as a group with generous space between them. Start with each glyph's longest dimension around 8–11% of canvas width; adapt spacing and scale to the scene and card-size clarity. Match visible ink weight rather than identical bounding boxes. A short low-contrast divider can separate them.
-Specific scene layout: Two compact symbols centered on one horizontal optical axis at half the canvas height. Place the adjustment glyph near 37 percent and the location pin near 63 percent of canvas width. The adjustment glyph is about 9 percent of canvas width and 8 percent of canvas width tall; the pin is narrower, about 6 percent of canvas width and 8.5 percent of canvas width tall. Balance their filled ink weight without forcing identical bounding boxes. Keep three slider tracks with knob positions left, right, left. Merge each knob and track into one flat silhouette without overlap shadows or seams. A thin divider at half the canvas width spans about 13 percent of canvas height. Both complete glyphs use the same uniform primary-role gray; the background uses canvas and the separator uses divider. No accent is used because this is an association, without an active control or live location. Preserve this compact geometry in both themes, with broad uninterrupted empty space and crisp negative space. No shading or material depth.
+Target canvas: 1586 × 992 pixels; landscape 1586:992. Produce a single image, not a dark/light collage.
+Place two compact symbols on one horizontal optical axis, centered as a group with generous space between them. Start with each glyph's longest dimension around 8–11% of canvas width, and the whole group around 40–48% of width; adapt to the scene and card-size clarity. Match visible ink weight rather than identical bounding boxes. A short low-contrast divider can separate them.
+Specific scene layout: Two compact symbols centered on one horizontal optical axis at half the canvas height. Place the adjustment glyph near 34 percent and the location pin near 66 percent of canvas width. The adjustment glyph is about 9 percent of canvas width and 8 percent of canvas width tall; the pin is narrower, about 7 percent of canvas width and 10 percent of canvas width tall. Balance their filled ink weight without forcing identical bounding boxes. Keep three slider tracks with knob positions left, right, left. Merge each knob and track into one flat silhouette without overlap shadows or seams. A thin divider at half the canvas width spans about 10 percent of canvas height. Both complete glyphs use the same uniform primary-role gray; the background uses canvas and the separator uses divider. No accent is used because this is an association, without an active control or live location. Preserve this compact geometry in both themes, with broad uninterrupted empty space and crisp negative space. No shading or material depth.
 Elements:
 - One three-slider adjustment glyph
 - One neutral location pin with a circular cutout
@@ -21,18 +27,18 @@ Elements:
 Communicate one relationship with flat 2D filled glyphs. Match visual weight, corner treatment, and perceived size. Use an arrow only when direction itself is part of the feature. Use the same neutral gray for both symbols by default. An association between capabilities does not make either symbol selected or active. Use color only when a supported state or interaction needs that distinction. No rendered materials or sculpted 3D symbols.
 Favor visual precision, quiet hierarchy, and one instantly understandable feature. Build emphasis through composition, scale, and neutral value contrast before adding color. No accent is the default, and a fully neutral image is a finished result. Being new, important, or the focal subject does not itself justify color. Small-screen clarity takes priority over decorative detail. Treat the specified element inventory as complete. Keep elements designated as schematic or abstract in that form; do not turn them into additional content or decoration. Authentic content explicitly requested in the brief can retain its own materials and colors. Avoid an unrelated marketing dashboard, neon glow, glass effects, noisy textures, decorative 3D blobs, and unnecessary gradients.
 
-## Light theme roles
+## Dark theme roles
 | Role | Color | Assignment |
 | --- | --- | --- |
-| canvas | #F8F8F8 | Uniform illustration background |
-| surface | #FFFFFF | Base or recessed interface panels |
-| raised | #ECECEC | Foreground panels, controls, and quiet tile fills |
-| primary | #999999 | Main neutral glyphs, focal controls, and feature-defining marks |
-| secondary | #B8B8B8 | Supporting glyphs, incidental bars, and abstract content |
-| divider | #D9D9D9 | Thin separators and necessary surface boundaries |
+| canvas | #242527 | Uniform illustration background |
+| surface | #18191B | Base or recessed interface panels |
+| raised | #343638 | Foreground panels, controls, and quiet tile fills |
+| primary | #B9BBBE | Main neutral glyphs, focal controls, and feature-defining marks |
+| secondary | #777B80 | Supporting glyphs, incidental bars, and abstract content |
+| divider | #46494D | Thin separators and necessary surface boundaries |
 Use these configured roles consistently across the scene and release. Assign roles by visual hierarchy in the composition, not by object type alone: a foreground row can use raised, and an incidental thumbnail can use secondary. Keep equivalent roles consistent across the release. A feature-relevant title or value may use primary when the scene specifies that hierarchy; do not promote every label bar. Repeated elements with the same role use the same fill. Keep flat areas uniform. Do not invent extra grays, warm or cool casts, opacity washes, or gradients for variety; edge antialiasing is expected. Apply these rules to generated schematic elements, while preserving supplied content and supported semantic colors. Optional project accent: #4678ED; this is available, not required. Use it only on the exact element whose supported state, action, or data meaning the scene says needs color. Otherwise use no accent. Keep unrelated glyphs, tiles, and supporting surfaces neutral; do not invent a colored state, badge, or marker to use the palette.
-Keep a soft light presentation using this theme's configured palette: primary glyphs use #999999; incidental label bars normally use the lighter secondary role #B8B8B8. Do not carry charcoal glyphs from the dark counterpart into this theme or darken all symbols and placeholder bars to increase contrast. Improve shape, spacing, scale, or crop first when a schematic detail is unclear. Respect explicit project palette overrides.
-Use uniform flat color areas and crisp negative space. If a tile is present, use #ECECEC for its flat fill. Separate the neutral glyph and its background by value alone. Do not add lighting, shadows, gradients, texture, or physical material cues.
+Preserve this theme's independent charcoal hierarchy: canvas #242527, base surface #18191B, foreground surface #343638, primary #B9BBBE, and secondary #777B80. Keep the primary subject compact and supporting details quieter; do not enlarge, thicken, or brighten every glyph and label bar. Retain the necessary separation between background, panels, and focal controls instead of compressing all dark values to match a softened light variant. Respect explicit project palette overrides.
+Use uniform flat color areas and crisp negative space. If a tile is present, use #18191B for its flat fill. Separate the neutral glyph and its background by value alone. Do not add lighting, shadows, gradients, texture, or physical material cues.
 Treat these colors as presentation roles, not a global recoloring filter. Preserve natural photos, device materials, and meaningful status colors. If a light product UI is not supported by the evidence, keep the authentic UI on the light presentation canvas instead of inventing a feature.
 
 ## Pair invariants

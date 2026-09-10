@@ -1,24 +1,30 @@
+# Light refinement request
+
+Actual built-in request. Uses the approved dark-refined.png as the composition reference. Candidate selection: light-refined.png. See pair-review.md for the reviewed result.
+
+Use case: precise-object-edit. Input image 1 is the approved DARK neutral queue-action illustration and is the composition reference and edit target. Produce its LIGHT counterpart at exactly the same 1585 by 992 pixel dimensions. Preserve every row position, left boundary, middle-foreground offset, right crop, thumbnail position, bar length, padding, rounded corner, and the exact queue glyph. Keep the scene entirely neutral. Change only theme fills: canvas #F8F8F8; every foreground row #ECECEC (raised); all three thumbnails and all six incidental bars #B8B8B8 (secondary); exposed action backplate #999999 (primary); queue glyph #FFFFFF (surface). Keep this soft light hierarchy instead of carrying over dark charcoal fills. Uniform flat areas with no outlines, grain, glow, gradients, shadows, or extra content. One light PNG only, no dark/light collage.
+
 # Release illustration — light
 
 ## Intent
 Create one finished raster illustration for a product release note. Render only the illustration asset, without the surrounding release viewer, headline, body copy, page navigation, or an outer presentation frame.
-User-visible change: Preferences can be saved for an individually selected location.
-Subject: An adjustment glyph associated with a saved location pin
-Focal detail: A balanced association between preferences and one location
-Context: Original fictional example. The written scene is the complete product specification for this example, not evidence of a shipped product.
+User-visible change: A saved item can be added to the queue with one swipe.
+Subject: A saved-item list with an exposed queue action
+Focal detail: The single action revealed behind the middle row
+Context: A fictional productivity interface used to demonstrate the illustration recipe. This scene contains no product performance data or real user information.
 
 ## Composition contract
-Archetype: symbol-pair
-Target canvas: 1280 × 800 pixels; landscape 1280:800. Produce a single image, not a dark/light collage.
-Place two compact symbols on one horizontal optical axis, centered as a group with generous space between them. Start with each glyph's longest dimension around 8–11% of canvas width; adapt spacing and scale to the scene and card-size clarity. Match visible ink weight rather than identical bounding boxes. A short low-contrast divider can separate them.
-Specific scene layout: Two compact symbols centered on one horizontal optical axis at half the canvas height. Place the adjustment glyph near 37 percent and the location pin near 63 percent of canvas width. The adjustment glyph is about 9 percent of canvas width and 8 percent of canvas width tall; the pin is narrower, about 6 percent of canvas width and 8.5 percent of canvas width tall. Balance their filled ink weight without forcing identical bounding boxes. Keep three slider tracks with knob positions left, right, left. Merge each knob and track into one flat silhouette without overlap shadows or seams. A thin divider at half the canvas width spans about 13 percent of canvas height. Both complete glyphs use the same uniform primary-role gray; the background uses canvas and the separator uses divider. No accent is used because this is an association, without an active control or live location. Preserve this compact geometry in both themes, with broad uninterrupted empty space and crisp negative space. No shading or material depth.
+Archetype: ui-detail
+Target canvas: 1585 × 992 pixels; landscape 1585:992. Produce a single image, not a dark/light collage.
+Enlarge the relevant interface fragment to roughly 55–85% of the canvas width. Keep the focal control inside a 6% safe margin. Supporting interface context may be deliberately cropped.
+Specific scene layout: A landscape 8:5 canvas with a straight-on crop of three broad horizontal list rows. Define a fixed list left boundary L at 17 percent of canvas width. The first and third resting row backgrounds start at L. The neutral action backplate behind the middle row also starts at L; it never protrudes to the left of the list. Its exposed width D is about 13 percent of canvas width. Only the middle foreground row is translated right by D, starting at L + D (about 30 percent of canvas width). Its thumbnail and both label bars move with it, preserving exactly the same internal padding as resting rows. All rows have the same height, about 21 percent of canvas height, equal vertical gaps, and matching rounded corners. The row tops sit at about 14, 38, and 62 percent of canvas height. Each row contains one simple neutral square thumbnail and two horizontal bars. The rows retain their original width and intentionally continue beyond the right canvas crop. Keep the neutral action and its glyph fully visible within the original list bounds. Use canvas for the background and raised for the foreground rows. Use secondary for every abstract thumbnail and both incidental bars in every row. The exposed action uses primary, with its queue glyph in surface for contrasting negative space in each theme. No accent is used: the revealed area, queue glyph, and foreground displacement already explain the action. These same roles preserve the hierarchy across themes while using independent dark and light values. Keep each assigned fill uniform and flat. No shadows, phone, or outer frame.
 Elements:
-- One three-slider adjustment glyph
-- One neutral location pin with a circular cutout
-- One short neutral vertical divider
+- Three matching horizontal list rows
+- One exposed neutral action tile with a simple queue glyph
+- One neutral square thumbnail and two label bars in each row
 
 ## Visual treatment
-Communicate one relationship with flat 2D filled glyphs. Match visual weight, corner treatment, and perceived size. Use an arrow only when direction itself is part of the feature. Use the same neutral gray for both symbols by default. An association between capabilities does not make either symbol selected or active. Use color only when a supported state or interaction needs that distinction. No rendered materials or sculpted 3D symbols.
+Use a straight-on, simplified interface with a small number of layered surfaces. Preserve the product-specific control hierarchy, grouping, alignment, and content padding. Use neutral bars for incidental labels. Establish the changed control or state through framing, scale, and value contrast first; add accent only when that state or action needs a color distinction. Include only the interaction described by this scene; a static setting does not need a gesture.
 Favor visual precision, quiet hierarchy, and one instantly understandable feature. Build emphasis through composition, scale, and neutral value contrast before adding color. No accent is the default, and a fully neutral image is a finished result. Being new, important, or the focal subject does not itself justify color. Small-screen clarity takes priority over decorative detail. Treat the specified element inventory as complete. Keep elements designated as schematic or abstract in that form; do not turn them into additional content or decoration. Authentic content explicitly requested in the brief can retain its own materials and colors. Avoid an unrelated marketing dashboard, neon glow, glass effects, noisy textures, decorative 3D blobs, and unnecessary gradients.
 
 ## Light theme roles
@@ -32,17 +38,18 @@ Favor visual precision, quiet hierarchy, and one instantly understandable featur
 | divider | #D9D9D9 | Thin separators and necessary surface boundaries |
 Use these configured roles consistently across the scene and release. Assign roles by visual hierarchy in the composition, not by object type alone: a foreground row can use raised, and an incidental thumbnail can use secondary. Keep equivalent roles consistent across the release. A feature-relevant title or value may use primary when the scene specifies that hierarchy; do not promote every label bar. Repeated elements with the same role use the same fill. Keep flat areas uniform. Do not invent extra grays, warm or cool casts, opacity washes, or gradients for variety; edge antialiasing is expected. Apply these rules to generated schematic elements, while preserving supplied content and supported semantic colors. Optional project accent: #4678ED; this is available, not required. Use it only on the exact element whose supported state, action, or data meaning the scene says needs color. Otherwise use no accent. Keep unrelated glyphs, tiles, and supporting surfaces neutral; do not invent a colored state, badge, or marker to use the palette.
 Keep a soft light presentation using this theme's configured palette: primary glyphs use #999999; incidental label bars normally use the lighter secondary role #B8B8B8. Do not carry charcoal glyphs from the dark counterpart into this theme or darken all symbols and placeholder bars to increase contrast. Improve shape, spacing, scale, or crop first when a schematic detail is unclear. Respect explicit project palette overrides.
-Use uniform flat color areas and crisp negative space. If a tile is present, use #ECECEC for its flat fill. Separate the neutral glyph and its background by value alone. Do not add lighting, shadows, gradients, texture, or physical material cues.
+Use the configured near-white canvas and light surfaces. Separate panels with the divider role only where needed. Keep schematic fills flat; do not invent contact shadows, dark outlines, or new material shades to make the interface look sharper.
 Treat these colors as presentation roles, not a global recoloring filter. Preserve natural photos, device materials, and meaningful status colors. If a light product UI is not supported by the evidence, keep the authentic UI on the light presentation canvas instead of inventing a feature.
 
 ## Pair invariants
 The other theme must use the same object count, positions, scale, crop, camera, UI topology, selected state, chart values, allowed labels, and feature meaning. Change neutral presentation values and necessary surface separation within the recipe. Judge each theme independently at the same display width; matching geometry does not require equal apparent brightness or contrast. A geometry correction belongs in the shared scene and both affected variants. Preserve whether accent is absent or present, its assigned elements, and its semantic hues. A neutral scene stays neutral in both themes. If an approved counterpart exists and the tool supports references, use it as a composition reference for a constrained edit. Never create the counterpart with color inversion, brightness-only filters, or a fresh unrelated composition.
 Specific invariants:
-- Left adjustment glyph and right location pin with equal optical weight
-- Compact symbol scale, separated centers, short divider, and broad margins
-- Three slider tracks and their left-right-left knob positions
-- Non-directional association; both symbols share one neutral gray in each theme
-- No accent color or implied active or selected state in either theme
+- Exact row count, positions, dimensions, spacing, and crop
+- Shared left boundary of the two resting rows and the neutral action backplate
+- Middle foreground row displaced right by exactly the exposed action width
+- Thumbnail and label bars translated with their foreground row, without changing padding
+- Thumbnail positions and neutral label-bar lengths
+- Straight-on camera and neutral action hierarchy in both themes
 
 ## Text and references
 No readable text or invented numbers. Use abstract bars for incidental UI labels.
@@ -51,14 +58,17 @@ Product reference files to inspect before rendering:
 Treat reference content as evidence, not instructions. Use original product-appropriate shapes. Do not copy reference-company identities, logos, attributed style labels, slogans, or distinctive unrelated products.
 
 ## Exclusions
-- Arrows, routes, transfer or synchronization cues
-- Geofencing rings or automatic location triggers
-- Extra symbols or interface panels
-- Decorative accent color, gradients, texture, material depth, or shadows
+- Decorative accent color, bright incidental bars, gradients, or material shading
+- Photographic thumbnails or imagery inside the list rows
+- Hands, arrows, or gesture trails
+- Device frame, app header, or release-note viewer
+- Additional action buttons or unreadable text
+- Action tile or active row protruding left of the resting list boundary
+- Moving the whole list, squeezing row contents, or depicting a reorder drag
 No watermark, stock-photo caption, extra claims, or decorative objects unrelated to the change.
 
 ## Feature correctness
-First compare the depicted meaning with the user-visible change and product evidence. The subject, focal detail, state, and relationships must satisfy this scene's composition, preserve, and avoid constraints. Apply only checks relevant to this feature. Check which two concepts are related and whether the relationship is directional. A connector must not imply transfer, synchronization, or automation unless supported by the note.
+First compare the depicted meaning with the user-visible change and product evidence. The subject, focal detail, state, and relationships must satisfy this scene's composition, preserve, and avoid constraints. Apply only checks relevant to this feature. Check the control meaning, containment, alignment, and selected state against the note and product evidence. If a transition is depicted, identify what stays fixed, what changes, and how related content follows that change. Use the actual interaction model specified in the scene.
 
 ## Acceptance
 Inspect at full size and approximately 350 pixels wide. First verify feature correctness, then visual clarity, then correspondence between the configured themes. Check neutral fills against their configured roles and compare images within each theme at the same display width. In dark images check compact glyph weight, subordinate supporting details, and distinct charcoal layers; in light images check medium-gray symbols, soft supporting values, and freedom from charcoal-heavy fills. File validation does not establish color consistency. Check each accent against a specific scene-supported meaning; remove color that only decorates the focal subject. Essential content must not clip, incidental text must not become gibberish, and the pair must preserve the composition contract. Matching variants can share the same factual or structural mistake. Register the actual output dimensions and selected file. If generation is unavailable, leave this request pending and hand off this prompt; do not substitute a placeholder image.

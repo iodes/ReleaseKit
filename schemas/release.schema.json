@@ -128,22 +128,22 @@
             "surface": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Base interface panels and resting rows."
+              "description": "Base or recessed interface panels."
             },
             "raised": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Quiet icon tiles, inset areas, and abstract thumbnail fills."
+              "description": "Foreground panels, controls, and quiet tile fills."
             },
             "primary": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Main neutral glyphs and feature-defining marks; mid-gray in the default light theme."
+              "description": "Main neutral glyphs, focal controls, and feature-defining marks; mid-gray in the default light theme."
             },
             "secondary": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Incidental label bars and supporting schematic details."
+              "description": "Supporting glyphs, incidental label bars, and abstract content."
             },
             "divider": {
               "type": "string",
@@ -172,22 +172,22 @@
             "surface": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Base interface panels and resting rows."
+              "description": "Base or recessed interface panels."
             },
             "raised": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Quiet icon tiles, inset areas, and abstract thumbnail fills."
+              "description": "Foreground panels, controls, and quiet tile fills."
             },
             "primary": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Main neutral glyphs and feature-defining marks; mid-gray in the default light theme."
+              "description": "Main neutral glyphs, focal controls, and feature-defining marks; mid-gray in the default light theme."
             },
             "secondary": {
               "type": "string",
               "pattern": "^#[a-fA-F0-9]{6}$",
-              "description": "Incidental label bars and supporting schematic details."
+              "description": "Supporting glyphs, incidental label bars, and abstract content."
             },
             "divider": {
               "type": "string",

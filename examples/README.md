@@ -17,15 +17,15 @@ The gallery demonstrates generated explanations. Each displayed folder contains 
 | Recipe and example | Dark | Light |
 | --- | --- | --- |
 | [`icon-tile`: backup encryption](backup-encryption/README.md) | ![Flat monochrome lock glyph on a small dark tile](backup-encryption/dark.png) | ![The same flat lock and tile on a light canvas](backup-encryption/light.png) |
-| [`symbol-pair`: location preferences](location-preferences/README.md) | ![Neutral adjustment glyph associated with a neutral location pin on charcoal](location-preferences/dark-neutral.png) | ![The same neutral symbol pair on near-white](location-preferences/light-soft.png) |
-| [`ui-detail`: queue action](queue-action/README.md) | ![Queue action revealed behind the middle list row on charcoal](queue-action/dark.png) | ![The same queue action and list geometry on near-white](queue-action/light-soft.png) |
+| [`symbol-pair`: location preferences](location-preferences/README.md) | ![Neutral adjustment glyph associated with a neutral location pin on charcoal](location-preferences/dark-refined.png) | ![The same neutral symbol pair on near-white](location-preferences/light-refined.png) |
+| [`ui-detail`: queue action](queue-action/README.md) | ![Queue action revealed behind the middle list row on charcoal](queue-action/dark-refined.png) | ![The same queue action and list geometry on near-white](queue-action/light-refined.png) |
 | [`device-view`: tablet reading](tablet-reading/README.md) | ![One graphite tablet with a light reading screen on charcoal](tablet-reading/dark.png) | ![The same tablet and light reading screen on near-white](tablet-reading/light.png) |
 | [`spatial-view`: connected route](connected-route/README.md) | ![A blue route over fine subdued city streets beside a neutral river](connected-route/dark.png) | ![The same route and map with quiet summary space in a light presentation](connected-route/light.png) |
 | [`data-view`: storage breakdown](storage-breakdown/README.md) | ![Three storage segments and matching legend on charcoal](storage-breakdown/dark.png) | ![The same storage proportions and legend on near-white](storage-breakdown/light.png) |
 
-The location pair and queue interaction include light variants reviewed against the current [neutral role palette](../kit/references/visual-language.md#assign-neutral-colors-by-role). Other examples retain the palettes recorded for their generation; use the saved project policy when creating new images instead of copying colors from an older PNG.
+The location pair and queue interaction demonstrate the current [independent theme treatments](../kit/references/theme-pairing.md#one-scene-two-presentation-treatments): compact balanced glyphs and quiet charcoal hierarchy in dark, with soft neutral values in light. Their reviewed originals and exact edit requests are linked from each example. All active scene prompts are compiled with current guidance; other raster examples retain their recorded treatments. Use the saved project policy when creating new images instead of copying colors from an older PNG.
 
-The location pair uses no accent: equal neutral treatment explains a static association. The route uses color to distinguish its path from the surrounding map.
+The location pair uses no accent: balanced neutral symbols explain a static association. The queue action also stays neutral because its glyph, revealed area, and foreground displacement explain the interaction. The route uses color to distinguish its path from the surrounding map.
 
 Use the tablet example to see how a light-only product screen stays light on both presentation canvases. Use an actual capture when device or interface fidelity matters. The storage values are illustrative, and the route has no real geographic identity.
 

@@ -10,7 +10,7 @@ This generation policy does not require inventing a second appearance for suppli
 
 Policy is captured in each release when it is prepared. Editing the project default affects new releases. To apply the current project policy to an existing draft, run `releasekit image plan <version> --sync-config`. Previously selected files are retained; themes disabled by the new policy are not exported. Ready releases must be reopened before their policy changes.
 
-For a requested palette correction, change the relevant saved theme roles at the requested project or release scope before generating replacements. A project change belongs in `releasekit/config.yaml`; sync that policy into the target draft with `releasekit image plan <version> --sync-config`. A release-only change belongs in that draft's captured visual policy. Do not work around a saved dark glyph value by adding a one-off lighter color to a prompt. Regenerate and review the affected requested variants; preserve unchanged accepted counterparts. Palette changes are authoring policy changes, not a global filter over supplied images.
+For a requested palette correction, change the relevant saved theme roles at the requested project or release scope before generating replacements. A project change belongs in `releasekit/config.yaml`; sync that policy into the target draft with `releasekit image plan <version> --sync-config`. A release-only change belongs in that draft's captured visual policy. Do not work around a saved dark glyph value by adding a one-off lighter color to a prompt. Regenerate and review the affected requested variants; preserve unchanged accepted counterparts. A light-only palette correction does not request dark regeneration. If the shared geometry needs correction, update the scene and review both affected variants, keeping each theme's palette. Palette changes are authoring policy changes, not a global filter over supplied images.
 
 ## Coverage and repeat runs
 
@@ -24,13 +24,13 @@ An existing image reported as stale or invalid is unresolved, even though its fi
 
 ## One scene, two presentation treatments
 
-Both outputs share the same scene brief. Lock subject identity, geometry, object count, positions, scale, crop, camera, UI topology, action state, chart values, and any allowed literal labels. Change presentation surfaces, neutral values, lighting, shadows, and necessary edge separation. Preserve meaningful status colors and natural photographic or material colors. Lock the absence of accent for a neutral scene; when accent is justified, keep it on the same meaningful elements in both variants. A theme change does not introduce an accent.
+Both outputs share the same scene brief. Lock subject identity, geometry, object count, positions, scale, crop, camera, UI topology, action state, chart values, and any allowed literal labels. Change neutral presentation values and necessary surface separation within the selected recipe. Match geometry, not apparent brightness or contrast: use each theme's independent treatment. Preserve meaningful status colors and natural photographic or material colors. Lock the absence of accent for a neutral scene; when accent is justified, keep it on the same meaningful elements in both variants. A theme change does not introduce an accent.
 
 | Role | Dark treatment | Light treatment |
 | --- | --- | --- |
 | Canvas | Quiet charcoal | Quiet near-white |
-| Interface surface | Separate adjacent dark values | Separate white and pale-gray values |
-| Primary neutral symbol | Legible mid-light neutral | Medium gray from `primary`, without default charcoal fills |
+| Interface surface | Distinguish base and foreground charcoal layers | Separate white and pale-gray values |
+| Primary neutral symbol | Compact mid-light neutral; no oversized bright glyph | Medium gray from `primary`, without default charcoal fills |
 | Secondary detail | Subdued, still distinguishable | Lighter `secondary` for incidental bars and supporting detail |
 | Surface separation | Preserve only feature-relevant layers | Use surface roles and thin dividers; do not invent shadows |
 | Optional interaction or status color | Preserve assignment and semantic hue, or keep absent | Preserve assignment and semantic hue, or keep absent |
@@ -45,7 +45,7 @@ Do not invert pixels or shift brightness globally. A black lens remains a black 
 3. Generate one requested variant using its prompt. Select and inspect the result.
 4. Import it. Re-run the image plan; a valid approved counterpart is now offered as a composition reference for the other theme.
 5. When the available tool supports image references or edits, use the counterpart for a constrained theme edit. Otherwise repeat the exact scene contract and inspect for layout drift. Never claim pixel-identical geometry from independent stochastic generations.
-6. Compare the pair and the other accepted images in the same theme. Check equivalent glyphs, label bars, and surfaces against the same configured color roles, without making light images as dark or contrast-heavy as dark-theme subjects. Both files should have the same pixel dimensions. Verify pose, crop, UI state, values, and semantic colors by sight, then import the selected counterpart.
+6. Review dark images together and light images together at equal display widths, then compare the pair. Check glyph ink size, supporting detail, and charcoal layer separation in dark; check medium-gray symbols and soft supporting values in light. Check equivalent elements against their configured roles without forcing equal apparent contrast between themes. Both files should have the same pixel dimensions. Verify pose, crop, UI state, values, and semantic colors by sight, then import the selected counterpart.
 
 Use one file per theme, not a split canvas or a two-panel comparison image. Keep the current selection until a reviewed replacement is imported into the same slot. Do not restart the entire release when one small defect can be corrected locally.
 

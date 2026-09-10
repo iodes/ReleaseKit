@@ -29,7 +29,7 @@ For each standalone note, derive the scene from that feature independently. Grou
 
 Separate the canvas, base surface, raised surface, primary symbol, secondary detail, and divider. These are semantic roles, not a global color filter. The project defines their dark and light values.
 
-On dark backgrounds, distinguish charcoal layers and use mid-light neutral symbols. Do not crush a dark object into the canvas or turn every small glyph pure white. On light backgrounds, use near-white space, subtle gray separation, and medium-gray symbols with lighter supporting details. Do not use charcoal glyphs or dark placeholder bars by default. A dark device or natural photo may stay dark in a light presentation.
+Judge each theme at the same display width using its own saved palette. On dark backgrounds, retain distinct charcoal layers and compact mid-light neutral symbols; keep supporting UI quieter than the focal control. Avoid oversized bright glyphs, thick label bars, and milky overlays. On light backgrounds, use near-white space, subtle gray separation, and medium-gray symbols with lighter supporting details. Do not use charcoal glyphs or dark placeholder bars by default. A dark device or natural photo may stay dark in a light presentation. Equal geometry does not require equal apparent brightness or contrast. A light-only palette correction leaves the accepted dark treatment intact.
 
 For icons, use a compact flat rounded-square tile with a neutral monochrome filled glyph and clear negative space. A typical tile occupies 20–24% of the canvas width, with the glyph around 50–65% of the tile width. Keep broad margins, uniform background fills, and related corner radii. Use color only when the feature gives it a functional meaning. Do not default to a colored badge, physical object, or modeled icon.
 
@@ -37,22 +37,22 @@ Flat icons and symbol pairs have no perspective, extrusion, material texture, gr
 
 ## Assign neutral colors by role
 
-Use the release's captured palette as the source of truth. The default light palette deliberately uses a narrow neutral hierarchy:
+Use the release's captured palette as the source of truth. The default palettes give the themes independent value hierarchies:
 
-| Role | Default light value | Assignment |
-| --- | --- | --- |
-| `canvas` | `#F8F8F8` | Uniform background |
-| `surface` | `#FFFFFF` | Base panels and resting rows |
-| `raised` | `#ECECEC` | Quiet tiles, inset areas, and abstract thumbnails |
-| `primary` | `#999999` | Main glyphs and feature-defining marks |
-| `secondary` | `#B8B8B8` | Incidental label bars and supporting detail |
-| `divider` | `#D9D9D9` | Thin separators and necessary boundaries |
+| Role | Default dark value | Default light value | Assignment |
+| --- | --- | --- | --- |
+| `canvas` | `#242527` | `#F8F8F8` | Uniform background |
+| `surface` | `#18191B` | `#FFFFFF` | Base or recessed panels |
+| `raised` | `#343638` | `#ECECEC` | Foreground panels, controls, and quiet tile fills |
+| `primary` | `#B9BBBE` | `#999999` | Main glyphs, focal controls, and feature-defining marks |
+| `secondary` | `#777B80` | `#B8B8B8` | Supporting glyphs, incidental bars, and abstract content |
+| `divider` | `#46494D` | `#D9D9D9` | Thin separators and necessary boundaries |
 
-Map visible schematic groups to these roles in `composition`; do not choose a fresh gray for each object or each image. Equivalent label bars share `secondary`; a second tone needs an actual hierarchy in the feature. Use the configured values, including explicit project overrides, instead of copying hex values from a worked example. Keep uniform flat fills without arbitrary warm or cool casts, opacity washes, gradients, or invented shading. Antialiased edges can contain intermediate pixels.
+Map visible schematic groups to these roles by hierarchy in `composition`; do not choose a fresh gray for each object or each image. Object type alone does not fix its role: a foreground row can use `raised`, and a subordinate thumbnail can share `secondary` with incidental bars. A feature-relevant title, value, or control may use `primary` when the scene calls for that distinction. Preserve that hierarchy across themes and equivalent scenes; do not brighten every label bar or flatten genuinely different levels into one tone. Use the configured values, including explicit project overrides, instead of copying hex values from a worked example. Keep uniform flat fills without arbitrary warm or cool casts, opacity washes, gradients, or invented shading. Antialiased edges can contain intermediate pixels.
 
 Light illustrations explain shapes and relationships without the contrast of a text document. If something is unclear at card size, improve silhouette, spacing, stroke width, scale, or crop first. Do not globally darken glyphs and placeholder bars or introduce shadows to make every element sharper. Preserve authentic dark hardware, supplied UI, content colors, and justified semantic colors; the neutral role map applies to generated schematic elements.
 
-Review same-role objects across the release's light images together, not only each dark/light pair. A successful decode and matching dimensions do not validate the palette or visual weight.
+Review same-role objects across the release's dark images together, and separately across its light images. Use equal display widths, not differently sized website cards. In dark images inspect glyph footprint and charcoal layer separation; in light images inspect soft neutral weight. A successful decode and matching dimensions do not validate the palette or visual weight.
 
 ## Color has a job
 

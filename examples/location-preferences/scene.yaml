@@ -2,14 +2,20 @@ archetype: symbol-pair
 subject: An adjustment glyph associated with a saved location pin
 message: Preferences can be saved for an individually selected location.
 focus: A balanced association between preferences and one location
-composition: Two equal optical-weight symbols centered as a group on one
-  horizontal axis. A three-slider adjustment glyph on the left and a simple
-  location pin on the right, each about 13 percent of canvas width, separated by
-  a short thin neutral vertical divider. Both complete glyphs use the same
-  uniform primary-role gray; the background uses canvas and the thin separator
-  uses divider. No accent is used because the scene shows an association,
-  without a selected item, enabled control, or live location state. Broad empty
-  space and crisp flat filled shapes; no shading or material depth.
+composition: Two compact symbols centered on one horizontal optical axis at
+  half the canvas height. Place the adjustment glyph near 37 percent and the
+  location pin near 63 percent of canvas width. The adjustment glyph is about
+  9 percent of canvas width and 8 percent of canvas width tall; the pin is
+  narrower, about 6 percent of canvas width and 8.5 percent of canvas width tall.
+  Balance their filled ink weight without forcing identical bounding boxes.
+  Keep three slider tracks with knob positions left, right, left. Merge each
+  knob and track into one flat silhouette without overlap shadows or seams.
+  A thin divider at half the canvas width spans about 13 percent of canvas
+  height. Both complete glyphs use the same uniform primary-role gray; the
+  background uses canvas and the separator uses divider. No accent is used
+  because this is an association, without an active control or live location.
+  Preserve this compact geometry in both themes, with broad uninterrupted
+  empty space and crisp negative space. No shading or material depth.
 context: Original fictional example. The written scene is the complete product
   specification for this example, not evidence of a shipped product.
 elements:
@@ -18,7 +24,8 @@ elements:
   - One short neutral vertical divider
 preserve:
   - Left adjustment glyph and right location pin with equal optical weight
-  - Three slider tracks and their knob positions
+  - Compact symbol scale, separated centers, short divider, and broad margins
+  - Three slider tracks and their left-right-left knob positions
   - Non-directional association; both symbols share one neutral gray in each theme
   - No accent color or implied active or selected state in either theme
 avoid:

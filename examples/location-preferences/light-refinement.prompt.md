@@ -1,3 +1,9 @@
+# Light refinement request
+
+Actual built-in image-tool request. The reviewed compact dark-refined.png is the composition reference. Candidate selection: light-refined.png. See pair-review.md for the reviewed result.
+
+Use case: precise-object-edit. Input image 1 is the approved DARK compact location-preferences pair and is the exact composition reference and edit target. Create its LIGHT counterpart. Preserve the input canvas at exactly 1584 by 993 pixels and preserve all pixel positions, dimensions, silhouettes, cutouts, track thickness, left/right/left slider knob positions, divider length, and broad margins. Keep the small right pin's balanced size; do not enlarge either symbol. Change ONLY the flat presentation fills: entire background #F8F8F8 (canvas), both complete glyphs #999999 (primary), center divider #D9D9D9. All knob and track junctions are one flat continuous shape. No shadows, halos, raised discs, outlines, gradients, texture, tinted background, blue accents, text, or new objects. One light PNG only.
+
 # Release illustration — light
 
 ## Intent
@@ -9,7 +15,7 @@ Context: Original fictional example. The written scene is the complete product s
 
 ## Composition contract
 Archetype: symbol-pair
-Target canvas: 1280 × 800 pixels; landscape 1280:800. Produce a single image, not a dark/light collage.
+Target canvas: 1584 × 993 pixels; landscape 1584:993. Produce a single image, not a dark/light collage.
 Place two compact symbols on one horizontal optical axis, centered as a group with generous space between them. Start with each glyph's longest dimension around 8–11% of canvas width; adapt spacing and scale to the scene and card-size clarity. Match visible ink weight rather than identical bounding boxes. A short low-contrast divider can separate them.
 Specific scene layout: Two compact symbols centered on one horizontal optical axis at half the canvas height. Place the adjustment glyph near 37 percent and the location pin near 63 percent of canvas width. The adjustment glyph is about 9 percent of canvas width and 8 percent of canvas width tall; the pin is narrower, about 6 percent of canvas width and 8.5 percent of canvas width tall. Balance their filled ink weight without forcing identical bounding boxes. Keep three slider tracks with knob positions left, right, left. Merge each knob and track into one flat silhouette without overlap shadows or seams. A thin divider at half the canvas width spans about 13 percent of canvas height. Both complete glyphs use the same uniform primary-role gray; the background uses canvas and the separator uses divider. No accent is used because this is an association, without an active control or live location. Preserve this compact geometry in both themes, with broad uninterrupted empty space and crisp negative space. No shading or material depth.
 Elements:

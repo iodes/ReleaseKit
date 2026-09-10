@@ -10,10 +10,10 @@ export type AssetVariant = z.infer<typeof assetVariant>;
 const color = z.string().regex(/^#[a-fA-F0-9]{6}$/);
 export const paletteSchema = z.strictObject({
   canvas: color.describe('Uniform illustration background.'),
-  surface: color.describe('Base interface panels and resting rows.'),
-  raised: color.describe('Quiet icon tiles, inset areas, and abstract thumbnail fills.'),
-  primary: color.describe('Main neutral glyphs and feature-defining marks; mid-gray in the default light theme.'),
-  secondary: color.describe('Incidental label bars and supporting schematic details.'),
+  surface: color.describe('Base or recessed interface panels.'),
+  raised: color.describe('Foreground panels, controls, and quiet tile fills.'),
+  primary: color.describe('Main neutral glyphs, focal controls, and feature-defining marks; mid-gray in the default light theme.'),
+  secondary: color.describe('Supporting glyphs, incidental label bars, and abstract content.'),
   divider: color.describe('Thin separators and necessary surface boundaries.'),
 });
 export const visualPolicySchema = z.strictObject({
