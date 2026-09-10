@@ -15,7 +15,11 @@ composition: >-
   height. Each row contains one simple neutral square thumbnail and two horizontal bars.
   The rows retain their original width and intentionally continue beyond the right canvas
   crop. Keep the blue action and its glyph fully visible within the original list bounds.
-  No phone or outer application frame.
+  Use canvas for the background, surface for every row, raised for every abstract
+  thumbnail, and secondary for both incidental bars in every row. Use the project
+  accent only for the exposed action; its reversed queue glyph uses the light
+  surface value for legibility. Keep each assigned fill uniform, with no new gray
+  tones or shadows. No phone or outer application frame.
 context: >-
   A fictional productivity interface used to demonstrate the illustration recipe.
   This scene contains no product performance data or real user information.

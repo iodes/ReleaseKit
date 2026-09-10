@@ -202,6 +202,45 @@ describe('theme-aware assets', () => {
     await expect(within(p.root, 'escape/app.txt')).rejects.toThrow('Symbolic link');
   });
 
+  it('persists soft neutral light defaults and keeps saved color roles authoritative until sync', async () => {
+    const p = await fixture('light');
+    const config = await p.config();
+    const initialLight = {
+      canvas: '#F8F8F8', surface: '#FFFFFF', raised: '#ECECEC',
+      primary: '#999999', secondary: '#B8B8B8', divider: '#D9D9D9',
+    };
+    expect(config.visuals.light).toEqual(initialLight);
+    await commit(p.root, 'queue\n', 'Add queue');
+    await prepare(p, '1', { from: 'v0' });
+    await addNote(p, '1', 'queue', 'feature', true);
+    await writeYaml(await p.releaseFile('1', 'visuals/queue.yaml'), {
+      schemaVersion: 1, scene: sampleScene, variants: {},
+    });
+    const promptFor = async () => {
+      const plan = await planImages(p, '1');
+      expect(plan.requests).toHaveLength(1);
+      const request = plan.requests[0]!;
+      if (request.action !== 'generate') throw new Error('Expected a generated light image.');
+      expect(request.theme).toBe('light');
+      return fs.readFile(request.promptFile, 'utf8');
+    };
+    const initialPrompt = await promptFor();
+    for (const value of Object.values(initialLight)) expect(initialPrompt).toContain(value);
+    config.visuals.light = {
+      canvas: '#F5F6F7', surface: '#FBFCFD', raised: '#E5E7E9',
+      primary: '#454A50', secondary: '#A1A7AD', divider: '#D1D5D9',
+    };
+    await writeYaml(await p.content('config.yaml'), config);
+    await installSkills(p);
+    expect((await p.config()).visuals.light).toEqual(config.visuals.light);
+    expect(await promptFor()).toBe(initialPrompt);
+    await syncImagePolicy(p, '1');
+    const syncedPrompt = await promptFor();
+    for (const value of Object.values(config.visuals.light)) expect(syncedPrompt).toContain(value);
+    expect(syncedPrompt).not.toContain(initialLight.primary);
+    expect((await p.release('1')).visuals.dark).toEqual(config.visuals.dark);
+  });
+
   it('compiles feature-specific prompts with theme roles and a fixed scene contract', async () => {
     const p = await fixture(); const policy = (await p.config()).visuals;
     const dark = imagePrompt(sampleScene, policy, 'dark');

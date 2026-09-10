@@ -9,7 +9,12 @@ export const assetVariant = z.enum(['dark', 'light', 'shared']);
 export type AssetVariant = z.infer<typeof assetVariant>;
 const color = z.string().regex(/^#[a-fA-F0-9]{6}$/);
 export const paletteSchema = z.strictObject({
-  canvas: color, surface: color, raised: color, primary: color, secondary: color, divider: color,
+  canvas: color.describe('Uniform illustration background.'),
+  surface: color.describe('Base interface panels and resting rows.'),
+  raised: color.describe('Quiet icon tiles, inset areas, and abstract thumbnail fills.'),
+  primary: color.describe('Main neutral glyphs and feature-defining marks; mid-gray in the default light theme.'),
+  secondary: color.describe('Incidental label bars and supporting schematic details.'),
+  divider: color.describe('Thin separators and necessary surface boundaries.'),
 });
 export const visualPolicySchema = z.strictObject({
   themes: z.enum(['both', 'dark', 'light']),
@@ -130,7 +135,7 @@ export function defaultConfig(product: string): ProjectConfig {
     visuals: {
       themes: 'both', preset: 'quiet-product', width: 1280, height: 800, accent: '#4678ED',
       dark: { canvas: '#242527', surface: '#18191B', raised: '#343638', primary: '#B9BBBE', secondary: '#777B80', divider: '#46494D' },
-      light: { canvas: '#F7F8FA', surface: '#FFFFFF', raised: '#ECEEF1', primary: '#494D52', secondary: '#969BA2', divider: '#DDE0E5' },
+      light: { canvas: '#F8F8F8', surface: '#FFFFFF', raised: '#ECECEC', primary: '#999999', secondary: '#B8B8B8', divider: '#D9D9D9' },
     },
   };
 }

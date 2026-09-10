@@ -10,6 +10,8 @@ This generation policy does not require inventing a second appearance for suppli
 
 Policy is captured in each release when it is prepared. Editing the project default affects new releases. To apply the current project policy to an existing draft, run `releasekit image plan <version> --sync-config`. Previously selected files are retained; themes disabled by the new policy are not exported. Ready releases must be reopened before their policy changes.
 
+For a requested palette correction, change the relevant saved theme roles at the requested project or release scope before generating replacements. A project change belongs in `releasekit/config.yaml`; sync that policy into the target draft with `releasekit image plan <version> --sync-config`. A release-only change belongs in that draft's captured visual policy. Do not work around a saved dark glyph value by adding a one-off lighter color to a prompt. Regenerate and review the affected requested variants; preserve unchanged accepted counterparts. Palette changes are authoring policy changes, not a global filter over supplied images.
+
 ## Coverage and repeat runs
 
 The default image scope is every note in the saved release, including grouped minor fixes and improvements. A grouped note has one visual brief and the configured image variants; its bullets do not become separate notes or image requests. Use [common images](common-images.md) to reuse the appropriate original across releases before planning new generation. Review the current `release.yaml` each time so newly added notes are included. A plain `releasekit-image` invocation uses this full scope without asking the user to pick important notes. Honor an explicitly limited request and the user's explicit text-only choices. If earlier agent prioritization disabled a note's image without such a choice, restore `image: true` and create or complete its visual brief in place, preserving its text, translations, and existing assets. Do not recreate the note. Missing supplied media stays pending instead of making the note text-only.
@@ -28,9 +30,9 @@ Both outputs share the same scene brief. Lock subject identity, geometry, object
 | --- | --- | --- |
 | Canvas | Quiet charcoal | Quiet near-white |
 | Interface surface | Separate adjacent dark values | Separate white and pale-gray values |
-| Primary neutral symbol | Legible mid-light neutral | Legible mid-dark neutral |
-| Secondary detail | Subdued, still distinguishable | Subdued, still distinguishable |
-| Contact shadow | Soft, with enough local separation | Light, restrained, never muddy |
+| Primary neutral symbol | Legible mid-light neutral | Medium gray from `primary`, without default charcoal fills |
+| Secondary detail | Subdued, still distinguishable | Lighter `secondary` for incidental bars and supporting detail |
+| Surface separation | Preserve only feature-relevant layers | Use surface roles and thin dividers; do not invent shadows |
 | Optional interaction or status color | Preserve assignment and semantic hue, or keep absent | Preserve assignment and semantic hue, or keep absent |
 | Photo or product material | Preserve authentic appearance | Preserve authentic appearance |
 
@@ -38,12 +40,12 @@ Do not invert pixels or shift brightness globally. A black lens remains a black 
 
 ## Generation sequence
 
-1. Complete the shared brief and inspect its product references.
+1. Complete the shared brief and inspect its product references. Map schematic groups to the [neutral color roles](visual-language.md#assign-neutral-colors-by-role); preserve those assignments across themes while using each theme's saved values.
 2. Read the current image plan and the project's requested themes. Reuse existing current assets and import any suitable [common originals](common-images.md), then refresh the plan. The following rendering steps apply to `action: generate`; handle `action: provide` through the supplied-image workflow.
 3. Generate one requested variant using its prompt. Select and inspect the result.
 4. Import it. Re-run the image plan; a valid approved counterpart is now offered as a composition reference for the other theme.
 5. When the available tool supports image references or edits, use the counterpart for a constrained theme edit. Otherwise repeat the exact scene contract and inspect for layout drift. Never claim pixel-identical geometry from independent stochastic generations.
-6. Compare the pair. Both files should have the same pixel dimensions. Verify pose, crop, UI state, values, and semantic colors by sight, then import the selected counterpart.
+6. Compare the pair and the other accepted images in the same theme. Check equivalent glyphs, label bars, and surfaces against the same configured color roles, without making light images as dark or contrast-heavy as dark-theme subjects. Both files should have the same pixel dimensions. Verify pose, crop, UI state, values, and semantic colors by sight, then import the selected counterpart.
 
 Use one file per theme, not a split canvas or a two-panel comparison image. Keep the current selection until a reviewed replacement is imported into the same slot. Do not restart the entire release when one small defect can be corrected locally.
 

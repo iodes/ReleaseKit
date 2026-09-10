@@ -14,6 +14,8 @@ Within one release:
 | `prompts/<id>.<theme>.md` | Generation requests for pending generated variants; supplied images have no generation request |
 | `assets/` | Selected raster files with content-derived names |
 
+`visuals.dark` and `visuals.light` assign six neutral roles: `canvas` for the background, `surface` for base panels, `raised` for tiles and abstract thumbnails, `primary` for main glyphs, `secondary` for incidental bars and detail, and `divider` for thin boundaries. See the [role table](visual-language.md#assign-neutral-colors-by-role). Values are fixed per role within the captured theme policy; do not derive a separate palette for each note. Updating the toolkit does not overwrite existing project colors or release snapshots. To adopt new defaults in an existing project, edit `releasekit/config.yaml`; use `image plan --sync-config` to apply that project policy to a draft.
+
 `visuals.accent` makes a project color available for generated images; it does not require that color in every image. In the shared scene's `composition`, record no accent or the exact colored element and its supported state, action, or information meaning. Keep that assignment in `preserve`; neutral scenes remain neutral in both themes.
 
 Each `(version, note.id, variant)` has one selected image. Importing replaces the selected slot and then removes unused managed images belonging to this note, including obsolete shared or themed imports. Files referenced by any visual variant or scene in the project are retained, as are other notes' files and source originals outside the note's managed assets. Reimporting identical content reuses its file. Keep existing variant entries until the replacement import succeeds.

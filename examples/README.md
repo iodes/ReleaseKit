@@ -17,11 +17,13 @@ The gallery demonstrates generated explanations. Each displayed folder contains 
 | Recipe and example | Dark | Light |
 | --- | --- | --- |
 | [`icon-tile`: backup encryption](backup-encryption/README.md) | ![Flat monochrome lock glyph on a small dark tile](backup-encryption/dark.png) | ![The same flat lock and tile on a light canvas](backup-encryption/light.png) |
-| [`symbol-pair`: location preferences](location-preferences/README.md) | ![Neutral adjustment glyph associated with a neutral location pin on charcoal](location-preferences/dark-neutral.png) | ![The same neutral symbol pair on near-white](location-preferences/light-neutral.png) |
-| [`ui-detail`: queue action](queue-action/README.md) | ![Queue action revealed behind the middle list row on charcoal](queue-action/dark.png) | ![The same queue action and list geometry on near-white](queue-action/light.png) |
+| [`symbol-pair`: location preferences](location-preferences/README.md) | ![Neutral adjustment glyph associated with a neutral location pin on charcoal](location-preferences/dark-neutral.png) | ![The same neutral symbol pair on near-white](location-preferences/light-soft.png) |
+| [`ui-detail`: queue action](queue-action/README.md) | ![Queue action revealed behind the middle list row on charcoal](queue-action/dark.png) | ![The same queue action and list geometry on near-white](queue-action/light-soft.png) |
 | [`device-view`: tablet reading](tablet-reading/README.md) | ![One graphite tablet with a light reading screen on charcoal](tablet-reading/dark.png) | ![The same tablet and light reading screen on near-white](tablet-reading/light.png) |
 | [`spatial-view`: connected route](connected-route/README.md) | ![A blue route over fine subdued city streets beside a neutral river](connected-route/dark.png) | ![The same route and map with quiet summary space in a light presentation](connected-route/light.png) |
 | [`data-view`: storage breakdown](storage-breakdown/README.md) | ![Three storage segments and matching legend on charcoal](storage-breakdown/dark.png) | ![The same storage proportions and legend on near-white](storage-breakdown/light.png) |
+
+The location pair and queue interaction include light variants reviewed against the current [neutral role palette](../kit/references/visual-language.md#assign-neutral-colors-by-role). Other examples retain the palettes recorded for their generation; use the saved project policy when creating new images instead of copying colors from an older PNG.
 
 The location pair uses no accent: equal neutral treatment explains a static association. The route uses color to distinguish its path from the surrounding map.
 
@@ -33,4 +35,4 @@ Use the tablet example to see how a light-only product screen stays light on bot
 
 Each bundle contains version 1.4.0 followed by 1.3.0 and 1.2.0. The explicit `previous` links define that order. The `queue-action` note appears in two different version groups because each describes that version's change; consumers retain both entries.
 
-Both locales reference the same selected dark and light PNGs. Choose `image.variants[theme]`, falling back to `image.variants[image.fallbackTheme]` only when the requested variant is absent. Text-only notes use `image: null`. These are content examples; build the surrounding scrolling interface in the consumer application.
+Both locales reference the same dark and light PNGs from those release snapshots. The gallery can show later authoring revisions without rewriting these earlier snapshots. Choose `image.variants[theme]`, falling back to `image.variants[image.fallbackTheme]` only when the requested variant is absent. Text-only notes use `image: null`. These are content examples; build the surrounding scrolling interface in the consumer application.

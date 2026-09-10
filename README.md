@@ -24,7 +24,7 @@ ReleaseKit pairs a deterministic CLI with portable agent skills. Your agent writ
 
 | Dark | Light |
 | :---: | :---: |
-| ![A blue queue action revealed behind a list row on a charcoal canvas](examples/queue-action/dark.png) | ![The same queue action and list geometry on a light canvas](examples/queue-action/light.png) |
+| ![A blue queue action revealed behind a list row on a charcoal canvas](examples/queue-action/dark.png) | ![The same queue action and list geometry on a light canvas](examples/queue-action/light-soft.png) |
 
 *One scene brief, two theme variants. Fictional feature illustrations. [Browse the composition gallery →](examples/README.md#composition-gallery)*
 
@@ -322,7 +322,7 @@ Translations track source fingerprints, and finalized releases record content fi
 
 Visual guidance uses independent, brand-neutral descriptions. Each illustration should communicate the actual feature through its own scene. Worked examples demonstrate the process; standalone notes get their own composition, while minor groups reuse their common scene.
 
-The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat neutral monochrome glyphs. Emphasis starts with composition and value contrast; the project accent is optional and reserved for a specific state, action, or information distinction that needs color. Entirely neutral images are complete outputs. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
+The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat neutral monochrome glyphs. Emphasis starts with composition and value contrast; the project accent is optional and reserved for a specific state, action, or information distinction that needs color. Entirely neutral images are complete outputs. The default light palette uses medium-gray glyphs and lighter supporting details, with [fixed neutral role assignments](kit/references/visual-language.md#assign-neutral-colors-by-role) across notes. Existing project palettes and release snapshots remain authoritative. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
 
 ## Development
 

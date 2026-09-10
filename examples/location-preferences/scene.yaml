@@ -6,7 +6,8 @@ composition: Two equal optical-weight symbols centered as a group on one
   horizontal axis. A three-slider adjustment glyph on the left and a simple
   location pin on the right, each about 13 percent of canvas width, separated by
   a short thin neutral vertical divider. Both complete glyphs use the same
-  uniform neutral gray. No accent is used because the scene shows an association,
+  uniform primary-role gray; the background uses canvas and the thin separator
+  uses divider. No accent is used because the scene shows an association,
   without a selected item, enabled control, or live location state. Broad empty
   space and crisp flat filled shapes; no shading or material depth.
 context: Original fictional example. The written scene is the complete product

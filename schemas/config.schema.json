@@ -157,27 +157,33 @@
           "properties": {
             "canvas": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Uniform illustration background."
             },
             "surface": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Base interface panels and resting rows."
             },
             "raised": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Quiet icon tiles, inset areas, and abstract thumbnail fills."
             },
             "primary": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Main neutral glyphs and feature-defining marks; mid-gray in the default light theme."
             },
             "secondary": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Incidental label bars and supporting schematic details."
             },
             "divider": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Thin separators and necessary surface boundaries."
             }
           },
           "required": [
@@ -195,27 +201,33 @@
           "properties": {
             "canvas": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Uniform illustration background."
             },
             "surface": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Base interface panels and resting rows."
             },
             "raised": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Quiet icon tiles, inset areas, and abstract thumbnail fills."
             },
             "primary": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Main neutral glyphs and feature-defining marks; mid-gray in the default light theme."
             },
             "secondary": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Incidental label bars and supporting schematic details."
             },
             "divider": {
               "type": "string",
-              "pattern": "^#[a-fA-F0-9]{6}$"
+              "pattern": "^#[a-fA-F0-9]{6}$",
+              "description": "Thin separators and necessary surface boundaries."
             }
           },
           "required": [
