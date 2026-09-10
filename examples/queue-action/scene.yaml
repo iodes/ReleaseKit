@@ -5,7 +5,7 @@ focus: The single action revealed behind the middle row
 composition: >-
   A landscape 8:5 canvas with a straight-on crop of three broad horizontal list rows.
   Define a fixed list left boundary L at 17 percent of canvas width. The first and third
-  resting row backgrounds start at L. The neutral action backplate behind the middle row
+  resting row backgrounds start at L. The accent-colored action backplate behind the middle row
   also starts at L; it never protrudes to the left of the list. Its exposed width D is
   about 13 percent of canvas width. Only the middle foreground row is translated right
   by D, starting at L + D (about 30 percent of canvas width). Its thumbnail and both
@@ -14,30 +14,31 @@ composition: >-
   and matching rounded corners. The row tops sit at about 14, 38, and 62 percent of canvas
   height. Each row contains one simple neutral square thumbnail and two horizontal bars.
   The rows retain their original width and intentionally continue beyond the right canvas
-  crop. Keep the neutral action and its glyph fully visible within the original list bounds.
+  crop. Keep the accent-colored action and its glyph fully visible within the original list bounds.
   Use canvas for the background and raised for the foreground rows. Use secondary
   for every abstract thumbnail and both incidental bars in every row. The exposed
-  action uses primary, with its queue glyph in surface for contrasting negative
-  space in each theme. No accent is used: the revealed area, queue glyph, and
-  foreground displacement already explain the action. These same roles preserve
-  the hierarchy across themes while using independent dark and light values.
+  action uses the project accent to help readers locate the available queue
+  operation. Its queue glyph is white (#FFFFFF) in both themes for on-accent
+  contrast. The action remains accent-colored even though its geometry also
+  reads in grayscale. Leave all other elements neutral. Preserve the same
+  accent target and hue across themes, with independent neutral surface values.
   Keep each assigned fill uniform and flat. No shadows, phone, or outer frame.
 context: >-
   A fictional productivity interface used to demonstrate the illustration recipe.
   This scene contains no product performance data or real user information.
 elements:
   - Three matching horizontal list rows
-  - One exposed neutral action tile with a simple queue glyph
+  - One exposed accent-colored action tile with a simple queue glyph
   - One neutral square thumbnail and two label bars in each row
 preserve:
   - Exact row count, positions, dimensions, spacing, and crop
-  - Shared left boundary of the two resting rows and the neutral action backplate
+  - Shared left boundary of the two resting rows and the accent-colored action backplate
   - Middle foreground row displaced right by exactly the exposed action width
   - Thumbnail and label bars translated with their foreground row, without changing padding
   - Thumbnail positions and neutral label-bar lengths
-  - Straight-on camera and neutral action hierarchy in both themes
+  - Straight-on camera, the same accent-colored action, and white queue glyph in both themes
 avoid:
-  - Decorative accent color, bright incidental bars, gradients, or material shading
+  - Accent spreading to supporting rows or thumbnails, bright incidental bars, gradients, or material shading
   - Photographic thumbnails or imagery inside the list rows
   - Hands, arrows, or gesture trails
   - Device frame, app header, or release-note viewer

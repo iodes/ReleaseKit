@@ -24,7 +24,7 @@ ReleaseKit pairs a deterministic CLI with portable agent skills. Your agent writ
 
 | Dark | Light |
 | :---: | :---: |
-| ![A blue queue action revealed behind a list row on a charcoal canvas](examples/queue-action/dark-refined.png) | ![The same queue action and list geometry on a light canvas](examples/queue-action/light-refined.png) |
+| ![A blue queue action revealed behind a list row on a charcoal canvas](examples/queue-action/dark-accent.png) | ![The same queue action and list geometry on a light canvas](examples/queue-action/light-accent.png) |
 
 *One scene brief, two theme variants. Fictional feature illustrations. [Browse the composition gallery →](examples/README.md#composition-gallery)*
 
@@ -322,7 +322,7 @@ Translations track source fingerprints, and finalized releases record content fi
 
 Visual guidance uses independent, brand-neutral descriptions. Each illustration should communicate the actual feature through its own scene. Worked examples demonstrate the process; standalone notes get their own composition, while minor groups reuse their common scene.
 
-The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons are compact flat neutral monochrome glyphs. Emphasis starts with composition and value contrast; the project accent is optional and reserved for a specific state, action, or information distinction that needs color. Entirely neutral images are complete outputs. The themes use [independent neutral hierarchies](kit/references/visual-language.md#assign-neutral-colors-by-role): compact mid-light glyphs and distinct charcoal layers for dark, medium-gray glyphs and softer supporting values for light. Assign roles by visual hierarchy and compare each theme at equal display widths. A light-only palette correction preserves accepted dark images; shared geometry corrections apply to both affected variants. Existing project palettes and release snapshots remain authoritative. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
+The built-in guidance covers source selection, a scene contract, semantic palette roles, theme-pair invariants, text rules, cost-aware reuse, and visual acceptance checks. Generated icons use compact flat filled glyphs. Neutral supporting elements keep the hierarchy quiet; use the project accent for a primary action, selected/enabled state, active path, or focal information when it guides attention. Color need not be indispensable in grayscale. Generic information icons can remain neutral; review both decorative overuse and suppressed functional accents. The themes use [independent neutral hierarchies](kit/references/visual-language.md#assign-neutral-colors-by-role): compact mid-light neutral glyphs and distinct charcoal layers for dark, medium-gray neutral glyphs and softer supporting values for light. Assign roles by visual hierarchy and compare each theme at equal display widths. A light-only palette correction preserves accepted dark images; shared geometry corrections apply to both affected variants. Existing project palettes and release snapshots remain authoritative. Physical details and content previews use supplied images rather than invented 3D objects or decorative scenes.
 
 ## Development
 
