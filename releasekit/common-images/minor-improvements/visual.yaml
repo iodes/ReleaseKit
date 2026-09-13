@@ -1,0 +1,39 @@
+schemaVersion: 1
+scene:
+  archetype: icon-tile
+  source: generated
+  subject: General minor improvements
+  message: General minor improvements
+  focus: General minor improvements
+  composition: One centered flat rounded square tile, 22% of canvas width, using
+    surface in dark and raised in light. One compact filled wrench glyph
+    centered inside, 52% of tile width, primary neutral. Broad margins, no
+    accent. Uniform canvas role background. Flat fills, no lighting, shadows,
+    gradients, texture or 3D.
+  context: Reusable generic maintenance symbol, independent of versions, bullet
+    counts, languages, and individual changes.
+  elements:
+    - General minor improvements
+  preserve:
+    - Exact object count, anchors, scale, spacing, and connections across themes
+    - Preserve the specified accent assignment or its absence
+    - Use captured palette roles without extra shades
+  avoid:
+    - Product screenshots or invented product UI
+    - Logos, readable text, numbers, extra badges, decorative objects
+    - Changing the scene topology between themes
+  text: []
+  references: []
+variants:
+  dark:
+    file: dark.ac1deca17f37.png
+    sha256: ac1deca17f377f2c202a0acdcc2b2d6dd94764522d0faa83abc488ce1ad7b19d
+    sceneHash: cfd9acc5284fac14dcda912e4a2453145d01d64cc171026ef822bffc1fc46428
+    width: 1586
+    height: 992
+  light:
+    file: light.540acacb7976.png
+    sha256: 540acacb7976f83228ca76d810ad12db751ba2d91e98083f2b4843395dbc374a
+    sceneHash: 4ab8e91ff812c2a9b8aae2b9fd2214d483e1cce78c20468e88d3551c73b51171
+    width: 1586
+    height: 992

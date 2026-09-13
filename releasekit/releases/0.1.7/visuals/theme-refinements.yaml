@@ -1,0 +1,42 @@
+schemaVersion: 1
+scene:
+  archetype: icon-tile
+  source: generated
+  subject: Theme panel refined with a magic wand
+  message: More consistent theme illustrations
+  focus: Small wand and sparkle beside the existing list-panel symbol
+  composition: "One centered flat rounded tile about 25% canvas width. Reuse the former three-row
+    list-panel motif: three compact neutral square bullets and horizontal bars in the left two
+    thirds of the tile. A small neutral diagonal magic wand sits on the right, angled upward toward
+    one small four-point blue sparkle above its tip. Tile surface in dark and raised in light; first
+    row primary, subordinate rows secondary, wand primary, sparkle accent #4678ED. Broad margins.
+    All glyphs compact, flat and fully inside the tile. No glow, shadows, texture or 3D."
+  context: User-requested visual metaphor for refining themes, not an AI feature or actual magic-wand
+    control.
+  elements:
+    - One flat rounded tile
+    - Three-row list glyph based on previous illustration
+    - One small diagonal wand
+    - One small four-point sparkle
+  preserve:
+    - Identical geometry and spacing across themes
+    - Only the small sparkle uses blue; panel and wand neutral
+  avoid:
+    - Half-tone circle from rejected candidate
+    - Extra stars, readable text, logos, AI badges
+    - Shadows, gradients, glow, texture and 3D
+  text: []
+  references: []
+variants:
+  dark:
+    file: assets/theme-refinements.dark.fc03ad0ba0f8.png
+    sha256: fc03ad0ba0f8af8651e42fa2e19eca628bb8bdfece0fbf9c77dd8d091b89f55f
+    sceneHash: 728e8a2af244563ef8ddf68e6480ad721580199e491c6c2991a44be59874aa41
+    width: 1586
+    height: 992
+  light:
+    file: assets/theme-refinements.light.1c4c48cec2a7.png
+    sha256: 1c4c48cec2a7ceecf580354022ebefae2b46f8dc4b43b1b838056f91092e71fa
+    sceneHash: 4505c9e02b0097741dac13fc93ca693e60760deae4e15519532d8d3b93ca3b86
+    width: 1586
+    height: 992

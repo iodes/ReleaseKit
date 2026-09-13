@@ -135,7 +135,7 @@ releasekit update                      # Refresh installed skills; preserve user
 
 `list` shows release identities, saved draft/ready state, note counts, and dates. `status` checks content with the same validation used by `validate`, displays errors and warnings, and suggests the next step. A ready label alone does not guarantee that files still pass validation. Status is read-only and exits successfully even when drafts have pending work; use `validate` for a failing exit code when content is invalid. Before initialization, `status` points to `init`.
 
-Running `releasekit update` refreshes skills for all supported tools (Codex, Claude Code, and Cursor), regardless of the saved init selection. It installs missing skills, preserves current project configuration and locally modified files, and never prompts for tool selection. For older configurations containing `history.limit`, update first saves the original to `releasekit/config.yaml.before-update`, removes only that obsolete setting, and then refreshes skills. Other settings, comments on retained entries, and line endings are preserved. The result reports the migration and backup path. Use `export --limit` for an explicit export limit; omitting it exports all releases. Unrelated invalid settings still need correction and are never silently discarded. The result shows the project, supported tools, updated files, already-current files, and preserved edits, followed by invocation hints and the next command. Conflicts produce exit code 1. `--json` returns only the structured result, including `written`, `unchanged`, and `conflicts` arrays. This command refreshes bundled project skills; it does not upgrade the CLI package itself.
+Running `releasekit update` refreshes skills for all supported tools (Codex, Claude Code, and Cursor), regardless of the saved init selection. It installs missing skills, preserves current project configuration and locally modified files, and never prompts for tool selection. Update reads only the product label from configuration; it does not migrate settings, rewrite `config.yaml`, or create configuration backups. Older or invalid release settings do not block skill refreshes, but content commands still validate them. Remove obsolete `history.limit` settings when using content commands; use `export --limit` for an explicit export limit, or omit it to export all releases. The result shows the project, supported tools, updated files, already-current files, and preserved edits, followed by invocation hints and the next command. Conflicts produce exit code 1. `--json` returns only the structured result, including `written`, `unchanged`, and `conflicts` arrays. This command refreshes bundled project skills; it does not upgrade the CLI package itself.
 
 Setup, update, prepare, list, status, and validate print readable summaries. `--json` preserves structured output for automation; command and option errors are JSON objects on stderr with a nonzero exit code. Help and version output remain plain text. Other content operations retain their detailed JSON results. Run `releasekit <command> --help` for options and `releasekit --help` for the workflow overview.
 
@@ -178,7 +178,7 @@ Git range → Draft source + translations → Images → Finalize → Optional e
 
 All three skills use the agent's native question picker when clarification is needed and the tool is available, with free-text input for another answer; otherwise they ask in chat. This covers language choices, image references, translation scope or terminology, and unresolved finalization/export choices. Existing decisions are reused, and routine technical parameters are resolved through repository inspection. Required CLI flags do not become a questionnaire. Once a question is asked, dependent work waits for your submitted answer; a default selection, elapsed time, or a closed picker does not count as a choice. Only one question request may remain unanswered in the conversation: newly discovered questions and next-step choices wait in a queue, even across skills or releases. A partial answer keeps the remaining questions pending. The agent keeps an asynchronous picker open while waiting, or asks in chat if the environment cannot support that wait. Image uploads are requested through the conversation's attachment flow.
 
-After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation. After drafting is complete, **Finish drafting** saves the draft for you to read and request changes from the agent. The handoff includes links and examples of revision requests; the agent edits the same draft and refreshes affected translations when you ask. At other stages, you can stop for now. If you already requested the remaining work, the agent continues without asking again. When source and translations are complete, the next step is images; when required images are complete, it is finalization. Text-only releases go directly to finalization. Completed steps are skipped, and missing images or translations stay visible until resolved.
+After each stage, the agent reports what is complete and recommends the next useful task based on the release's current state. Choose a suggested action or describe another direction to continue in the same conversation. After drafting is complete, **Finish drafting** saves the draft for you to read and request changes from the agent. The agent shows the saved draft titles and full bodies directly in the conversation, using an available complete translation in your language or falling back to the release's source language. The preview does not change saved language settings. The handoff also includes links and examples of revision requests; the agent edits the same draft and refreshes affected translations when you ask. At other stages, you can stop for now. If you already requested the remaining work, the agent continues without asking again. When source and translations are complete, the next step is images; when required images are complete, it is finalization. Text-only releases go directly to finalization. Completed steps are skipped, and missing images or translations stay visible until resolved.
 
 The agent handles editorial work, media selection, and image generation where appropriate. The CLI handles files, evidence, validation, and export. Finalization includes review and marks local content ready with a content fingerprint. Export is optional; committing, publishing, and displaying it remain separate steps.
 
@@ -245,34 +245,36 @@ Codex and Cursor share `.agents/skills` to avoid duplicate discovery. Claude Cod
 
 Channel use is a first-draft choice, alongside unresolved language choices. The draft skill saves `channels: false` for a single history, or a user-selected channel map before preparing content. Initialization leaves the choice unset. Existing projects with releases and no channel setting continue their single history.
 
+The skill asks whether to keep one history or organize releases by audience or purpose. Examples include stable/preview releases, public/internal audiences, or deployment environments when relevant. Names and which releases each view displays are user choices; there is no fixed channel preset.
+
+For example, if you choose stable and preview channels and want preview to display both:
+
 ```yaml
 channels:
-  prod:
-    include: [prod]
-  dev:
-    include: [dev, prod]
-  stage:
-    include: [prod]
+  stable:
+    include: [stable]
+  preview:
+    include: [preview, stable]
 ```
 
-For later new drafts, an explicit request such as “Draft 2.1 for dev” selects that channel. With several configured channels and no clear target, the skill asks which channel to write for. It reuses an existing draft's channel and never guesses from the previous release or branch name. A project with one configured channel needs no target question. The CLI itself does not prompt.
+For later new drafts, an explicit request such as “Draft 2.1 for preview” selects that channel. With several configured channels and no clear target, the skill asks which channel to write for. It reuses an existing draft's channel and never guesses from the previous release or branch name. A project with one configured channel needs no target question. The CLI itself does not prompt.
 
 Channel releases live in `releasekit/releases/<channel>/<version>/`. The same version can exist in several channels. All channel releases share one newest-to-oldest `previous` chain using `{ channel, version }` references; an export follows that chain and skips drafts and excluded channels without sorting dates. Channel-free releases keep their separate existing history.
 
 ```sh
-releasekit prepare 2.1 --channel dev --from <git-ref> --to <git-ref>
-releasekit finalize 2.1 --channel dev
-releasekit export --channel dev --out ./output/dev
-releasekit export --channel prod --limit 3 --out ./output/prod
+releasekit prepare 2.1 --channel preview --from <git-ref> --to <git-ref>
+releasekit finalize 2.1 --channel preview
+releasekit export --channel preview --out ./output/preview
+releasekit export --channel stable --limit 3 --out ./output/stable
 ```
 
-There is no default export count limit. `--limit N` caps the combined, filtered result at N releases. With the configuration above, dev sees dev and prod; stage sees prod only. The exported entries identify their channels, and the exported `previous` links connect only entries included in that output. Git analysis boundaries remain independent of display links.
+There is no default export count limit. `--limit N` caps the combined, filtered result at N releases. With the configuration above, preview shows preview and stable releases; stable shows only stable releases. For independent views, set preview to `include: [preview]`. Includes name channels directly and do not grant or restrict access. The exported entries identify their channels, and the exported `previous` links connect only entries included in that output. Git analysis boundaries remain independent of display links.
 
-Ask the draft skill to move one or several whole releases, for example “Move dev 2.0 and 2.1 to prod.” It previews and runs the deterministic move command, preserving ready status, content, images, Git boundaries, and release timestamps. Channel-to-channel moves retain their global position; moves to or from a channel-free history splice the selected releases between histories. Conflicts stop the whole move.
+Ask the draft skill to move one or several whole releases, for example “Move preview 2.0 and 2.1 to stable.” It previews and runs the deterministic move command, preserving ready status, content, images, Git boundaries, and release timestamps. Channel-to-channel moves retain their global position; moves to or from a channel-free history splice the selected releases between histories. Conflicts stop the whole move.
 
 ```sh
-releasekit release move 2.0 2.1 --from-channel dev --to-channel prod --dry-run
-releasekit release move 2.0 2.1 --from-channel dev --to-channel prod
+releasekit release move 2.0 2.1 --from-channel preview --to-channel stable --dry-run
+releasekit release move 2.0 2.1 --from-channel preview --to-channel stable
 ```
 
 `releasedAt` accepts a date or a timestamp with `Z` or an explicit UTC offset. New drafts default to the current UTC timestamp, including milliseconds. Use `--date 2026-09-14T18:30:00+09:00` to supply one; existing date-only strings are preserved. Neither finalization nor channel moves replace the saved time.

@@ -1,0 +1,43 @@
+schemaVersion: 1
+scene:
+  archetype: symbol-pair
+  source: generated
+  subject: Git logomark connected to release-note cards
+  message: Git history connected to release notes
+  focus: Monochrome Git logomark matched to the theme
+  composition: "Keep the current Git diamond logomark, connector and overlapping note-card geometry
+    exactly. Replace orange in the Git logo with captured primary neutral: #B9BBBE in dark and
+    #999999 in light. Its branch cutouts reveal the canvas. Preserve the authentic logo silhouette
+    and branch topology. Cards use raised, incidental bars secondary, connector divider, background
+    canvas. No orange, blue or other chromatic accent. Flat fills and broad margins."
+  context: The coding agent writes notes from pinned Git evidence; this is an abstract relationship,
+    not an automatic publishing flow.
+  elements:
+    - Monochrome Git logomark
+    - Short neutral connector
+    - Two overlapping release-note cards
+  preserve:
+    - Exact Git logo silhouette and branch topology
+    - Exact object positions, scale, card geometry and connector across themes
+    - Logo uses primary neutral and branch cutouts show canvas
+  avoid:
+    - Orange or blue accent
+    - Other logos, readable text, numbers, badges
+    - Invented branches or distorted logo
+    - Shadows, texture, gradients or 3D
+  text: []
+  references:
+    - releasekit/references/git/Git-Icon-1788C.png
+variants:
+  dark:
+    file: assets/git-based-notes.dark.0ba08df62e97.png
+    sha256: 0ba08df62e9795e9aeeca0a15cafd203938fe333880c7b2c8805b25c4b9f3179
+    sceneHash: 26bdfc34fadb604c876b055f5c6d774a96f939ab8a287878e01e6c84a245f3d0
+    width: 1586
+    height: 992
+  light:
+    file: assets/git-based-notes.light.e58b7aaaa9cd.png
+    sha256: e58b7aaaa9cd5cedea0393cbaa6930a44f6970ea05401ce2f2b95d0474f4a698
+    sceneHash: 8b3908705115df97180a95a69905bfc300ea5372dee241a3040f5560d02f64c8
+    width: 1586
+    height: 992

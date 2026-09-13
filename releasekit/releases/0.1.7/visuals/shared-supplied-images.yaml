@@ -1,0 +1,40 @@
+schemaVersion: 1
+scene:
+  archetype: symbol-pair
+  source: generated
+  subject: One source image used in two theme slots
+  message: One source image used in two theme slots
+  focus: One source image used in two theme slots
+  composition: Centered sparse diagram occupying middle 48% width. One small neutral image-file glyph
+    on the left, a short branching divider connector, and two vertically stacked small rounded
+    display-slot outlines on the right. Each slot contains the identical simple neutral image glyph.
+    Keep image glyphs identical in shape and color within the image; distinguish slot frames by
+    surface and raised values. Main source glyph uses primary and frames use divider. No accent.
+    Uniform canvas role background. Flat fills, no lighting, shadows, gradients, texture or 3D.
+  context: This is an abstract file-sharing relationship, not real content artwork or a screenshot. No
+    invented photographic subject.
+  elements:
+    - One source image used in two theme slots
+  preserve:
+    - Exact object count, anchors, scale, spacing, and connections across themes
+    - Preserve the specified accent assignment or its absence
+    - Use captured palette roles without extra shades
+  avoid:
+    - Product screenshots or invented product UI
+    - Logos, readable text, numbers, extra badges, decorative objects
+    - Changing the scene topology between themes
+  text: []
+  references: []
+variants:
+  dark:
+    file: assets/shared-supplied-images.dark.4455f68c7015.png
+    sha256: 4455f68c70154aabdf3d9d847aa0b73f540723f3e83b8277a14fd6850cfa5c64
+    sceneHash: 0d1f3b4b38ef8b8844d2355d35e54823151384c5f0805d0dda1a39dcaad14f6a
+    width: 1586
+    height: 992
+  light:
+    file: assets/shared-supplied-images.light.c778454a094c.png
+    sha256: c778454a094cc982d43a2463baa1dbc410dddcc7265432397434f17aac623649
+    sceneHash: 7adf290c806e21baf662294193ad51e7adc8c1fb4f17a339400d88f61638161a
+    width: 1586
+    height: 992

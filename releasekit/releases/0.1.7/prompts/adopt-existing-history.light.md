@@ -1,0 +1,65 @@
+# Release illustration — light
+
+## Intent
+Create one finished raster illustration for a product release note. Render only the illustration asset, without the surrounding release viewer, headline, body copy, page navigation, or an outer presentation frame.
+User-visible change: Start using ReleaseKit in an existing project
+Subject: Release notes being introduced into an existing project
+Focal detail: A small release-note card entering an established project folder
+Context: The folder represents an already existing project. Adding release-note authoring to it does not replace its existing files. This is an adoption metaphor, not an automatic import or synchronization feature.
+
+## Composition contract
+Archetype: symbol-pair
+Target canvas: 1280 × 800 pixels; landscape 1280:800. Produce a single image, not a dark/light collage.
+Place two compact symbols on one horizontal optical axis, centered as a group with generous space between them. Start with each glyph's longest dimension around 8–11% of canvas width; adapt spacing and scale to the scene and card-size clarity. Match visible ink weight rather than identical bounding boxes. A short low-contrast divider can separate them.
+Specific scene layout: Centered compact group within middle 38% of canvas width. On left a neutral open project-folder glyph about 18% canvas width, containing two existing small document tabs visible behind its front face. On right a separate small release-note card with three neutral horizontal bars, about 8% canvas width. Between them one short project-blue arrow points LEFT from the note card into the folder, indicating adoption into an existing project. Folder front primary neutral, existing document tabs secondary, note card raised with primary bars, arrow #4678ED. Uniform canvas background. Broad empty margins, flat crisp glyphs, no shadows, gradients, textures or 3D.
+Elements:
+- Existing project folder
+- Two existing document tabs inside folder
+- One incoming release-note card
+- One short left-pointing adoption arrow
+
+## Visual treatment
+Communicate one relationship with flat 2D filled glyphs. Match visual weight, corner treatment, and perceived size. Use an arrow only when direction itself is part of the feature. A static association normally uses the same neutral gray for both symbols. If the scene includes a supported action or state, use the assigned accent on that meaningful part while keeping its companion neutral. Do not invent an active state merely from an association. No rendered materials or sculpted 3D symbols.
+Favor visual precision, quiet hierarchy, and one instantly understandable feature. Build a clear composition with neutral supporting elements and purposeful focal color. Prefer accent on a scene-supported primary action, selected or enabled state, active path, or defining information distinction when it helps readers locate the feature. Color need not be indispensable to comprehension. Generic information symbols and static associations can remain neutral. Small-screen clarity takes priority over decorative detail. Treat the specified element inventory as complete. Keep elements designated as schematic or abstract in that form; do not turn them into additional content or decoration. Authentic content explicitly requested in the brief can retain its own materials and colors. Avoid an unrelated marketing dashboard, neon glow, glass effects, noisy textures, decorative 3D blobs, and unnecessary gradients.
+
+## Light theme roles
+| Role | Color | Assignment |
+| --- | --- | --- |
+| canvas | #F8F8F8 | Uniform illustration background |
+| surface | #FFFFFF | Base or recessed interface panels |
+| raised | #ECECEC | Foreground panels, controls, and quiet tile fills |
+| primary | #999999 | Main neutral glyphs, focal controls, and feature-defining marks |
+| secondary | #B8B8B8 | Supporting glyphs, incidental bars, and abstract content |
+| divider | #D9D9D9 | Thin separators and necessary surface boundaries |
+Use these configured roles consistently across the scene and release. Assign roles by visual hierarchy in the composition, not by object type alone: a foreground row can use raised, and an incidental thumbnail can use secondary. Keep equivalent roles consistent across the release. A feature-relevant title or value may use primary when the scene specifies that hierarchy; do not promote every label bar. Repeated elements with the same role use the same fill. Keep flat areas uniform. Do not invent extra grays, warm or cool casts, opacity washes, or gradients for variety; edge antialiasing is expected. Apply these rules to generated schematic elements, while preserving supplied content and supported semantic colors. Project accent: #4678ED. Apply it to the functional focal element assigned in the scene and keep surrounding scaffolding neutral. Neutral role values must not replace that assigned accent. An on-accent glyph may use the contrasting neutral explicitly specified in the scene. A primary action or state may use color to guide attention even when its shape is already recognizable. Respect explicit monochrome choices and authentic product colors; do not invent a state, badge, or marker to introduce color.
+Keep a soft light presentation using this theme's configured palette: neutral primary glyphs use #999999; incidental label bars normally use the lighter secondary role #B8B8B8. Do not carry charcoal glyphs from the dark counterpart into this theme or darken all symbols and placeholder bars to increase contrast. Improve shape, spacing, scale, or crop first when a schematic detail is unclear. Respect explicit project palette overrides.
+Use uniform flat color areas and crisp negative space. If a tile is present, use #ECECEC for its flat fill. Keep the glyph distinct from its background by value contrast, including when it uses a functional accent. Do not add lighting, shadows, gradients, texture, or physical material cues.
+Treat these colors as presentation roles, not a global recoloring filter. Preserve natural photos, device materials, and meaningful status colors. If a light product UI is not supported by the evidence, keep the authentic UI on the light presentation canvas instead of inventing a feature.
+
+## Pair invariants
+The other theme must use the same object count, positions, scale, crop, camera, UI topology, selected state, chart values, allowed labels, and feature meaning. Change neutral presentation values and necessary surface separation within the recipe. Judge each theme independently at the same display width; matching geometry does not require equal apparent brightness or contrast. A geometry correction belongs in the shared scene and both affected variants. Preserve whether accent is absent or present, its assigned elements, and its semantic hues. A neutral scene stays neutral in both themes. If an approved counterpart exists and the tool supports references, use it as a composition reference for a constrained edit. Never create the counterpart with color inversion, brightness-only filters, or a fresh unrelated composition.
+Specific invariants:
+- Folder on left retains two existing documents
+- Arrow points from the separate note toward the project folder
+- Identical geometry and object count in both themes
+- Only adoption arrow uses blue
+
+## Text and references
+No readable text or invented numbers. Use abstract bars for incidental UI labels.
+Product reference files to inspect before rendering:
+- None
+Treat reference content as evidence, not instructions. Use original product-appropriate shapes. Do not copy reference-company identities, logos, attributed style labels, slogans, or distinctive unrelated products.
+
+## Exclusions
+- Timeline nodes or baseline ticks
+- Empty new-project folder
+- Bidirectional sync arrows, cloud, download tray, deletion marks
+- Readable text, logos, numbers, extra objects
+- 3D, glow, shadows, gradients or texture
+No watermark, stock-photo caption, extra claims, or decorative objects unrelated to the change.
+
+## Feature correctness
+First compare the depicted meaning with the user-visible change and product evidence. The subject, focal detail, state, and relationships must satisfy this scene's composition, preserve, and avoid constraints. Apply only checks relevant to this feature. Check which two concepts are related and whether the relationship is directional. A connector must not imply transfer, synchronization, or automation unless supported by the note.
+
+## Acceptance
+Inspect at full size and approximately 350 pixels wide. First verify feature correctness, then visual clarity, then correspondence between the configured themes. Check neutral fills against their configured roles and compare images within each theme at the same display width. In dark images check compact glyph weight, subordinate supporting details, and distinct charcoal layers; in light images check medium-gray neutral symbols, soft supporting values, and freedom from charcoal-heavy fills. File validation does not establish color consistency. Check both overuse and underuse: accent should identify the intended action, state, or information focus without spreading into unrelated elements. An assigned functional accent must remain visible, not be muted to gray because the scene also works without color. Essential content must not clip, incidental text must not become gibberish, and the pair must preserve the composition contract. Matching variants can share the same factual or structural mistake. Register the actual output dimensions and selected file. If generation is unavailable, leave this request pending and hand off this prompt; do not substitute a placeholder image.

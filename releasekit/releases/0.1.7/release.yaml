@@ -1,0 +1,88 @@
+schemaVersion: 1
+version: 0.1.7
+releasedAt: 2026-09-13T18:17:50.151Z
+previous: null
+status: ready
+source:
+  fromRef: null
+  fromSha: null
+  toRef: v0.1.7
+  toSha: b0639e8bbb662f795daa419db3984606d7a99745
+initialContent: history
+sourceLocale: en-US
+locales:
+  - en-US
+  - ko-KR
+  - ja-JP
+  - zh-CN
+visuals:
+  themes: both
+  preset: quiet-product
+  width: 1280
+  height: 800
+  accent: "#4678ED"
+  dark:
+    canvas: "#242527"
+    surface: "#18191B"
+    raised: "#343638"
+    primary: "#B9BBBE"
+    secondary: "#777B80"
+    divider: "#46494D"
+  light:
+    canvas: "#F8F8F8"
+    surface: "#FFFFFF"
+    raised: "#ECECEC"
+    primary: "#999999"
+    secondary: "#B8B8B8"
+    divider: "#D9D9D9"
+notes:
+  - id: git-based-notes
+    category: feature
+    commits:
+      - b923294024c1d35ac5fda6058911faaad994c043
+    paths:
+      - src/project.ts
+      - src/validate.ts
+      - kit/skills/releasekit-draft/SKILL.md
+    image: true
+  - id: adopt-existing-history
+    category: feature
+    commits:
+      - 885a49c453db4846e2aca7185368fb129225edb8
+    paths:
+      - src/project.ts
+      - kit/references/adoption.md
+    image: true
+  - id: shared-supplied-images
+    category: feature
+    commits:
+      - e0010002e562de98b240a99d39c27dd8fafb5fb9
+    paths:
+      - src/images.ts
+      - src/export.ts
+    image: true
+  - id: theme-refinements
+    category: improvement
+    commits:
+      - 93853f9f1d1db4293963e6e3f85f1448f6597331
+      - ccf1906a5884d83fc5e7345de32d2a32db70b0cf
+      - b0639e8bbb662f795daa419db3984606d7a99745
+    paths:
+      - src/prompts.ts
+      - src/model.ts
+    image: true
+  - id: minor-improvements
+    category: improvement
+    commits:
+      - cdc6f66aaef68d8028798e05c98457342a0579d9
+      - c50f5946a0079cf94924ee8d069034e8e950db6f
+      - 81059ffbf1c021eb1408da7fdf44bab3fc6e4bba
+      - f36a859e4b942adee1d1b498ddfd6f6418915688
+    paths:
+      - src/content.ts
+      - src/project.ts
+      - kit/references/writing.md
+      - kit/references/common-images.md
+    image: true
+emptyReason: null
+contentHash: 9c95bc5893cdad24f17d1bb261d9402e2ca2e67cc38a13d213473960585e831d

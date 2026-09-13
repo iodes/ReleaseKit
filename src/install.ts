@@ -3,17 +3,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import { Project } from './project.js';
-import { migrateConfig } from './migrate-config.js';
 import { configSchema, defaultConfig, type ProjectConfig } from './model.js';
-import { exists, within, write, writeYaml, digest } from './files.js';
+import { exists, within, write, writeYaml, readYaml, digest } from './files.js';
 
 const resources = fileURLToPath(new URL('../kit/', import.meta.url));
 const names = ['releasekit-draft', 'releasekit-image', 'releasekit-finalize'];
 const managedSchema = z.record(z.string(), z.string().regex(/^[a-f0-9]{64}$/));
 
 export async function installSkills(project: Project, tools?: ProjectConfig['tools']) {
-  const config = await project.config();
-  const selected = tools ?? config.tools;
+  const selected = tools ?? (await project.config()).tools;
   const marker = await project.content('managed-skills.json');
   const managed = await exists(marker) ? managedSchema.parse(JSON.parse(await fs.readFile(marker, 'utf8'))) : {};
   const roots = new Set(selected.map(tool => tool === 'claude' ? '.claude/skills' : '.agents/skills'));
@@ -49,16 +47,16 @@ export async function installSkills(project: Project, tools?: ProjectConfig['too
 }
 
 export async function updateProject(project: Project) {
-  const migration = await migrateConfig(project);
-  return { ...await installSkills(project, ['codex', 'claude', 'cursor']), ...migration };
+  const file = await project.content('config.yaml');
+  if (!(await exists(file))) throw new Error('ReleaseKit is not initialized. Run releasekit init first.');
+  // Skill updates only need the product label, not release or export settings.
+  const { product } = await readYaml(file, z.object({ product: configSchema.shape.product }));
+  return { ...await installSkills(project, ['codex', 'claude', 'cursor']), product };
 }
 
 export function formatUpdate(result: Awaited<ReturnType<typeof updateProject>>): string {
   const lines = [result.conflicts.length ? 'Update needs attention.' : result.tools.length ? 'Skills are up to date.' : 'No agent tools selected.',
     `  Updated: ${result.written.length} files`, `  Already current: ${result.unchanged.length} files`, `  Modified files preserved: ${result.conflicts.length}`];
-  if (result.migrations.length) {
-    lines.push('', ...result.migrations.map(item => `  Configuration: ${item}`), `  Original configuration: ${result.backup}`);
-  }
   if (result.conflicts.length) {
     lines.push('', ...result.conflicts.map(file => `  ! ${file}`),
       'Compare these files with the installed package templates and merge the changes you want to keep.');

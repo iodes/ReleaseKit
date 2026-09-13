@@ -1,0 +1,49 @@
+schemaVersion: 1
+scene:
+  archetype: symbol-pair
+  source: generated
+  subject: Release notes being introduced into an existing project
+  message: Start using ReleaseKit in an existing project
+  focus: A small release-note card entering an established project folder
+  composition: "Centered compact group within middle 38% of canvas width. On left a neutral open
+    project-folder glyph about 18% canvas width, containing two existing small document tabs visible
+    behind its front face. On right a separate small release-note card with three neutral horizontal
+    bars, about 8% canvas width. Between them one short project-blue arrow points LEFT from the note
+    card into the folder, indicating adoption into an existing project. Folder front primary
+    neutral, existing document tabs secondary, note card raised with primary bars, arrow #4678ED.
+    Uniform canvas background. Broad empty margins, flat crisp glyphs, no shadows, gradients,
+    textures or 3D."
+  context: The folder represents an already existing project. Adding release-note authoring to it does
+    not replace its existing files. This is an adoption metaphor, not an automatic import or
+    synchronization feature.
+  elements:
+    - Existing project folder
+    - Two existing document tabs inside folder
+    - One incoming release-note card
+    - One short left-pointing adoption arrow
+  preserve:
+    - Folder on left retains two existing documents
+    - Arrow points from the separate note toward the project folder
+    - Identical geometry and object count in both themes
+    - Only adoption arrow uses blue
+  avoid:
+    - Timeline nodes or baseline ticks
+    - Empty new-project folder
+    - Bidirectional sync arrows, cloud, download tray, deletion marks
+    - Readable text, logos, numbers, extra objects
+    - 3D, glow, shadows, gradients or texture
+  text: []
+  references: []
+variants:
+  dark:
+    file: assets/adopt-existing-history.dark.18fae9f49f0c.png
+    sha256: 18fae9f49f0c4ca62bf0f8e488061166a224f68d25dbd93df69d055feba64b7e
+    sceneHash: 1776946d5cbd3903c265f80efedfd0f0fd2aede829be7afdaa8a4e9c34588615
+    width: 1586
+    height: 992
+  light:
+    file: assets/adopt-existing-history.light.b6b700ef78e5.png
+    sha256: b6b700ef78e50341a7f62fba0e6ad57940c056e71305a14085ec0f1d8cb8eb5a
+    sceneHash: 9b8f8fb1ab71ddb747fede680e736980b26302ade26afc0c3890bd5687661f1e
+    width: 1586
+    height: 992

@@ -42,7 +42,7 @@ export function linearHistory(releases: Release[]): Release[] {
 
 export function parseProjectConfig(raw: unknown): ProjectConfig {
   if (raw && typeof raw === 'object' && 'history' in raw && raw.history && typeof raw.history === 'object' && 'limit' in raw.history) {
-    throw new Error('Run releasekit update to migrate this configuration automatically. Remove history.limit from config.yaml; use export --limit instead. Omit --limit to export all releases.');
+    throw new Error('Remove history.limit from config.yaml; use export --limit instead. Omit --limit to export all releases.');
   }
   const config = configSchema.parse(raw);
   if (!config.locales.includes(config.sourceLocale) || new Set(config.locales).size !== config.locales.length) {
