@@ -1,22 +1,34 @@
 #!/usr/bin/env node
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
-import { Command, Option } from 'commander';
+import { Command, CommanderError, Option } from 'commander';
 import { Project, prepare, startProject } from './project.js';
-import { initProject, installSkills } from './install.js';
+import { initProject, updateProject, formatUpdate, type InitOptions } from './install.js';
+import { commaList, parseTools, interactiveSetup } from './setup.js';
+import { listReleases, projectStatus, formatStatus } from './status.js';
+import { exists } from './files.js';
+import { refKey } from './refs.js';
 import { addNote, removeNote, markTranslation, syncImagePolicy } from './content.js';
 import { planImages, importImage, type ImportImageOptions } from './images.js';
 import { validate, finalize } from './validate.js';
 import { moveReleases, type MoveOptions } from './move.js';
 import { ref } from './refs.js';
 import { exportBundle } from './export.js';
-import { configSchema, noteMetaSchema, assetVariant, type ProjectConfig } from './model.js';
+import { noteMetaSchema, assetVariant, type ProjectConfig } from './model.js';
 
 const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
 const program = new Command();
 program.name('releasekit').description('Git-based visual release content and agent skills').version(version)
   .option('--cwd <directory>', 'project working directory', process.cwd())
-  .option('--json', 'print machine-readable results');
+  .option('--json', 'print machine-readable results')
+  .option('--no-interactive', 'disable setup prompts (also disabled for JSON and non-TTY input)')
+  .showSuggestionAfterError()
+  .showHelpAfterError('(Run releasekit --help for available commands.)')
+  .exitOverride();
+program.configureOutput({ writeErr: message => {
+  if (!process.argv.includes('--json')) process.stderr.write(message);
+} });
+program.addHelpText('after', '\nGetting started:\n  releasekit init\n  releasekit list\n  releasekit status\n\nUse releasekit-draft with your agent to write a release. Run any command with --help for details.');
 type ChannelOption = { channel?: string };
 const target = (version: string, options: ChannelOption) => ref({ version, channel: options.channel });
 const project = () => Project.find(path.resolve(program.opts<{ cwd: string }>().cwd));
@@ -28,16 +40,47 @@ function emit(value: unknown, summary?: string) {
   console.log(program.opts().json || !summary ? JSON.stringify(value, null, 2) : summary);
 }
 
-program.command('init').description('Initialize content and install project skills')
+program.command('init [directory]').description('Initialize content and install project skills')
   .option('--product <name>', 'product name')
-  .option('--tools <tools>', 'comma-separated codex,claude,cursor')
+  .option('--tools <tools>', 'comma-separated codex,claude,cursor, or none')
   .addOption(new Option('--themes <policy>', 'project image variants').choices(['both', 'dark', 'light']))
-  .action(async (options: { product?: string; tools?: string; themes?: ProjectConfig['visuals']['themes'] }) => {
-    const tools = options.tools === undefined ? undefined : configSchema.shape.tools.parse(options.tools.split(',').map(s => s.trim()).filter(Boolean));
-    emit(await initProject(project(), { ...options, tools }));
+  .option('--source-locale <locale>', 'original language, defaults to en-US')
+  .option('--locales <locales>', 'comma-separated languages including the original')
+  .action(async (directory: string | undefined, options: { product?: string; tools?: string; themes?: ProjectConfig['visuals']['themes']; sourceLocale?: string; locales?: string }) => {
+    const instance = directory === undefined ? project() : Project.find(path.resolve(program.opts<{ cwd: string }>().cwd, directory));
+    if (await exists(await instance.content('config.yaml'))) throw new Error('ReleaseKit is already initialized. Edit releasekit/config.yaml for settings or run releasekit update.');
+    let setup: InitOptions = { ...options, tools: options.tools === undefined ? undefined : parseTools(options.tools),
+      locales: options.locales === undefined ? undefined : commaList(options.locales) };
+    if (program.opts().interactive && !program.opts().json && process.stdin.isTTY && process.stdout.isTTY) setup = await interactiveSetup(instance.root, setup);
+    const result = await initProject(instance, setup);
+    emit(result, [`Initialized ReleaseKit in ${instance.root}`, `Configuration: ${result.config}`,
+      `Installed skills for: ${result.tools.join(', ') || 'none'}`, ...result.tools.map(tool => result.hints[tool]),
+      ...result.conflicts.map(file => `Preserved modified file: ${file}`),
+      'Next: ask your agent to use releasekit-draft with a release version.', 'Check progress: releasekit status'].join('\n'));
+    if (result.conflicts.length) process.exitCode = 1;
   });
-program.command('update').description('Refresh managed skills while preserving user edits')
-  .action(async () => { const result = await installSkills(project()); emit(result); if (result.conflicts.length) process.exitCode = 1; });
+program.command('update').description('Refresh skills for all supported tools while preserving user edits')
+  .action(async () => {
+    const instance = project();
+    const config = await instance.config();
+    if (!program.opts().json) console.log(`ReleaseKit skill update — ${config.product}\nProject: ${instance.root}\nTools: codex, claude, cursor\n`);
+    const result = await updateProject(instance);
+    emit(result, formatUpdate(result));
+    if (result.conflicts.length) process.exitCode = 1;
+  });
+program.command('list').description('List releases across all channels')
+  .option('--channel <name>', 'show only this channel')
+  .action(async (options: ChannelOption) => {
+    const releases = await listReleases(project(), options.channel);
+    emit(releases, releases.length ? ['Release  Status  Notes  Date', ...releases.map(r => `${refKey(r)}  ${r.status}  ${r.notes}  ${r.releasedAt}`),
+      'Next: releasekit status <version> (add --channel for a channel release)'].join('\n') : 'No releases yet. Use releasekit-draft with your agent to create the first draft.');
+  });
+program.command('status [version]').description('Show validation issues and the next step; omit version for all releases')
+  .option('--channel <name>', 'show only this channel')
+  .action(async (version: string | undefined, options: ChannelOption) => {
+    const result = await projectStatus(project(), version ? target(version, options) : undefined, options.channel);
+    emit(result, formatStatus(result));
+  });
 program.command('start').description('Save the first-use Git boundary and treatment of earlier history')
   .option('--channel <name>', 'release channel; omit for unchanneled releases')
   .requiredOption('--at <ref>', 'baseline commit or tag; subsequent notes begin after this commit')
@@ -53,7 +96,11 @@ program.command('prepare <version>').description('Create a draft from pinned Git
   .option('--from-root', 'explicitly include the whole history')
   .option('--first-release', 'start an independent release line')
   .option('--date <date-or-datetime>', 'release date or timestamp with timezone; defaults to the current UTC timestamp')
-  .action(async (version: string, options: Parameters<typeof prepare>[2]) => emit(await prepare(project(), version, options)));
+  .action(async (version: string, options: Parameters<typeof prepare>[2]) => {
+    const instance = project();
+    const result = await prepare(instance, version, options);
+    emit(result, `Prepared draft ${refKey(result)}\nFiles: ${await instance.releaseDir(result)}\nNext: use releasekit-draft with your agent to write the notes, then run releasekit status ${version}${options.channel ? ` --channel ${options.channel}` : ''}.`);
+  });
 
 const note = program.command('note').description('Manage individual release notes');
 note.command('add <version> <id>').description('Scaffold a note and its locale files')
@@ -95,7 +142,7 @@ program.command('validate [version]').description('Validate one release or all r
     if (options.channel !== undefined) await instance.requireChannel(options.channel);
     const versions = version ? [target(version, options)] : (await instance.allRefs()).filter(r => r.channel === options.channel);
     const results = await Promise.all(versions.map(v => validate(instance, v)));
-    emit(results);
+    emit(results, results.length ? results.map(r => `${refKey(r)}: ${r.valid ? 'valid' : 'needs attention'}${[...r.errors.map(e => `\n  - ${e}`), ...r.warnings.map(w => `\n  Warning: ${w}`)].join('')}`).join('\n') : 'No releases to validate. Use releasekit-draft to create the first draft.');
     if (results.some(r => !r.valid)) process.exitCode = 1;
   });
 program.command('finalize <version>').description('Validate and mark local release content ready')
@@ -125,6 +172,12 @@ async function main() {
   await program.parseAsync();
 }
 main().catch((error: unknown) => {
+  if (error instanceof CommanderError) {
+    if (error.exitCode === 0) return;
+    if (process.argv.includes('--json')) console.error(JSON.stringify({ error: error.message }));
+    process.exitCode = error.exitCode;
+    return;
+  }
   const message = error instanceof Error ? error.message : String(error);
   console.error(program.opts().json ? JSON.stringify({ error: message }) : message);
   process.exitCode = 1;

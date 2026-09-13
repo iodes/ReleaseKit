@@ -50,10 +50,20 @@ npm install -g @iodes/releasekit
 Run inside your product's Git repository:
 
 ```sh
-releasekit init --tools codex,claude,cursor --themes both
+releasekit init
 ```
 
-Choose the tools you use: `codex`, `claude`, `cursor`, or a comma-separated list. New projects use English (`en-US`) as the original language, with no translations enabled until selected. Edit `releasekit/config.yaml` to set your product name, language defaults for new drafts, and visual settings. Setup prints the skill invocation hints for each tool.
+Interactive setup asks for your product name, agent tools, original language, complete language set, and image themes. Press Enter to accept each default. Explicit options skip their corresponding questions. Settings are saved to `releasekit/config.yaml`; setup prints invocation hints only for the tools you selected. Ctrl+C cancels setup before configuration is written.
+
+For scripts, CI, or a coding agent, pass options directly:
+
+```sh
+releasekit init --no-interactive --tools codex,claude --source-locale en-US --locales en-US,ko-KR --themes both
+```
+
+Prompts are disabled with `--json`, `--no-interactive`, or non-terminal input/output. Omitted settings then use the defaults: repository name, all supported tools, English only, and both themes. Use `--tools none` to install no agent skills. `--locales` must include the original language with no duplicates. You can also initialize another existing Git repository with `releasekit init ./your-product` (relative to `--cwd`, if supplied). Re-running init preserves existing configuration and directs you to `releasekit update` for managed skills.
+
+Edit `releasekit/config.yaml` later to change defaults for new drafts. Existing releases retain their saved settings.
 
 ### 3. Ask your agent
 
@@ -110,6 +120,24 @@ The agent resolves the version and Git range from your request, saved releases, 
 Language selection is a first-use decision. When it is still unresolved, the draft skill defaults the original to English, suggests the user's current language for optional translation, and accepts additional language names or locale codes as well as an English-only choice. Explicit choices and intentional project settings are reused. The first selection is saved in `releasekit/config.yaml` before preparing the draft, without a separate confirmation. Each new draft uses the current config's original language and complete translation set without asking again, even when previous releases used different languages. Existing drafts keep their saved selection. The draft includes the source and all selected translations; use the same skill to request a language change or refresh translations. Changing project defaults affects future drafts while earlier releases remain unchanged.
 
 Invoke the skill with `$releasekit-draft` in Codex, `/releasekit-draft` in Claude Code, or the skill picker in Cursor. The agent runs the CLI, generates flat explanations, and requests approved source images when the actual product or content must be shown.
+
+## CLI progress and next steps
+
+```sh
+releasekit list                         # All releases, including channels
+releasekit list --channel stable       # One channel
+releasekit status                      # Validate all releases and show next steps
+releasekit status 1.4.0                 # One unchanneled release
+releasekit status 1.4.0 --channel stable
+releasekit status --json                # Structured progress for scripts
+releasekit update                      # Refresh installed skills; preserve user edits
+```
+
+`list` shows release identities, saved draft/ready state, note counts, and dates. `status` checks content with the same validation used by `validate`, displays errors and warnings, and suggests the next step. A ready label alone does not guarantee that files still pass validation. Status is read-only and exits successfully even when drafts have pending work; use `validate` for a failing exit code when content is invalid. Before initialization, `status` points to `init`.
+
+Running `releasekit update` refreshes skills for all supported tools (Codex, Claude Code, and Cursor), regardless of the saved init selection. It installs missing skills, preserves project configuration and locally modified files, and never prompts for tool selection. The result shows the project, supported tools, updated files, already-current files, and preserved edits, followed by invocation hints and the next command. Conflicts produce exit code 1. `--json` returns only the structured result, including `written`, `unchanged`, and `conflicts` arrays. This command refreshes bundled project skills; it does not upgrade the CLI package itself.
+
+Setup, update, prepare, list, status, and validate print readable summaries. `--json` preserves structured output for automation; command and option errors are JSON objects on stderr with a nonzero exit code. Help and version output remain plain text. Other content operations retain their detailed JSON results. Run `releasekit <command> --help` for options and `releasekit --help` for the workflow overview.
 
 ## Adopting ReleaseKit later
 

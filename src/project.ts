@@ -46,7 +46,9 @@ export class Project {
   static find(cwd: string): Project { return new Project(repoRoot(cwd)); }
   async content(relative: string): Promise<string> { return within(this.root, `${KIT_DIR}/${relative}`); }
   async config(): Promise<ProjectConfig> {
-    const raw = parseYaml(await fs.readFile(await this.content('config.yaml'), 'utf8'));
+    const file = await this.content('config.yaml');
+    if (!(await exists(file))) throw new Error('ReleaseKit is not initialized. Run releasekit init first.');
+    const raw = parseYaml(await fs.readFile(file, 'utf8'));
     if (raw && typeof raw === 'object' && 'history' in raw && raw.history && typeof raw.history === 'object' && 'limit' in raw.history) {
       throw new Error('Remove history.limit from config.yaml; use export --limit instead. Omit --limit to export all releases.');
     }
