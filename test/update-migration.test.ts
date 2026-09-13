@@ -17,6 +17,7 @@ describe('skill updates preserve configuration', () => {
     const releaseFile = await p.releaseFile('1', 'release.yaml');
     const releaseBefore = await fs.readFile(releaseFile, 'utf8');
     const expected = await p.config();
+    expected.tools = ['codex'];
     expected.channels = false;
     expected.locales = ['en-US', 'ko-KR'];
     expected.visuals.accent = '#123456';
@@ -37,9 +38,9 @@ describe('skill updates preserve configuration', () => {
     expect(await fs.readFile(file, 'utf8')).toBe(original);
     await expect(p.config()).rejects.toThrow('Remove history.limit');
     expect(await fs.readFile(releaseFile, 'utf8')).toBe(releaseBefore);
-    for (const root of ['.agents', '.claude']) {
-      expect(await exists(path.join(p.root, root, 'skills/releasekit-draft/SKILL.md'))).toBe(true);
-    }
+    expect(result.tools).toEqual(['codex']);
+    expect(await exists(path.join(p.root, '.agents/skills/releasekit-draft/SKILL.md'))).toBe(true);
+    expect(await exists(path.join(p.root, '.claude'))).toBe(false);
     const second = await updateProject(p);
     expect(second.written).toEqual([]);
     expect(formatUpdate(second)).not.toMatch(/Removed history|Configuration:|Original configuration:/);
@@ -50,7 +51,7 @@ describe('skill updates preserve configuration', () => {
   it('refreshes skills while leaving invalid release settings intact', async () => {
     const p = await fixture();
     const file = await p.content('config.yaml');
-    await writeYaml(file, { ...await p.config(), locales: ['ko-KR'] });
+    await writeYaml(file, { ...await p.config(), tools: ['codex'], locales: ['ko-KR'] });
     const before = await fs.readFile(file, 'utf8');
     expect((await updateProject(p)).written.length).toBeGreaterThan(0);
     await expect(p.config()).rejects.toThrow('include the source locale');
@@ -69,6 +70,34 @@ describe('skill updates preserve configuration', () => {
     expect((await updateProject(p)).conflicts).toEqual([]);
     expect(await fs.readFile(backup, 'utf8')).toBe('Earlier backup');
     expect(await fs.readFile(file, 'utf8')).toBe(original);
+  });
+
+  it.each([
+    { tools: ['claude'], root: '.claude', absent: '.agents' },
+    { tools: ['cursor'], root: '.agents', absent: '.claude' },
+  ])('updates only the configured $tools skills', async ({ tools, root, absent }) => {
+    const p = await fixture();
+    await writeYaml(await p.content('config.yaml'), { ...await p.config(), tools });
+    const result = await updateProject(p);
+    expect(result.tools).toEqual(tools);
+    expect(result.written.length).toBeGreaterThan(0);
+    expect(result.written.every(file => file.startsWith(root + '/skills/'))).toBe(true);
+    expect(await exists(path.join(p.root, root, 'skills/releasekit-draft/SKILL.md'))).toBe(true);
+    expect(await exists(path.join(p.root, absent))).toBe(false);
+  });
+
+  it.each([undefined, null, 'codex', ['unknown']])('rejects an invalid tool selection before installing skills (%j)', async tools => {
+    const p = await fixture();
+    const file = await p.content('config.yaml');
+    await writeYaml(file, { ...await p.config(), tools });
+    const before = await fs.readFile(file, 'utf8');
+    const marker = await p.content('managed-skills.json');
+    const managedBefore = await fs.readFile(marker, 'utf8');
+    await expect(updateProject(p)).rejects.toThrow();
+    expect(await fs.readFile(file, 'utf8')).toBe(before);
+    expect(await fs.readFile(marker, 'utf8')).toBe(managedBefore);
+    expect(await exists(path.join(p.root, '.agents'))).toBe(false);
+    expect(await exists(path.join(p.root, '.claude'))).toBe(false);
   });
 
   it.each(['product: [invalid]\n', 'product: [\n'])('rejects an unreadable product label before installing skills (%j)', async config => {

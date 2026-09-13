@@ -12,14 +12,14 @@ export function parseTools(value: string) {
 
 type Theme = ProjectConfig['visuals']['themes'];
 
-export function selectAgentTools(context?: Parameters<typeof checkbox>[1]) {
+export function selectAgentTools(context?: Parameters<typeof checkbox>[1], selected: ProjectConfig['tools'] = []) {
   (context?.output ?? process.stdout).write('Choose at least one coding agent to receive ReleaseKit skills.\nUse Space to select or clear tools, then Enter to continue.\n\n');
   return checkbox<ProjectConfig['tools'][number]>({
     message: 'Which agent tools do you use?',
     choices: [
-      { name: 'Codex', value: 'codex', checked: false },
-      { name: 'Claude Code', value: 'claude', checked: false },
-      { name: 'Cursor', value: 'cursor', checked: false },
+      { name: 'Codex', value: 'codex', checked: selected.includes('codex') },
+      { name: 'Claude Code', value: 'claude', checked: selected.includes('claude') },
+      { name: 'Cursor', value: 'cursor', checked: selected.includes('cursor') },
     ],
     required: true,
     loop: false,
@@ -28,7 +28,7 @@ export function selectAgentTools(context?: Parameters<typeof checkbox>[1]) {
 }
 
 interface SetupPrompts {
-  tools?: () => Promise<ProjectConfig['tools']>;
+  tools?: (selected: ProjectConfig['tools']) => Promise<ProjectConfig['tools']>;
   theme?: () => Promise<Theme>;
 }
 
@@ -50,9 +50,10 @@ export function selectImageThemes(context?: Parameters<typeof select>[1]) {
 }
 
 // All other settings retain their explicit values or initProject defaults.
-export async function interactiveSetup(options: InitOptions, prompts: SetupPrompts = {}): Promise<InitOptions> {
+export async function interactiveSetup(options: InitOptions, prompts: SetupPrompts = {}, existingTools?: ProjectConfig['tools']): Promise<InitOptions> {
   try {
-    const tools = options.tools ?? await (prompts.tools ?? selectAgentTools)();
+    const tools = options.tools ?? await (prompts.tools ?? (selected => selectAgentTools(undefined, selected)))(existingTools ?? []);
+    if (existingTools !== undefined) return { ...options, tools };
     const themes = options.themes ?? await (prompts.theme ?? selectImageThemes)();
     return { ...options, tools, themes };
   } catch (error) {

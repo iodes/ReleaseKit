@@ -17,6 +17,35 @@ function cli(root: string, ...args: string[]) {
 }
 
 describe('guided CLI', () => {
+  it('reconfigures tools with init and uses the new selection for subsequent updates', async () => {
+    const p = await fixture('light');
+    const initial = await p.config();
+    const first = cli(p.root, 'init', '--tools', 'codex,claude', '--json');
+    expect(first.status, first.stderr).toBe(0);
+    expect(JSON.parse(first.stdout)).toMatchObject({ reconfigured: true, tools: ['codex', 'claude'] });
+    const claudeFile = path.join(p.root, '.claude/skills/releasekit-draft/SKILL.md');
+    const claudeBefore = await fs.readFile(claudeFile);
+    const next = cli(p.root, 'init', '.', '--tools', 'codex', '--json');
+    expect(next.status, next.stderr).toBe(0);
+    expect(JSON.parse(next.stdout).tools).toEqual(['codex']);
+    expect(await p.config()).toEqual({ ...initial, tools: ['codex'] });
+    expect(await fs.readFile(claudeFile)).toEqual(claudeBefore);
+    const update = cli(p.root, 'update', '--json');
+    expect(update.status, update.stderr).toBe(0);
+    expect(JSON.parse(update.stdout).tools).toEqual(['codex']);
+    const file = await p.content('config.yaml');
+    const before = await fs.readFile(file);
+    const again = cli(p.root, 'init', '--no-interactive', '--json');
+    expect(again.status, again.stderr).toBe(0);
+    expect(JSON.parse(again.stdout)).toMatchObject({ tools: ['codex'], written: [] });
+    expect(await fs.readFile(file)).toEqual(before);
+    const none = cli(p.root, 'init', '--tools', 'none', '--json');
+    expect(none.status, none.stderr).toBe(0);
+    expect(JSON.parse(none.stdout)).toMatchObject({ tools: [], written: [] });
+    expect((await p.config()).tools).toEqual([]);
+    expect(await fs.readFile(claudeFile)).toEqual(claudeBefore);
+  });
+
   it('supports the original init command with default product and languages', async () => {
     const p = await fixture();
     await fs.unlink(await p.content('config.yaml'));
@@ -108,8 +137,11 @@ describe('guided CLI', () => {
     expect(help.stderr).toBe('');
   });
 
-  it('updates every supported tool without prompts and preserves project settings', async () => {
+  it('updates all tools when configured without prompts and preserves project settings', async () => {
     const p = await fixture('light');
+    const config = await p.config();
+    config.tools = ['codex', 'claude', 'cursor'];
+    await writeYaml(await p.content('config.yaml'), config);
     const configBytes = await fs.readFile(await p.content('config.yaml'), 'utf8');
     const first = cli(p.root, 'update', '--json');
     expect(first.status, first.stderr).toBe(0);
@@ -134,6 +166,41 @@ describe('guided CLI', () => {
     expect(await fs.readFile(await p.content('config.yaml'), 'utf8')).toBe(configBytes);
   });
 
+  it('keeps a Codex-only init selection in update files and output', async () => {
+    const p = await fixture();
+    const file = await p.content('config.yaml');
+    await fs.unlink(file);
+    const init = cli(p.root, 'init', '--tools', 'codex', '--no-interactive');
+    expect(init.status, init.stderr).toBe(0);
+    const before = await fs.readFile(file, 'utf8');
+    const skill = path.join(p.root, '.agents/skills/releasekit-draft/SKILL.md');
+    await fs.unlink(skill);
+    const update = cli(p.root, 'update', '--json');
+    expect(update.status, update.stderr).toBe(0);
+    expect(JSON.parse(update.stdout)).toMatchObject({
+      tools: ['codex'], written: ['.agents/skills/releasekit-draft/SKILL.md'], conflicts: [],
+    });
+    await expect(fs.access(skill)).resolves.toBeUndefined();
+    await expect(fs.access(path.join(p.root, '.claude'))).rejects.toThrow();
+    await expect(fs.access(path.join(p.root, '.cursor'))).rejects.toThrow();
+    const human = cli(p.root, 'update');
+    expect(human.status, human.stderr).toBe(0);
+    expect(human.stdout).toContain('Tools: codex\n');
+    expect(human.stdout).toContain('$releasekit-draft');
+    expect(human.stdout).not.toMatch(/claude|cursor/);
+    expect(await fs.readFile(file, 'utf8')).toBe(before);
+  });
+
+  it('reports no selected tools without installing skills', async () => {
+    const p = await fixture();
+    const result = cli(p.root, 'update');
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain('Tools: none');
+    expect(result.stdout).not.toMatch(/codex|claude|cursor/);
+    await expect(fs.access(path.join(p.root, '.agents'))).rejects.toThrow();
+    await expect(fs.access(path.join(p.root, '.claude'))).rejects.toThrow();
+  });
+
   it('preserves modified skills during update and reports conflicts', async () => {
     const p = await fixture();
     const config = await p.config();
@@ -147,5 +214,49 @@ describe('guided CLI', () => {
     expect(result.status).toBe(1);
     expect(JSON.parse(result.stdout).conflicts).toContain('.agents/skills/releasekit-draft/SKILL.md');
     expect(await fs.readFile(skill, 'utf8')).toBe(before);
+    const human = cli(p.root, 'update');
+    expect(human.status, human.stderr).toBe(1);
+    expect(human.stdout).toContain('! Update needs attention');
+    expect(human.stdout).toContain('.agents/skills/releasekit-draft/SKILL.md');
+    expect(human.stdout).not.toContain('✓');
+    expect(human.stdout).not.toContain('Next: releasekit status');
+    expect(await fs.readFile(skill, 'utf8')).toBe(before);
+  });
+
+  it('shows actionable update failures on stderr and preserves JSON errors', async () => {
+    const p = await fixture();
+    await fs.unlink(await p.content('config.yaml'));
+    const human = cli(p.root, 'update');
+    expect(human.status).toBe(1);
+    expect(human.stdout).toBe('');
+    expect(human.stderr).toContain('✕ Update failed');
+    expect(human.stderr).toContain(p.root);
+    expect(human.stderr).toContain('releasekit init');
+    const json = cli(p.root, 'update', '--json');
+    expect(json.status).toBe(1);
+    expect(json.stdout).toBe('');
+    expect(JSON.parse(json.stderr).error).toContain('releasekit init');
+    expect(json.stderr).not.toContain('✕');
+  });
+
+  it('supports terminal colors and NO_COLOR while keeping JSON undecorated', async () => {
+    const p = await fixture();
+    const file = await p.content('config.yaml');
+    await writeYaml(file, { ...await p.config(), tools: ['codex'] });
+    for (const mode of ['color', 'plain', 'json']) {
+      const env = { ...process.env };
+      delete env.NO_COLOR;
+      delete env.NODE_DISABLE_COLORS;
+      delete env.FORCE_COLOR;
+      if (mode === 'plain') env.NO_COLOR = '1';
+      else env.FORCE_COLOR = '1';
+      const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/cli.ts', '--cwd', p.root, 'update',
+        ...(mode === 'json' ? ['--json'] : [])], { encoding: 'utf8', timeout: 20_000, windowsHide: true, env });
+      expect(result.status, result.stderr).toBe(0);
+      if (mode === 'color') expect(result.stdout).toContain('\u001b[');
+      else expect(result.stdout).not.toContain('\u001b[');
+      if (mode === 'json') expect(JSON.parse(result.stdout).tools).toEqual(['codex']);
+      else expect(result.stdout).toContain('✓');
+    }
   });
 });

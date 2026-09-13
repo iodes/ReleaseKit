@@ -3,10 +3,9 @@ import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { Command, CommanderError, Option } from 'commander';
 import { Project, prepare, startProject } from './project.js';
-import { initProject, updateProject, formatUpdate, type InitOptions } from './install.js';
+import { initProject, readExistingSetup, updateProject, formatUpdate, formatUpdateFailure, type InitOptions } from './install.js';
 import { commaList, parseTools, interactiveSetup } from './setup.js';
 import { listReleases, projectStatus, formatStatus } from './status.js';
-import { exists } from './files.js';
 import { refKey } from './refs.js';
 import { addNote, removeNote, markTranslation, syncImagePolicy } from './content.js';
 import { planImages, importImage, type ImportImageOptions } from './images.js';
@@ -40,7 +39,7 @@ function emit(value: unknown, summary?: string) {
   console.log(program.opts().json || !summary ? JSON.stringify(value, null, 2) : summary);
 }
 
-program.command('init [directory]').description('Initialize content and install project skills')
+program.command('init [directory]').description('Initialize a project or reconfigure its agent tools')
   .option('--product <name>', 'product name')
   .option('--tools <tools>', 'comma-separated codex,claude,cursor, or none')
   .addOption(new Option('--themes <policy>', 'project image variants').choices(['both', 'dark', 'light']))
@@ -48,24 +47,33 @@ program.command('init [directory]').description('Initialize content and install 
   .option('--locales <locales>', 'comma-separated languages including the original')
   .action(async (directory: string | undefined, options: { product?: string; tools?: string; themes?: ProjectConfig['visuals']['themes']; sourceLocale?: string; locales?: string }) => {
     const instance = directory === undefined ? project() : Project.find(path.resolve(program.opts<{ cwd: string }>().cwd, directory));
-    if (await exists(await instance.content('config.yaml'))) throw new Error('ReleaseKit is already initialized. Edit releasekit/config.yaml for settings or run releasekit update.');
     let setup: InitOptions = { ...options, tools: options.tools === undefined ? undefined : parseTools(options.tools),
       locales: options.locales === undefined ? undefined : commaList(options.locales) };
-    if (program.opts().interactive && !program.opts().json && process.stdin.isTTY && process.stdout.isTTY) setup = await interactiveSetup(setup);
+    const existing = await readExistingSetup(instance, setup);
+    if (program.opts().interactive && !program.opts().json && process.stdin.isTTY && process.stdout.isTTY) {
+      if (existing && setup.tools === undefined) console.log(`Reconfigure agent tools for ${existing.product}. Saved tools are pre-selected.\n`);
+      setup = await interactiveSetup(setup, {}, existing?.tools);
+    }
     const result = await initProject(instance, setup);
-    emit(result, [`Initialized ReleaseKit in ${instance.root}`, `Configuration: ${result.config}`,
+    emit(result, result.reconfigured ? formatUpdate(result, { projectRoot: instance.root, stream: process.stdout }) : [`Initialized ReleaseKit in ${instance.root}`, `Configuration: ${result.config}`,
       `Installed skills for: ${result.tools.join(', ') || 'none'}`, ...result.tools.map(tool => result.hints[tool]),
       ...result.conflicts.map(file => `Preserved modified file: ${file}`),
       'Next: ask your agent to use releasekit-draft with a release version.', 'Check progress: releasekit status'].join('\n'));
     if (result.conflicts.length) process.exitCode = 1;
   });
-program.command('update').description('Refresh skills for all supported tools while preserving user edits')
+program.command('update').description('Refresh skills for configured tools while preserving user edits')
   .action(async () => {
     const instance = project();
-    const result = await updateProject(instance);
-    if (!program.opts().json) console.log(`ReleaseKit skill update — ${result.product}\nProject: ${instance.root}\nTools: codex, claude, cursor\n`);
-    emit(result, formatUpdate(result));
-    if (result.conflicts.length) process.exitCode = 1;
+    try {
+      const result = await updateProject(instance);
+      emit(result, formatUpdate(result, { projectRoot: instance.root, stream: process.stdout }));
+      if (result.conflicts.length) process.exitCode = 1;
+    } catch (error) {
+      if (program.opts().json) throw error;
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(formatUpdateFailure(message, { projectRoot: instance.root, stream: process.stderr }));
+      process.exitCode = 1;
+    }
   });
 program.command('list').description('List releases across all channels')
   .option('--channel <name>', 'show only this channel')

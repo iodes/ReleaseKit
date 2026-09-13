@@ -13,6 +13,47 @@ async function picker() {
 }
 
 describe('tools then theme setup', () => {
+  it.each([false, true])('preselects saved tools on re-init and skips theme selection (add tool: %j)', async addTool => {
+    const input = new PassThrough();
+    const output = new PassThrough();
+    let screen = '';
+    output.on('data', chunk => { screen += chunk.toString(); });
+    const theme = vi.fn(async () => 'both' as const);
+    const answer = interactiveSetup({}, {
+      tools: selected => selectAgentTools({ input, output }, selected), theme,
+    }, ['codex']);
+    await vi.waitFor(() => expect(screen).toContain('Cursor'));
+    if (addTool) {
+      input.write('\u001b[B');
+      input.write(' ');
+    }
+    input.write('\r');
+    expect(await answer).toEqual({ tools: addTool ? ['codex', 'claude'] : ['codex'] });
+    expect(theme).not.toHaveBeenCalled();
+    input.destroy(); output.destroy();
+  });
+
+  it('cancels reconfiguration without returning a replacement selection', async () => {
+    const input = new PassThrough();
+    const output = new PassThrough();
+    let screen = '';
+    output.on('data', chunk => { screen += chunk.toString(); });
+    const answer = interactiveSetup({}, { tools: selected => selectAgentTools({ input, output }, selected) }, ['codex']);
+    const cancelled = expect(answer).rejects.toThrow('Setup cancelled');
+    await vi.waitFor(() => expect(screen).toContain('Cursor'));
+    input.write('\u0003');
+    await cancelled;
+    input.destroy(); output.destroy();
+  });
+
+  it('skips all prompts when reconfiguring with explicit tools', async () => {
+    const tools = vi.fn(async () => ['cursor'] as ['cursor']);
+    const theme = vi.fn(async () => 'both' as const);
+    expect(await interactiveSetup({ tools: [] }, { tools, theme }, ['codex'])).toEqual({ tools: [] });
+    expect(tools).not.toHaveBeenCalled();
+    expect(theme).not.toHaveBeenCalled();
+  });
+
   it('starts empty and blocks submission until a tool is selected', async () => {
     const input = new PassThrough();
     const output = new PassThrough();
