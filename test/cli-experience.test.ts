@@ -3,7 +3,6 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { afterEach, describe, expect, it } from 'vitest';
 import { fixture, cleanup } from './helpers.js';
-import { collectSetup } from '../src/setup.js';
 import { projectStatus } from '../src/status.js';
 import { prepare } from '../src/project.js';
 import { finalize } from '../src/validate.js';
@@ -18,17 +17,12 @@ function cli(root: string, ...args: string[]) {
 }
 
 describe('guided CLI', () => {
-  it('collects setup, retries invalid answers, and respects explicit options', async () => {
-    const answers = ['unsupported', 'codex,claude', 'ko-KR', 'en-US', 'ko-KR,en-US', 'both'];
-    const problems: string[] = [];
-    const setup = await collectSetup('/example', { product: 'Chosen product' }, async () => {
-      const answer = answers.shift();
-      if (answer === undefined) throw new Error('Unexpected prompt');
-      return answer;
-    }, message => problems.push(message));
-    expect(setup).toEqual({ product: 'Chosen product', tools: ['codex', 'claude'], sourceLocale: 'ko-KR', locales: ['ko-KR', 'en-US'], themes: 'both' });
-    expect(problems).toHaveLength(2);
-    expect(answers).toEqual([]);
+  it('supports the original init command with default product and languages', async () => {
+    const p = await fixture();
+    await fs.unlink(await p.content('config.yaml'));
+    const result = cli(p.root, 'init', '--tools', 'codex,claude,cursor', '--themes', 'both');
+    expect(result.status, result.stderr).toBe(0);
+    expect(await p.config()).toMatchObject({ product: path.basename(p.root), tools: ['codex', 'claude', 'cursor'], sourceLocale: 'en-US', locales: ['en-US'], visuals: { themes: 'both' } });
   });
 
   it('initializes a directory without prompts and persists language defaults', async () => {

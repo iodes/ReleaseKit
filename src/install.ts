@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import { Project } from './project.js';
+import { migrateConfig } from './migrate-config.js';
 import { configSchema, defaultConfig, type ProjectConfig } from './model.js';
 import { exists, within, write, writeYaml, digest } from './files.js';
 
@@ -48,12 +49,16 @@ export async function installSkills(project: Project, tools?: ProjectConfig['too
 }
 
 export async function updateProject(project: Project) {
-  return installSkills(project, ['codex', 'claude', 'cursor']);
+  const migration = await migrateConfig(project);
+  return { ...await installSkills(project, ['codex', 'claude', 'cursor']), ...migration };
 }
 
-export function formatUpdate(result: Awaited<ReturnType<typeof installSkills>>): string {
+export function formatUpdate(result: Awaited<ReturnType<typeof updateProject>>): string {
   const lines = [result.conflicts.length ? 'Update needs attention.' : result.tools.length ? 'Skills are up to date.' : 'No agent tools selected.',
     `  Updated: ${result.written.length} files`, `  Already current: ${result.unchanged.length} files`, `  Modified files preserved: ${result.conflicts.length}`];
+  if (result.migrations.length) {
+    lines.push('', ...result.migrations.map(item => `  Configuration: ${item}`), `  Original configuration: ${result.backup}`);
+  }
   if (result.conflicts.length) {
     lines.push('', ...result.conflicts.map(file => `  ! ${file}`),
       'Compare these files with the installed package templates and merge the changes you want to keep.');

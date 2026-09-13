@@ -53,17 +53,17 @@ Run inside your product's Git repository:
 releasekit init
 ```
 
-Interactive setup asks for your product name, agent tools, original language, complete language set, and image themes. Press Enter to accept each default. Explicit options skip their corresponding questions. Settings are saved to `releasekit/config.yaml`; setup prints invocation hints only for the tools you selected. Ctrl+C cancels setup before configuration is written.
+Setup asks for agent tools first, then image themes. In the tool list, use ↑/↓ to move, Space to select or clear a tool, and Enter to continue. No tools are selected initially; A toggles all and I inverts the selection. Select at least one tool to continue. Pressing Enter with no selection displays an error and keeps the tool picker open. For image themes, use ↑/↓ to choose **Both dark and light** (the default), **Dark only**, or **Light only**, then press Enter. The picker explains each highlighted choice: both themes prepares matching versions for dark and light backgrounds; a single theme prepares one version for the chosen background. This default applies to generated release-note illustrations in new drafts and can be changed later. Ctrl+C cancels before configuration is written. Product name defaults to the repository folder name, and the original language defaults to English with no translations. Language selection remains part of the first draft workflow.
 
-For scripts, CI, or a coding agent, pass options directly:
+The original command still initializes immediately with no questions:
 
 ```sh
-releasekit init --no-interactive --tools codex,claude --source-locale en-US --locales en-US,ko-KR --themes both
+releasekit init --tools codex,claude,cursor --themes both
 ```
 
-Prompts are disabled with `--json`, `--no-interactive`, or non-terminal input/output. Omitted settings then use the defaults: repository name, all supported tools, English only, and both themes. Use `--tools none` to install no agent skills. `--locales` must include the original language with no duplicates. You can also initialize another existing Git repository with `releasekit init ./your-product` (relative to `--cwd`, if supplied). Re-running init preserves existing configuration and directs you to `releasekit update` for managed skills.
+Use `--tools codex` to install only selected tools, or `--tools none` to install no skills. Explicit `--tools` and `--themes` options skip their corresponding questions. With `--json`, `--no-interactive`, or non-terminal input/output, setup skips all questions and uses all supported tools and both themes unless explicitly overridden. Optional `--product`, `--source-locale`, and `--locales` overrides remain available without adding questions; `--locales` must include the original language with no duplicates.
 
-Edit `releasekit/config.yaml` later to change defaults for new drafts. Existing releases retain their saved settings.
+Settings are saved to `releasekit/config.yaml`, and setup prints invocation hints for the installed tools. You can also initialize another existing Git repository with `releasekit init ./your-product` (relative to `--cwd`, if supplied). Re-running init preserves existing configuration and directs you to `releasekit update` for managed skills. Edit `releasekit/config.yaml` later to change defaults for new drafts. Existing releases retain their saved settings.
 
 ### 3. Ask your agent
 
@@ -135,7 +135,7 @@ releasekit update                      # Refresh installed skills; preserve user
 
 `list` shows release identities, saved draft/ready state, note counts, and dates. `status` checks content with the same validation used by `validate`, displays errors and warnings, and suggests the next step. A ready label alone does not guarantee that files still pass validation. Status is read-only and exits successfully even when drafts have pending work; use `validate` for a failing exit code when content is invalid. Before initialization, `status` points to `init`.
 
-Running `releasekit update` refreshes skills for all supported tools (Codex, Claude Code, and Cursor), regardless of the saved init selection. It installs missing skills, preserves project configuration and locally modified files, and never prompts for tool selection. The result shows the project, supported tools, updated files, already-current files, and preserved edits, followed by invocation hints and the next command. Conflicts produce exit code 1. `--json` returns only the structured result, including `written`, `unchanged`, and `conflicts` arrays. This command refreshes bundled project skills; it does not upgrade the CLI package itself.
+Running `releasekit update` refreshes skills for all supported tools (Codex, Claude Code, and Cursor), regardless of the saved init selection. It installs missing skills, preserves current project configuration and locally modified files, and never prompts for tool selection. For older configurations containing `history.limit`, update first saves the original to `releasekit/config.yaml.before-update`, removes only that obsolete setting, and then refreshes skills. Other settings, comments on retained entries, and line endings are preserved. The result reports the migration and backup path. Use `export --limit` for an explicit export limit; omitting it exports all releases. Unrelated invalid settings still need correction and are never silently discarded. The result shows the project, supported tools, updated files, already-current files, and preserved edits, followed by invocation hints and the next command. Conflicts produce exit code 1. `--json` returns only the structured result, including `written`, `unchanged`, and `conflicts` arrays. This command refreshes bundled project skills; it does not upgrade the CLI package itself.
 
 Setup, update, prepare, list, status, and validate print readable summaries. `--json` preserves structured output for automation; command and option errors are JSON objects on stderr with a nonzero exit code. Help and version output remain plain text. Other content operations retain their detailed JSON results. Run `releasekit <command> --help` for options and `releasekit --help` for the workflow overview.
 

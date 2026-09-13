@@ -51,7 +51,7 @@ program.command('init [directory]').description('Initialize content and install 
     if (await exists(await instance.content('config.yaml'))) throw new Error('ReleaseKit is already initialized. Edit releasekit/config.yaml for settings or run releasekit update.');
     let setup: InitOptions = { ...options, tools: options.tools === undefined ? undefined : parseTools(options.tools),
       locales: options.locales === undefined ? undefined : commaList(options.locales) };
-    if (program.opts().interactive && !program.opts().json && process.stdin.isTTY && process.stdout.isTTY) setup = await interactiveSetup(instance.root, setup);
+    if (program.opts().interactive && !program.opts().json && process.stdin.isTTY && process.stdout.isTTY) setup = await interactiveSetup(setup);
     const result = await initProject(instance, setup);
     emit(result, [`Initialized ReleaseKit in ${instance.root}`, `Configuration: ${result.config}`,
       `Installed skills for: ${result.tools.join(', ') || 'none'}`, ...result.tools.map(tool => result.hints[tool]),
@@ -62,9 +62,8 @@ program.command('init [directory]').description('Initialize content and install 
 program.command('update').description('Refresh skills for all supported tools while preserving user edits')
   .action(async () => {
     const instance = project();
-    const config = await instance.config();
-    if (!program.opts().json) console.log(`ReleaseKit skill update — ${config.product}\nProject: ${instance.root}\nTools: codex, claude, cursor\n`);
     const result = await updateProject(instance);
+    if (!program.opts().json) console.log(`ReleaseKit skill update — ${result.product}\nProject: ${instance.root}\nTools: codex, claude, cursor\n`);
     emit(result, formatUpdate(result));
     if (result.conflicts.length) process.exitCode = 1;
   });

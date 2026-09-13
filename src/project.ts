@@ -40,6 +40,17 @@ export function linearHistory(releases: Release[]): Release[] {
   return chain;
 }
 
+export function parseProjectConfig(raw: unknown): ProjectConfig {
+  if (raw && typeof raw === 'object' && 'history' in raw && raw.history && typeof raw.history === 'object' && 'limit' in raw.history) {
+    throw new Error('Run releasekit update to migrate this configuration automatically. Remove history.limit from config.yaml; use export --limit instead. Omit --limit to export all releases.');
+  }
+  const config = configSchema.parse(raw);
+  if (!config.locales.includes(config.sourceLocale) || new Set(config.locales).size !== config.locales.length) {
+    throw new Error('Project locales must be unique and include the source locale.');
+  }
+  return config;
+}
+
 export class Project {
   readonly root: string;
   constructor(root: string) { this.root = path.resolve(root); }
@@ -49,14 +60,7 @@ export class Project {
     const file = await this.content('config.yaml');
     if (!(await exists(file))) throw new Error('ReleaseKit is not initialized. Run releasekit init first.');
     const raw = parseYaml(await fs.readFile(file, 'utf8'));
-    if (raw && typeof raw === 'object' && 'history' in raw && raw.history && typeof raw.history === 'object' && 'limit' in raw.history) {
-      throw new Error('Remove history.limit from config.yaml; use export --limit instead. Omit --limit to export all releases.');
-    }
-    const config = configSchema.parse(raw);
-    if (!config.locales.includes(config.sourceLocale) || new Set(config.locales).size !== config.locales.length) {
-      throw new Error('Project locales must be unique and include the source locale.');
-    }
-    return config;
+    return parseProjectConfig(raw);
   }
   async requireChannel(channel: string): Promise<void> {
     ref({ channel, version: 'check' });

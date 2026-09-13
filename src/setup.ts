@@ -1,7 +1,5 @@
-import path from 'node:path';
-import { createInterface } from 'node:readline/promises';
-import { stdin, stdout } from 'node:process';
-import { configSchema, defaultConfig } from './model.js';
+import { checkbox, select } from '@inquirer/prompts';
+import { configSchema, type ProjectConfig } from './model.js';
 import type { InitOptions } from './install.js';
 
 export const commaList = (value: string): string[] => value.split(',').map(s => s.trim()).filter(Boolean);
@@ -12,47 +10,55 @@ export function parseTools(value: string) {
   return configSchema.shape.tools.parse(values);
 }
 
-type Ask = (question: string) => Promise<string>;
+type Theme = ProjectConfig['visuals']['themes'];
 
-// Collect and validate everything before initProject writes any files.
-export async function collectSetup(root: string, options: InitOptions, ask: Ask, report: (message: string) => void): Promise<InitOptions> {
-  const defaults = defaultConfig(path.basename(root));
-  async function field<T>(label: string, fallback: string, parse: (value: string) => T): Promise<T> {
-    for (;;) {
-      const answer = (await ask(`${label} [${fallback}]: `)).trim() || fallback;
-      try { return parse(answer); }
-      catch (error) { report(error instanceof Error ? error.message : String(error)); }
-    }
-  }
-  const product = options.product ?? await field('Product name', defaults.product, value => configSchema.shape.product.parse(value));
-  const tools = options.tools ?? await field('Agent tools (codex, claude, cursor; comma-separated, or none)', defaults.tools.join(','), parseTools);
-  const sourceLocale = options.sourceLocale ?? await field('Original language (locale code)', defaults.sourceLocale, value => configSchema.shape.sourceLocale.parse(value));
-  const locales = options.locales ?? await field('All languages, including the original (comma-separated locale codes)', sourceLocale, value => {
-    const values = configSchema.shape.locales.parse(commaList(value));
-    if (!values.includes(sourceLocale) || new Set(values).size !== values.length) throw new Error(`Languages must be unique and include ${sourceLocale}.`);
-    return values;
-  });
-  const themes = options.themes ?? await field('Image themes (both, dark, light)', defaults.visuals.themes, value => configSchema.shape.visuals.shape.themes.parse(value));
-  return { product, tools, sourceLocale, locales, themes };
+export function selectAgentTools(context?: Parameters<typeof checkbox>[1]) {
+  (context?.output ?? process.stdout).write('Choose at least one coding agent to receive ReleaseKit skills.\nUse Space to select or clear tools, then Enter to continue.\n\n');
+  return checkbox<ProjectConfig['tools'][number]>({
+    message: 'Which agent tools do you use?',
+    choices: [
+      { name: 'Codex', value: 'codex', checked: false },
+      { name: 'Claude Code', value: 'claude', checked: false },
+      { name: 'Cursor', value: 'cursor', checked: false },
+    ],
+    required: true,
+    loop: false,
+    shortcuts: { all: 'a', invert: 'i' },
+  }, context);
 }
 
-export function interactiveSetup(root: string, options: InitOptions): Promise<InitOptions> {
-  return withTerminal((ask, report) => collectSetup(root, options, ask, report), 'Setup cancelled. No configuration was written.');
+interface SetupPrompts {
+  tools?: () => Promise<ProjectConfig['tools']>;
+  theme?: () => Promise<Theme>;
 }
 
-async function withTerminal<T>(collect: (ask: Ask, report: (message: string) => void) => Promise<T>, cancelled: string): Promise<T> {
-  const terminal = createInterface({ input: stdin, output: stdout });
-  const abort = new AbortController();
-  const cancel = () => abort.abort();
-  terminal.on('SIGINT', cancel);
-  terminal.on('close', cancel);
+export function selectImageThemes(context?: Parameters<typeof select>[1]) {
+  (context?.output ?? process.stdout).write('Choose the theme variants for generated release-note illustrations.\nThis default applies to new drafts and can be changed later.\n\n');
+  return select<Theme>({
+    message: 'Which image themes should new drafts use?',
+    choices: [
+      { name: 'Both dark and light (recommended)', value: 'both',
+        description: 'Two matching versions of each illustration, one for dark backgrounds and one for light. Choose this when your product supports both themes.' },
+      { name: 'Dark only', value: 'dark',
+        description: 'One version of each illustration for dark backgrounds. Choose this when your release notes are always shown in a dark theme.' },
+      { name: 'Light only', value: 'light',
+        description: 'One version of each illustration for light backgrounds. Choose this when your release notes are always shown in a light theme.' },
+    ],
+    default: 'both',
+    loop: false,
+  }, context);
+}
+
+// All other settings retain their explicit values or initProject defaults.
+export async function interactiveSetup(options: InitOptions, prompts: SetupPrompts = {}): Promise<InitOptions> {
   try {
-    return await collect(question => {
-      if (abort.signal.aborted) throw new Error(cancelled);
-      return terminal.question(question, { signal: abort.signal });
-    }, message => stdout.write(`${message}\n`));
+    const tools = options.tools ?? await (prompts.tools ?? selectAgentTools)();
+    const themes = options.themes ?? await (prompts.theme ?? selectImageThemes)();
+    return { ...options, tools, themes };
   } catch (error) {
-    if (abort.signal.aborted) throw new Error(cancelled);
+    if (error instanceof Error && ['ExitPromptError', 'AbortPromptError'].includes(error.name)) {
+      throw new Error('Setup cancelled. No configuration was written.');
+    }
     throw error;
-  } finally { terminal.close(); }
+  }
 }
