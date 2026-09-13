@@ -33,7 +33,7 @@ describe('adopting ReleaseKit in an existing project', () => {
     git(p.root, ['tag', '-a', 'adoption', '-m', 'Adoption boundary']);
     const start = await startProject(p, { at: 'adoption', past: 'skip' });
     expect(start).toEqual({ ref: 'adoption', sha: base, past: 'skip', version: null });
-    expect((await p.config()).history.start).toEqual(start);
+    expect((await p.config()).history?.start).toEqual(start);
     expect((await p.config()).visuals.themes).toBe('light');
     expect(await p.versions()).toEqual([]);
     await expect(prepare(p, 'next', {})).rejects.toThrow('same commit');
@@ -174,7 +174,7 @@ describe('adopting ReleaseKit in an existing project', () => {
 
   it('preserves the existing explicit-range workflow and rejects setup over existing releases', async () => {
     const p = await fixture();
-    expect((await p.config()).history.start).toBeUndefined();
+    expect((await p.config()).history?.start).toBeUndefined();
     await commit(p.root, 'initial\nqueue\n', 'Add queue');
     const draft = await prepare(p, 'existing', { from: 'v0' });
     expect(draft.initialContent).toBeUndefined();
@@ -194,7 +194,7 @@ describe('adopting ReleaseKit in an existing project', () => {
     });
     expect(run('start', '--at', 'v0').status).toBe(1);
     expect(run('start', '--at', 'v0', '--past', 'unknown').status).toBe(1);
-    expect((await p.config()).history.start).toBeUndefined();
+    expect((await p.config()).history?.start).toBeUndefined();
     const started = run('start', '--at', 'v0', '--past', 'summary', '--baseline-version', 'baseline');
     expect(started.stderr).toBe('');
     expect(started.status).toBe(0);

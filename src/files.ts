@@ -61,8 +61,12 @@ export async function write(file: string, content: string | Uint8Array): Promise
     throw error;
   }
 }
+async function preserveLineEndings(file: string, text: string): Promise<string> {
+  if (await exists(file) && (await fs.readFile(file, 'utf8')).includes('\r\n')) return text.replace(/\r?\n/g, '\r\n');
+  return text;
+}
 export async function writeYaml(file: string, value: unknown): Promise<void> {
-  await write(file, stringify(value, { lineWidth: 100 }));
+  await write(file, await preserveLineEndings(file, stringify(value, { lineWidth: 100 })));
 }
 export function parseYaml(text: string): unknown {
   const document = parseDocument(text, { uniqueKeys: true });
@@ -87,5 +91,5 @@ export function noteHash(note: NoteText): string {
 }
 export async function writeNote(file: string, note: NoteText): Promise<void> {
   const { body, ...metadata } = note;
-  await write(file, `---\n${stringify(metadata)}---\n\n${body.trim()}\n`);
+  await write(file, await preserveLineEndings(file, `---\n${stringify(metadata)}---\n\n${body.trim()}\n`));
 }

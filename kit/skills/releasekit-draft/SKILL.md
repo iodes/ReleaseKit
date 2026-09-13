@@ -1,9 +1,11 @@
 ---
 name: releasekit-draft
-description: Create or revise ReleaseKit release notes and their selected translations, including translation-only refreshes. Resolve release scope from the repository and guide first-use setup for an existing product. Use for release copy, not general code implementation.
+description: Create or revise ReleaseKit release notes and their selected translations, including translation-only refreshes and moving whole releases between channels. Resolve release scope from the repository and guide first-use setup for an existing product. Use for release copy, not general code implementation.
 ---
 
 Before asking anything, check for an unanswered question request already in this conversation. Keep that request pending across skill transitions and queue every new question until it is resolved; follow [the shared question guidance](references/workflow.md#ask-with-the-native-question-ui).
+
+For first-use channel decisions, new-draft channel selection, or whole-release channel moves, read [channels and moves](references/channels.md). Save first-use use/non-use alongside unresolved language choices before preparation; later drafts ask for a channel only when the request does not identify one and several are configured. Existing drafts retain their channel. A channel-move request is a whole-release operation through the CLI, not a copy rewrite, translation refresh, or image-regeneration task. Follow the reference's preflight and state-preserving move workflow.
 
 Read the project's ReleaseKit config and the existing release before writing. For translation-only requests, preserve the source copy, pinned scope, and accepted images; follow [Translate selected locales](references/workflow.md#translate-selected-locales) for the affected notes and languages without preparing a new release. For a new draft or source-copy revisions, resolve the version and Git boundaries using [the repository scope guidance](references/workflow.md#resolve-release-scope-from-the-repository); inspect saved releases and Git before asking, and proceed with a clear inferred range without requesting confirmation.
 

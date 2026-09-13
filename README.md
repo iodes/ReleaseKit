@@ -64,8 +64,8 @@ You: Use releasekit-draft to draft 1.4.0.
 AI:  I'll use English for the original notes. Add Korean, your current
      language, as a translation (recommended), or use English only?
      You can also enter additional languages together.
-You: Korean and Japanese translations.
-AI:  Saved these language defaults in releasekit/config.yaml.
+You: Korean and Japanese translations, and a single release history.
+AI:  Saved these language defaults and channels: false in releasekit/config.yaml.
      Found v1.4.0 and its preceding release tag v1.3.0 on this line.
      Created releasekit/releases/1.4.0/
      ✓ Pinned v1.3.0 → v1.4.0 and collected change evidence
@@ -196,7 +196,7 @@ releasekit export --out ./release-output
 - Notes include images by default. Use `note add --no-image` only for an explicit text-only choice. Adding a note clears any previous `emptyReason`.
 - Use `releasekit note remove <version> <id>` to exclude a draft note. It removes the note folder, translations, visual brief, prompts, and unused managed images, including older imports. Images referenced by remaining visuals and source originals are preserved. The result lists removed paths and retained shared assets. Removing the last note leaves the draft pending until you add notes or supply a factual `emptyReason`.
 - Add `--json` for structured results or `--cwd` to select a project directory.
-- Only `--out` is required for export. Omit `--current` to select the release with no successor in the saved `previous` links; multiple release lines require an explicit `--current`. The selected release must be ready. Omit `--limit` to use `history.limit` from `releasekit/config.yaml` (initially 3).
+- Only `--out` is required for export. Omit `--current` to select the release with no successor in the saved `previous` links; multiple release lines require an explicit `--current`. The selected release must be ready. Omit `--limit` to export the entire linked history; pass `--limit N` to select at most N releases.
 - Omit `--locale` to export every locale saved in the current release as `release-notes.<locale>.json`, such as `release-notes.en-US.json` and `release-notes.ko-KR.json`. Add `--locale en-US` for only the English file. All files share the same `assets/` directory. Each selected version must contain the requested locales; missing or stale translations stop the export before output is created.
 - Export to a new directory; an existing destination is never overwritten. The command result lists generated JSON paths in `files`, the number of version groups in `releases`, and the number of shared image files in `assets`.
 
@@ -212,6 +212,44 @@ After installing a newer package version, run `releasekit update` in your produc
 Codex and Cursor share `.agents/skills` to avoid duplicate discovery. Claude Code uses `.claude/skills`.
 
 </details>
+
+## Release channels
+
+Channel use is a first-draft choice, alongside unresolved language choices. The draft skill saves `channels: false` for a single history, or a user-selected channel map before preparing content. Initialization leaves the choice unset. Existing projects with releases and no channel setting continue their single history.
+
+```yaml
+channels:
+  prod:
+    include: [prod]
+  dev:
+    include: [dev, prod]
+  stage:
+    include: [prod]
+```
+
+For later new drafts, an explicit request such as “Draft 2.1 for dev” selects that channel. With several configured channels and no clear target, the skill asks which channel to write for. It reuses an existing draft's channel and never guesses from the previous release or branch name. A project with one configured channel needs no target question. The CLI itself does not prompt.
+
+Channel releases live in `releasekit/releases/<channel>/<version>/`. The same version can exist in several channels. All channel releases share one newest-to-oldest `previous` chain using `{ channel, version }` references; an export follows that chain and skips drafts and excluded channels without sorting dates. Channel-free releases keep their separate existing history.
+
+```sh
+releasekit prepare 2.1 --channel dev --from <git-ref> --to <git-ref>
+releasekit finalize 2.1 --channel dev
+releasekit export --channel dev --out ./output/dev
+releasekit export --channel prod --limit 3 --out ./output/prod
+```
+
+There is no default export count limit. `--limit N` caps the combined, filtered result at N releases. With the configuration above, dev sees dev and prod; stage sees prod only. The exported entries identify their channels, and the exported `previous` links connect only entries included in that output. Git analysis boundaries remain independent of display links.
+
+Ask the draft skill to move one or several whole releases, for example “Move dev 2.0 and 2.1 to prod.” It previews and runs the deterministic move command, preserving ready status, content, images, Git boundaries, and release timestamps. Channel-to-channel moves retain their global position; moves to or from a channel-free history splice the selected releases between histories. Conflicts stop the whole move.
+
+```sh
+releasekit release move 2.0 2.1 --from-channel dev --to-channel prod --dry-run
+releasekit release move 2.0 2.1 --from-channel dev --to-channel prod
+```
+
+`releasedAt` accepts a date or a timestamp with `Z` or an explicit UTC offset. New drafts default to the current UTC timestamp, including milliseconds. Use `--date 2026-09-14T18:30:00+09:00` to supply one; existing date-only strings are preserved. Neither finalization nor channel moves replace the saved time.
+
+See [channels and moves](kit/references/channels.md) for first-use decisions, identity, history, and insertion options.
 
 ## Image themes
 
@@ -297,7 +335,7 @@ Major capabilities and changes that warrant individual attention get standalone 
 
 Releases store the comparison start and end SHAs in `release.yaml`, with relevant paths or commits attached to individual notes. They do not save a full patch or a separate changed-file index. Draft validation reads the pinned Git range, or the baseline snapshot for a product introduction; finalized releases can be validated and exported without Git history.
 
-Export follows explicit `previous` links, keeping each version's notes in a separate group. The default limit is **three releases, including the current one**. Similar notes in different versions remain separate.
+Export follows explicit `previous` links, keeping each version's notes in a separate group. There is **no default count limit**; `--limit N` selects the first N releases after filtering. Similar notes in different versions remain separate.
 
 The bundle contains display data and relative assets. Git evidence, prompts, and private source paths stay out of the export. Consumers safely render `bodyMarkdown` and select `image.variants[theme]`, falling back to `image.variants[image.fallbackTheme]` when needed. Text-only notes have `image: null`.
 

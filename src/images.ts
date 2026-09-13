@@ -1,3 +1,5 @@
+import { type ReleaseId } from './model.js';
+import { ref } from './refs.js';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -28,7 +30,7 @@ export type ImageRequest = {
   note: string; theme: AssetVariant; reason: 'missing' | 'stale';
 } & ({ action: 'generate'; promptFile: string; compositionReference: string | null }
   | { action: 'provide'; promptFile: null; compositionReference: null; instruction: string });
-export async function planImages(project: Project, version: string) {
+export async function planImages(project: Project, version: ReleaseId) {
   const release = await project.release(version);
   const requests: ImageRequest[] = [];
   let ready = 0;
@@ -69,7 +71,7 @@ export async function planImages(project: Project, version: string) {
     }
   }
   return {
-    version, configuredThemes: themes(release.visuals), requestedAssets: ready + requests.length,
+    ...ref(version), configuredThemes: themes(release.visuals), requestedAssets: ready + requests.length,
     readyAssets: ready, pendingAssets: requests.length, requests,
     generationRequests: requests.filter(request => request.action === 'generate').length,
     providedRequests: requests.filter(request => request.action === 'provide').length,
@@ -77,7 +79,7 @@ export async function planImages(project: Project, version: string) {
   };
 }
 
-async function obsoleteNoteImages(project: Project, version: string, noteId: string, selected: Visual): Promise<string[]> {
+async function obsoleteNoteImages(project: Project, version: ReleaseId, noteId: string, selected: Visual): Promise<string[]> {
   const candidates = await managedAssetFiles(project, version, noteId);
   if (!candidates.length) return [];
   const retained = await retainedImageFiles(project, { version, noteId, visual: selected });
@@ -90,7 +92,7 @@ async function obsoleteNoteImages(project: Project, version: string, noteId: str
 
 export interface ImportImageOptions { source?: 'generated' | 'provided' }
 
-export async function importImage(project: Project, version: string, noteId: string, variant: AssetVariant, source: string, options: ImportImageOptions = {}) {
+export async function importImage(project: Project, version: ReleaseId, noteId: string, variant: AssetVariant, source: string, options: ImportImageOptions = {}) {
   const release = await project.release(version);
   editable(release); identifier(noteId); assetVariant.parse(variant);
   if (!release.notes.some(n => n.id === noteId && n.image)) throw new Error(`No image-enabled note named ${noteId}.`);
@@ -127,7 +129,7 @@ export async function importImage(project: Project, version: string, noteId: str
   return visual.variants[variant]!;
 }
 
-export async function validateImages(project: Project, version: string, noteId: string, visual: Visual, errors: string[], warnings: string[]): Promise<void> {
+export async function validateImages(project: Project, version: ReleaseId, noteId: string, visual: Visual, errors: string[], warnings: string[]): Promise<void> {
   const release = await project.release(version);
   for (const variant of activeVariants(visual, release.visuals)) {
     const expected = sceneHash(visual.scene, release.visuals, variant);

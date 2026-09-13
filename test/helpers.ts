@@ -8,7 +8,7 @@ import { addNote, markTranslation } from '../src/content.js';
 import { git } from '../src/git.js';
 import { writeNote, writeYaml, write } from '../src/files.js';
 import { importImage } from '../src/images.js';
-import { themes, type Scene } from '../src/model.js';
+import { themes, type Scene, type ReleaseId } from '../src/model.js';
 
 const created: string[] = [];
 export const sampleScene: Scene = {
@@ -43,7 +43,7 @@ export async function commit(root: string, text: string, message: string, tag?: 
 export async function png(color: string, width = 128, height = 80) {
   return sharp({ create: { width, height, channels: 3, background: color } }).png().toBuffer();
 }
-export async function fillNote(project: Project, version: string, image = true) {
+export async function fillNote(project: Project, version: ReleaseId, image = true) {
   await addNote(project, version, 'queue', 'feature', image);
   const release = await project.release(version);
   release.notes[0]!.paths = ['app.txt'];

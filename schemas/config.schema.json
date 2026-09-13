@@ -25,11 +25,6 @@
     "history": {
       "type": "object",
       "properties": {
-        "limit": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100
-        },
         "start": {
           "oneOf": [
             {
@@ -118,10 +113,132 @@
           ]
         }
       },
-      "required": [
-        "limit"
-      ],
       "additionalProperties": false
+    },
+    "channels": {
+      "anyOf": [
+        {
+          "type": "boolean",
+          "const": false
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$)[a-z][a-z0-9-]{0,62}$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "include": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$)[a-z][a-z0-9-]{0,62}$"
+                }
+              },
+              "history": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "ref": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "sha": {
+                            "type": "string",
+                            "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+                          },
+                          "past": {
+                            "type": "string",
+                            "const": "summary"
+                          },
+                          "version": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+                          }
+                        },
+                        "required": [
+                          "ref",
+                          "sha",
+                          "past",
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "ref": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "sha": {
+                            "type": "string",
+                            "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+                          },
+                          "past": {
+                            "type": "string",
+                            "const": "history"
+                          },
+                          "version": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$"
+                          }
+                        },
+                        "required": [
+                          "ref",
+                          "sha",
+                          "past",
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "ref": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "sha": {
+                            "type": "string",
+                            "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+                          },
+                          "past": {
+                            "type": "string",
+                            "const": "skip"
+                          },
+                          "version": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "ref",
+                          "sha",
+                          "past",
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "include"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ]
     },
     "visuals": {
       "type": "object",
@@ -269,7 +386,6 @@
     "product",
     "sourceLocale",
     "locales",
-    "history",
     "visuals",
     "tools"
   ],

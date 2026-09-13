@@ -1,3 +1,5 @@
+import { type ReleaseId } from './model.js';
+import { ref } from './refs.js';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileKey, managedAssetFiles, retainedImageFiles, visualFileReferences } from './assets.js';
@@ -5,14 +7,14 @@ import { locale, noteMetaSchema, visualSchema, imageSource, type NoteMeta } from
 import { identifier, writeYaml, writeNote, readNote, noteHash, exists, readYaml } from './files.js';
 import { Project, editable } from './project.js';
 
-async function notePaths(project: Project, version: string, id: string): Promise<string[]> {
+async function notePaths(project: Project, version: ReleaseId, id: string): Promise<string[]> {
   return Promise.all([
     `notes/${id}`, `visuals/${id}.yaml`,
     ...['dark', 'light', 'shared'].map(variant => `prompts/${id}.${variant}.md`),
   ].map(relative => project.releaseFile(version, relative)));
 }
 
-export async function addNote(project: Project, version: string, id: string, category: NoteMeta['category'], image: boolean): Promise<void> {
+export async function addNote(project: Project, version: ReleaseId, id: string, category: NoteMeta['category'], image: boolean): Promise<void> {
   const release = await project.release(version);
   editable(release);
   identifier(id);
@@ -48,7 +50,7 @@ export async function addNote(project: Project, version: string, id: string, cat
   }
 }
 
-export async function removeNote(project: Project, version: string, id: string) {
+export async function removeNote(project: Project, version: ReleaseId, id: string) {
   const release = await project.release(version);
   editable(release);
   identifier(id);
@@ -104,10 +106,10 @@ export async function removeNote(project: Project, version: string, id: string) 
     throw new Error(`Note ${id} was removed, but file cleanup is incomplete in ${checkedHolding}`, { cause: error });
   }
   const relative = (file: string) => path.relative(directory, file).split(path.sep).join('/');
-  return { version, note: id, status: release.status, removedPaths: targets.map(relative), retainedAssets: retainedAssets.map(relative) };
+  return { ...ref(version), note: id, status: release.status, removedPaths: targets.map(relative), retainedAssets: retainedAssets.map(relative) };
 }
 
-export async function markTranslation(project: Project, version: string, id: string, language: string): Promise<string> {
+export async function markTranslation(project: Project, version: ReleaseId, id: string, language: string): Promise<string> {
   const release = await project.release(version);
   editable(release);
   identifier(id); locale.parse(language);
@@ -122,7 +124,7 @@ export async function markTranslation(project: Project, version: string, id: str
   return translated.sourceHash;
 }
 
-export async function syncImagePolicy(project: Project, version: string): Promise<void> {
+export async function syncImagePolicy(project: Project, version: ReleaseId): Promise<void> {
   const release = await project.release(version);
   editable(release);
   const policy = (await project.config()).visuals;
@@ -132,7 +134,7 @@ export async function syncImagePolicy(project: Project, version: string): Promis
   await project.save(release);
 }
 
-export async function readVisual(project: Project, version: string, id: string) {
+export async function readVisual(project: Project, version: ReleaseId, id: string) {
   const visual = await readYaml(await project.releaseFile(version, `visuals/${identifier(id)}.yaml`), visualSchema);
   imageSource(visual.scene);
   return visual;

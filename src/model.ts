@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
 export const segment = z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9._+-]{0,95}$/);
+export const channelName = z.string().regex(/^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$)[a-z][a-z0-9-]{0,62}$/);
+export const channelRefSchema = z.strictObject({ channel: channelName, version: segment });
+export type ReleaseRef = { version: string; channel?: string };
+export type ReleaseId = string | ReleaseRef;
+export const releasedAtSchema = z.union([z.iso.date(), z.iso.datetime({ offset: true }).regex(/T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/)]);
 export const sha = z.string().regex(/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/);
 export const locale = z.string().regex(/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/);
 export const theme = z.enum(['dark', 'light']);
@@ -32,10 +37,21 @@ export const historyStartSchema = z.discriminatedUnion('past', [
   z.strictObject({ ref: z.string().min(1), sha, past: z.literal('skip'), version: z.null() }),
 ]);
 export type HistoryStart = z.infer<typeof historyStartSchema>;
+const historySettings = z.strictObject({ start: historyStartSchema.optional() });
+export const channelsSchema = z.record(channelName, z.strictObject({
+  include: z.array(channelName).min(1), history: historySettings.optional(),
+})).superRefine((channels, ctx) => {
+  if (!Object.keys(channels).length) ctx.addIssue({ code: 'custom', message: 'Use channels: false to disable channels.' });
+  for (const [name, settings] of Object.entries(channels)) {
+    if (new Set(settings.include).size !== settings.include.length) ctx.addIssue({ code: 'custom', path: [name, 'include'], message: 'Included channels must be unique.' });
+    for (const included of settings.include) if (!Object.hasOwn(channels, included)) ctx.addIssue({ code: 'custom', path: [name, 'include'], message: `Unknown included channel: ${included}` });
+  }
+});
 export const configSchema = z.strictObject({
   schemaVersion: z.literal(1), product: z.string().min(1),
   sourceLocale: locale, locales: z.array(locale).min(1),
-  history: z.strictObject({ limit: z.number().int().min(1).max(100), start: historyStartSchema.optional() }),
+  history: historySettings.optional(),
+  channels: z.union([z.literal(false), channelsSchema]).optional(),
   visuals: visualPolicySchema,
   tools: z.array(z.enum(['codex', 'claude', 'cursor'])),
 });
@@ -50,12 +66,16 @@ export const noteMetaSchema = z.strictObject({
 });
 export type NoteMeta = z.infer<typeof noteMetaSchema>;
 export const releaseSchema = z.strictObject({
-  schemaVersion: z.literal(1), version: segment, releasedAt: z.iso.date(),
-  previous: segment.nullable(), status: z.enum(['draft', 'ready']),
+  schemaVersion: z.literal(1), version: segment, channel: channelName.optional(), releasedAt: releasedAtSchema,
+  previous: z.union([segment, channelRefSchema]).nullable(), status: z.enum(['draft', 'ready']),
   source: sourceSchema, initialContent: z.enum(['summary', 'history']).optional(),
   sourceLocale: locale, locales: z.array(locale).min(1),
   visuals: visualPolicySchema, notes: z.array(noteMetaSchema),
   emptyReason: z.string().nullable(), contentHash: z.string().nullable(),
+}).superRefine((release, ctx) => {
+  if (release.previous !== null && (release.channel === undefined ? typeof release.previous !== 'string' : typeof release.previous === 'string')) {
+    ctx.addIssue({ code: 'custom', path: ['previous'], message: 'Channel releases require a channel/version predecessor; unchanneled releases require a version string.' });
+  }
 });
 export type Release = z.infer<typeof releaseSchema>;
 export const noteTextSchema = z.strictObject({
@@ -91,8 +111,9 @@ const exportedImage = z.strictObject({
 });
 export const bundleSchema = z.strictObject({
   schemaVersion: z.literal(1), currentVersion: segment, locale,
+  viewChannel: channelName.optional(), currentChannel: channelName.optional(),
   releases: z.array(z.strictObject({
-    version: segment, releasedAt: z.iso.date(), previous: segment.nullable(),
+    version: segment, channel: channelName.optional(), releasedAt: releasedAtSchema, previous: z.union([segment, channelRefSchema]).nullable(),
     notes: z.array(z.strictObject({
       id: segment, category: noteMetaSchema.shape.category, title: z.string(), bodyMarkdown: z.string(),
       image: z.strictObject({
@@ -131,7 +152,7 @@ export function activeVariants(visual: Visual, policy: VisualPolicy): AssetVaria
 export function defaultConfig(product: string): ProjectConfig {
   return {
     schemaVersion: 1, product, sourceLocale: 'en-US', locales: ['en-US'],
-    history: { limit: 3 }, tools: ['codex', 'claude', 'cursor'],
+    tools: ['codex', 'claude', 'cursor'],
     visuals: {
       themes: 'both', preset: 'quiet-product', width: 1280, height: 800, accent: '#4678ED',
       dark: { canvas: '#242527', surface: '#18191B', raised: '#343638', primary: '#B9BBBE', secondary: '#777B80', divider: '#46494D' },

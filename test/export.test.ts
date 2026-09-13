@@ -32,7 +32,7 @@ async function readBundle(file: string) {
 }
 
 describe('export defaults', () => {
-  it('exports the linked latest three versions in every saved locale with only --out, sharing images', async () => {
+  it('exports the entire linked history in every saved locale with only --out, sharing images', async () => {
     const p = await fixture();
     const versions = ['9.0.0', '10.0.0', 'z-preview', 'a-final'];
     for (const [index, version] of versions.entries()) {
@@ -49,15 +49,15 @@ describe('export defaults', () => {
     const result = JSON.parse(command.stdout) as Awaited<ReturnType<typeof exportBundle>>;
     expect(result).toEqual({
       files: ['en-US', 'ko-KR'].map(language => path.join(out, `release-notes.${language}.json`)),
-      releases: 3, assets: 2,
+      releases: 4, assets: 2,
     });
     expect((await fs.readdir(out)).sort()).toEqual(['assets', 'release-notes.en-US.json', 'release-notes.ko-KR.json']);
     const bundles = await Promise.all(result.files.map((file: string) => readBundle(file)));
     expect(bundles.map(bundle => bundle.locale)).toEqual(['en-US', 'ko-KR']);
     for (const bundle of bundles) {
       expect(bundle.currentVersion).toBe('a-final');
-      expect(bundle.releases.map(release => release.version)).toEqual(['a-final', 'z-preview', '10.0.0']);
-      expect(bundle.releases.map(release => release.previous)).toEqual(['z-preview', '10.0.0', '9.0.0']);
+      expect(bundle.releases.map(release => release.version)).toEqual(['a-final', 'z-preview', '10.0.0', '9.0.0']);
+      expect(bundle.releases.map(release => release.previous)).toEqual(['z-preview', '10.0.0', '9.0.0', null]);
       for (const release of bundle.releases) {
         const source = await readNote(await p.releaseFile(release.version, `notes/queue/${bundle.locale}.md`));
         expect(release.notes).toHaveLength(1);
@@ -74,12 +74,10 @@ describe('export defaults', () => {
     }
   });
 
-  it('honors configured history limits and explicit current, limit, and locale overrides through the CLI', async () => {
+  it('honors explicit current, limit, and locale options through the CLI', async () => {
     const p = await fixture();
     await ready(p, 'first'); await ready(p, 'middle', 'first'); await ready(p, 'last', 'middle');
-    const config = await p.config(); config.history.limit = 1;
-    await writeYaml(await p.content('config.yaml'), config);
-    const limited = cli(p, ['--locale', 'ko-KR', '--out', './limited']);
+    const limited = cli(p, ['--limit', '1', '--locale', 'ko-KR', '--out', './limited']);
     expect(limited.status, limited.stderr).toBe(0);
     const limitedResult = JSON.parse(limited.stdout);
     expect(limitedResult.releases).toBe(1);
@@ -160,7 +158,7 @@ describe('export defaults', () => {
     expect(await exists(out)).toBe(false);
   });
 
-  it.each(['0', '1.5', '101', 'invalid'])('rejects invalid CLI history limit %s before creating output', async limit => {
+  it.each(['0', '-1', '1.5', '9007199254740992', 'invalid'])('rejects invalid CLI history limit %s before creating output', async limit => {
     const p = await fixture(); await ready(p, 'first');
     const result = cli(p, ['--limit', limit, '--out', './invalid']);
     expect(result.status).toBe(1);

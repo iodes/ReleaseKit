@@ -1,29 +1,49 @@
+import { type ReleaseId } from './model.js';
+import { ref, refKey } from './refs.js';
 import { imageSource, type Release } from './model.js';
 import { Project, editable } from './project.js';
 import { canonical, digest, readNote, noteHash, identifier } from './files.js';
 import { readVisual, checkReferenceFiles } from './content.js';
 import { validateImages } from './images.js';
-import { checkPrevious, collect, collectSnapshot } from './git.js';
+import { collect, collectSnapshot } from './git.js';
 
-export interface Validation { version: string; valid: boolean; errors: string[]; warnings: string[]; contentHash: string | null }
+export interface Validation { version: string; channel?: string; valid: boolean; errors: string[]; warnings: string[]; contentHash: string | null }
 
 export async function contentHash(project: Project, release: Release): Promise<string> {
   const { status: _status, contentHash: _hash, ...metadata } = release;
   const parts: unknown[] = [metadata];
   for (const note of release.notes) {
-    for (const language of release.locales) parts.push(await readNote(await project.releaseFile(release.version, `notes/${note.id}/${language}.md`)));
-    if (note.image) parts.push(await readVisual(project, release.version, note.id));
+    for (const language of release.locales) parts.push(await readNote(await project.releaseFile(release, `notes/${note.id}/${language}.md`)));
+    if (note.image) parts.push(await readVisual(project, release, note.id));
   }
   return digest(canonical(parts));
 }
 
-export async function validate(project: Project, version: string): Promise<Validation> {
+export async function validate(project: Project, version: ReleaseId): Promise<Validation> {
+  return validateOne(project, version);
+}
+
+// Reuse structural validation within an export or move, without caching across mutations.
+export async function validateMany(project: Project, versions: ReleaseId[]): Promise<Validation[]> {
+  const checkedHistory = new Set<string>();
+  if (versions.some(v => ref(v).channel !== undefined)) {
+    for (const release of await project.channelHistory()) checkedHistory.add(refKey(release));
+  }
+  for (const version of versions) {
+    if (!checkedHistory.has(refKey(version))) {
+      for (const release of await project.history(version)) checkedHistory.add(refKey(release));
+    }
+  }
+  return Promise.all(versions.map(version => validateOne(project, version, checkedHistory)));
+}
+
+async function validateOne(project: Project, version: ReleaseId, checkedHistory?: Set<string>): Promise<Validation> {
   const errors: string[] = [], warnings: string[] = [];
   let hash: string | null = null;
   try {
     const release = await project.release(version);
-    if (release.initialContent && (release.source.fromSha !== null || release.source.fromRef !== null || release.previous !== null)) {
-      errors.push('Initial content requires a root baseline with no previous release.');
+    if (release.initialContent && (release.source.fromSha !== null || release.source.fromRef !== null)) {
+      errors.push('Initial content requires a root baseline Git range.');
     }
     // Summaries inspect only the baseline snapshot; ready releases use their finalized fingerprint.
     const summary = release.initialContent === 'summary';
@@ -58,24 +78,21 @@ export async function validate(project: Project, version: string): Promise<Valid
         } catch (error) { errors.push(`${note.id}: ${error instanceof Error ? error.message : error}`); }
       }
     }
-    try { await project.history(version, 1); } catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
-    if (release.status === 'draft' && release.previous) {
-      try { checkPrevious(project.root, await project.release(release.previous), release.source); }
-      catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
-    }
+    try { if (!checkedHistory?.has(refKey(version))) await project.history(version, 1); } catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
+    // Git scope was pinned independently; display links can change during moves.
     if (!errors.length) hash = await contentHash(project, release);
     if (release.status === 'ready' && release.contentHash !== hash && !errors.length) errors.push('Ready release content changed. Reopen the draft and finalize it again.');
   } catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
-  return { version, valid: errors.length === 0, errors, warnings, contentHash: hash };
+  return { ...ref(version), valid: errors.length === 0, errors, warnings, contentHash: hash };
 }
 
-export async function finalize(project: Project, version: string): Promise<Validation> {
+export async function finalize(project: Project, version: ReleaseId): Promise<Validation> {
   const release = await project.release(version);
   editable(release);
   const result = await validate(project, version);
   if (!result.valid || !result.contentHash) throw new Error(result.errors.join('\n'));
-  const chain = await project.history(version, 100);
-  if (chain.slice(1).some(r => r.status !== 'ready')) throw new Error('Finalize the previous releases before finalizing this release.');
+  const chain = await project.history(version);
+  if (release.channel === undefined && chain.slice(1).some(r => r.status !== 'ready')) throw new Error('Finalize the previous releases before finalizing this release.');
   release.status = 'ready';
   release.contentHash = result.contentHash;
   await project.save(release);
