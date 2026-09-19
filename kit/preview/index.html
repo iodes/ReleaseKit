@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReleaseKit Preview</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#notes" id="skip">Skip to release notes</a>
+  <div class="preview-controls">
+    <div class="controls-inner">
+      <div class="language-picker" id="language-picker">
+        <span class="sr-only" id="language-label">Language</span>
+        <button id="language" class="language-trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-options" aria-labelledby="language-label language-value" disabled>
+          <svg class="control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18M12 3c-5 5-5 13 0 18"/></svg>
+          <span id="language-value">Language</span>
+          <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+        </button>
+        <div id="language-options" class="language-options" role="listbox" aria-labelledby="language-label" hidden></div>
+      </div>
+      <button id="theme" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode" title="Dark mode" disabled>
+        <span class="theme-thumb" aria-hidden="true"></span>
+        <svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+        <svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="eyebrow" id="outline-label">IN THIS RELEASE</div>
+      <nav id="outline" aria-labelledby="outline-label"></nav>
+    </aside>
+    <main>
+      <div class="release-heading">
+        <div class="eyebrow" id="release-label">RELEASE NOTES</div>
+        <div class="title-row"><h1 id="version">Release preview</h1><span id="status" class="badge" hidden></span></div>
+        <p id="release-meta" class="muted"></p>
+      </div>
+      <p class="notice" id="locale-notice" role="status" hidden></p>
+      <div class="notice error" id="error" role="status" hidden><span id="error-message"></span><button id="retry" type="button">Retry now</button></div>
+      <div id="notes" tabindex="-1"><p class="empty" id="loading">Loading saved release notes…</p></div>
+      <footer id="footer">A reading preview. Request changes in your agent conversation.</footer>
+    </main>
+  </div>
+</body>
+</html>

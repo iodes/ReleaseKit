@@ -88,6 +88,31 @@ program.command('status [version]').description('Show validation issues and the 
     const result = await projectStatus(project(), version ? target(version, options) : undefined, options.channel);
     emit(result, formatStatus(result));
   });
+program.command('preview <version>').description('Read a multilingual release draft in a live local preview')
+  .option('--channel <name>', 'release channel; omit for unchanneled releases')
+  .option('--locale <locale>', 'preferred reading language; incomplete translations fall back to the source')
+  .option('--port <port>', 'local port; defaults to an available port', value => {
+    if (!/^\d+$/.test(value) || Number(value) > 65535) throw new Error('Preview port must be an integer from 0 to 65535.');
+    return Number(value);
+  })
+  .option('--open', 'open the preview in the default browser')
+  .action(async (version: string, options: ChannelOption & { locale?: string; port?: number; open?: boolean }) => {
+    const { startPreview, openPreview } = await import('./preview.js');
+    const preview = await startPreview(project(), target(version, options), options);
+    const { close, ...result } = preview;
+    const stop = () => {
+      process.removeListener('SIGINT', stop);
+      process.removeListener('SIGTERM', stop);
+      void close().catch(() => { process.exitCode = 1; });
+    };
+    process.once('SIGINT', stop);
+    process.once('SIGTERM', stop);
+    emit(result, `Preview ${refKey(result)}: ${result.url}\nKeep this process running. Press Ctrl+C to stop.\nAsk your agent in the existing conversation for changes; the preview refreshes automatically.`);
+    if (options.open) {
+      try { await openPreview(result.url); }
+      catch { console.error(program.opts().json ? JSON.stringify({ warning: 'Could not open a browser.', url: result.url }) : `Could not open a browser. Open ${result.url} manually.`); }
+    }
+  });
 program.command('start').description('Save the first-use Git boundary and treatment of earlier history')
   .option('--channel <name>', 'release channel; omit for unchanneled releases')
   .requiredOption('--at <ref>', 'baseline commit or tag; subsequent notes begin after this commit')

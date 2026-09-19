@@ -1,5 +1,5 @@
 {
-  ".agents/skills/releasekit-draft/SKILL.md": "03c8a2cee23d91c9ad3b737869ed4386793397e82395ac1041e09eed88b434ae",
+  ".agents/skills/releasekit-draft/SKILL.md": "b5804ffa411d18daf4ce3b5c2c5c99c6ee8abca56f3a2882da8bc60dd00867b2",
   ".agents/skills/releasekit-draft/references/adoption.md": "27f93be847491111fd11371f259d8cabe7e33454654dafff05b776e095dec69e",
   ".agents/skills/releasekit-draft/references/channels.md": "69f9a2c6a7578827ae13e2bd2846c401217af622f9fa5e52ffa2759e9c64021b",
   ".agents/skills/releasekit-draft/references/common-images.md": "c446dd79e6995e1b70638e04ccba41d9d7688bb7f8996dedbdc5a978deda2595",
@@ -8,9 +8,9 @@
   ".agents/skills/releasekit-draft/references/media-sources.md": "df6c00017f84c567f64b42308c7212d1c3f9a1dd82fb2f2ca288afda82750a50",
   ".agents/skills/releasekit-draft/references/theme-pairing.md": "b5b8d80c23c338fa12ad96cc019bce073d910561637946b69ab8a53e66906b90",
   ".agents/skills/releasekit-draft/references/visual-language.md": "0a29b04da79bcd877886bfa5c29fff26f0e354ccf0422022f971ce3ecbb623ea",
-  ".agents/skills/releasekit-draft/references/workflow.md": "f33a6f6459451cc1042d0c6cb595942d7fe67f7ec3c7578b399a6ba133eeb93e",
+  ".agents/skills/releasekit-draft/references/workflow.md": "faa26c7ae84d637bb8619c373e7b3d5b44d65b6e0662ebacad088048e726f9ef",
   ".agents/skills/releasekit-draft/references/writing.md": "5d0773bfdff233cdd08eba8907179931277defdfdb0c2ed06af69329ac33e9c9",
-  ".agents/skills/releasekit-image/SKILL.md": "69ef44b6cf0de2e649ad7ad3b8e514878e42a434c031b1892e41145760aba702",
+  ".agents/skills/releasekit-image/SKILL.md": "40134fae4422b7eb83f42a4a94fc003f6f2c09556a4a3f41cc30c202212e7ec7",
   ".agents/skills/releasekit-image/references/adoption.md": "27f93be847491111fd11371f259d8cabe7e33454654dafff05b776e095dec69e",
   ".agents/skills/releasekit-image/references/channels.md": "69f9a2c6a7578827ae13e2bd2846c401217af622f9fa5e52ffa2759e9c64021b",
   ".agents/skills/releasekit-image/references/common-images.md": "c446dd79e6995e1b70638e04ccba41d9d7688bb7f8996dedbdc5a978deda2595",
@@ -19,7 +19,7 @@
   ".agents/skills/releasekit-image/references/media-sources.md": "df6c00017f84c567f64b42308c7212d1c3f9a1dd82fb2f2ca288afda82750a50",
   ".agents/skills/releasekit-image/references/theme-pairing.md": "b5b8d80c23c338fa12ad96cc019bce073d910561637946b69ab8a53e66906b90",
   ".agents/skills/releasekit-image/references/visual-language.md": "0a29b04da79bcd877886bfa5c29fff26f0e354ccf0422022f971ce3ecbb623ea",
-  ".agents/skills/releasekit-image/references/workflow.md": "f33a6f6459451cc1042d0c6cb595942d7fe67f7ec3c7578b399a6ba133eeb93e",
+  ".agents/skills/releasekit-image/references/workflow.md": "faa26c7ae84d637bb8619c373e7b3d5b44d65b6e0662ebacad088048e726f9ef",
   ".agents/skills/releasekit-image/references/writing.md": "5d0773bfdff233cdd08eba8907179931277defdfdb0c2ed06af69329ac33e9c9",
   ".agents/skills/releasekit-finalize/SKILL.md": "407ef5d4d523bb317d87732971d79253e829cbf01373cf15869cec08c35e9fda",
   ".agents/skills/releasekit-finalize/references/adoption.md": "27f93be847491111fd11371f259d8cabe7e33454654dafff05b776e095dec69e",
@@ -30,6 +30,6 @@
   ".agents/skills/releasekit-finalize/references/media-sources.md": "df6c00017f84c567f64b42308c7212d1c3f9a1dd82fb2f2ca288afda82750a50",
   ".agents/skills/releasekit-finalize/references/theme-pairing.md": "b5b8d80c23c338fa12ad96cc019bce073d910561637946b69ab8a53e66906b90",
   ".agents/skills/releasekit-finalize/references/visual-language.md": "0a29b04da79bcd877886bfa5c29fff26f0e354ccf0422022f971ce3ecbb623ea",
-  ".agents/skills/releasekit-finalize/references/workflow.md": "f33a6f6459451cc1042d0c6cb595942d7fe67f7ec3c7578b399a6ba133eeb93e",
+  ".agents/skills/releasekit-finalize/references/workflow.md": "faa26c7ae84d637bb8619c373e7b3d5b44d65b6e0662ebacad088048e726f9ef",
   ".agents/skills/releasekit-finalize/references/writing.md": "5d0773bfdff233cdd08eba8907179931277defdfdb0c2ed06af69329ac33e9c9"
 }

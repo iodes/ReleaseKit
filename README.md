@@ -85,10 +85,11 @@ AI:  Saved these language defaults and channels: false in releasekit/config.yaml
      or Finish drafting — save the draft and ask for revisions later.
 
 You: Finish drafting.
-AI:  Drafting 1.4.0 is complete. Review releasekit/releases/1.4.0/.
+AI:  Drafting 1.4.0 is complete. Opened a local multilingual preview.
      Ask me here to rewrite a feature description, leave a feature out,
      or add a feature that was missed. I'll update the draft and its
-     affected translations. Images and finalization remain pending.
+     affected translations; saved changes appear in the same preview.
+     Images and finalization remain pending.
 
 You: Rewrite the queue feature description to explain when to use it.
 AI:  Updated that feature description and its Korean and Japanese translations.
@@ -138,6 +139,24 @@ releasekit update                      # Refresh installed skills; preserve user
 Running `releasekit update` refreshes skills only for the tools saved in the project configuration during setup. It installs missing skills for those tools, preserves current project configuration and locally modified files, and never prompts for tool selection. An empty tools list installs no skills. Run `releasekit init` again or edit the tools list in the configuration to change the selection; update does not remove previously installed skills for deselected tools. Update validates only the product label and tool selection from configuration; it does not migrate settings, rewrite `config.yaml`, or create configuration backups. Older or invalid release settings do not block skill refreshes, but content commands still validate them. Remove obsolete `history.limit` settings when using content commands; use `export --limit` for an explicit export limit, or omit it to export all releases. The result leads with a distinct status for completed updates, already-current skills, preserved-file conflicts, or skipped updates with no tools selected. Aligned file counts and project details follow. Successful updates show invocation hints; conflicts list files to merge, and execution failures show the error and retry guidance. Terminal colors highlight success in green, conflicts in yellow, and failures in red; symbols and labels keep the output readable without color. Color follows terminal support and the standard Node.js color environment variables, including NO_COLOR. LF/CRLF-only differences are treated as already current without rewriting skill files. Updates preserve existing skill line endings and recognize hashes from older installations. Actual content edits remain protected. Conflicts and execution failures produce exit code 1. `--json` returns only the structured result, including `written`, `unchanged`, and `conflicts` arrays. This command refreshes bundled project skills; it does not upgrade the CLI package itself.
 
 Setup, update, prepare, list, status, and validate print readable summaries. `--json` preserves structured output for automation; command and option errors are JSON objects on stderr with a nonzero exit code. Help and version output remain plain text. Other content operations retain their detailed JSON results. Run `releasekit <command> --help` for options and `releasekit --help` for the workflow overview.
+
+## Read a draft in your browser
+
+After drafting, the agent opens a local multilingual preview automatically. Choose a saved language to read its full titles and Markdown bodies, switch between light and dark, and see imported images alongside the copy. Ask for all copy, translation, and image revisions in your existing agent conversation; saved changes appear in the same preview automatically. The preview has no direct editing or save controls.
+
+You can also start it yourself:
+
+```sh
+releasekit preview 1.4.0 --open
+releasekit preview 1.4.0 --channel stable --locale ko --open
+releasekit preview 1.4.0 --port 4317 --json
+```
+
+`preview` serves only the selected release at `http://127.0.0.1:<port>/`. Omit `--port` (or use `0`) for an available port; keep the command running and press Ctrl+C to stop. `--open` launches the default browser; otherwise, open the printed URL in a browser or your agent's web panel. `--json` prints one startup object containing `url`, `project`, `version`, and optional `channel`, then keeps the server running. The agent reuses its recorded process and URL for the same project and release rather than opening a server after every revision. There is no installed background service or cross-conversation process discovery.
+
+`--locale` prefers an exact saved locale or a unique match for a language-only code, such as `ko` for `ko-KR`. Missing, unfinished, or stale translations initially fall back to the source language with an explanation. All saved languages remain selectable with their status visible, and switching languages never generates translations or fills missing text from another language. Without a preference, the source language opens first. Interface labels are Korean when the requested locale (or, when omitted, browser language) is Korean, and English otherwise; release content can use any configured locale.
+
+Unfinished drafts can be previewed before validation succeeds. Missing images have a small notice; imported dark/light variants, single-theme images, and unchanged shared supplied images appear when available. Text-only notes have no image notice. The preview polls every second, preserves reading preferences and position, and shows connection or file-reading problems while retaining the last loaded content. A saved ready label is not a substitute for final validation. It reads source files without changing them, serves registered local raster images only, and does not expose a write API or publish content. If the agent environment cannot provide a reachable local preview, it explains the limitation and shows the saved draft in the conversation.
 
 ## Adopting ReleaseKit later
 
