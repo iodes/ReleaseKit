@@ -1,0 +1,92 @@
+schemaVersion: 1
+version: 0.3.0
+releasedAt: 2026-09-13T20:24:11.116Z
+previous: 0.1.7
+status: draft
+source:
+  fromRef: v0.1.7
+  fromSha: b0639e8bbb662f795daa419db3984606d7a99745
+  toRef: HEAD
+  toSha: bfccad9c31d8e29e40d0f13e357f0c617638a0c8
+sourceLocale: en-US
+locales:
+  - en-US
+  - ko-KR
+  - ja-JP
+  - zh-CN
+visuals:
+  themes: both
+  preset: quiet-product
+  width: 1280
+  height: 800
+  accent: "#4678ED"
+  dark:
+    canvas: "#242527"
+    surface: "#18191B"
+    raised: "#343638"
+    primary: "#B9BBBE"
+    secondary: "#777B80"
+    divider: "#46494D"
+  light:
+    canvas: "#F8F8F8"
+    surface: "#FFFFFF"
+    raised: "#ECECEC"
+    primary: "#999999"
+    secondary: "#B8B8B8"
+    divider: "#D9D9D9"
+notes:
+  - id: live-preview
+    category: feature
+    commits:
+      - bfccad9c31d8e29e40d0f13e357f0c617638a0c8
+    paths:
+      - src/preview.ts
+      - src/preview-content.ts
+      - kit/preview/app.js
+      - kit/references/workflow.md
+    image: true
+  - id: release-channels
+    category: feature
+    commits: []
+    paths:
+      - src/model.ts
+      - src/project.ts
+      - src/export.ts
+      - src/move.ts
+    image: true
+  - id: agent-tool-selection
+    category: improvement
+    commits:
+      - f292aa9ba822d52aeaea7741bdecde7d75177e81
+    paths:
+      - src/setup.ts
+      - src/cli.ts
+    image: true
+  - id: release-progress
+    category: feature
+    commits: []
+    paths:
+      - src/status.ts
+      - src/cli.ts
+    image: true
+  - id: minor-improvements
+    category: improvement
+    commits:
+      - cd994594c3dafcbb238bc42cb94bc41ec25a15d7
+    paths:
+      - src/install.ts
+      - src/cli.ts
+      - kit/references/workflow.md
+      - src/export.ts
+      - src/model.ts
+    image: true
+  - id: minor-fixes
+    category: fix
+    commits:
+      - cd994594c3dafcbb238bc42cb94bc41ec25a15d7
+    paths:
+      - src/install.ts
+      - test/install.test.ts
+    image: true
+emptyReason: null
+contentHash: null

@@ -1,0 +1,38 @@
+schemaVersion: 1
+scene:
+  archetype: ui-detail
+  source: generated
+  subject: A live release draft preview
+  message: Saved copy and registered images refresh in the same preview
+  focus: One refreshed note card
+  composition: One centered schematic reading panel with a compact language selector and theme control
+    above two note rows. Accent only the refresh arrow beside the active row. Map canvas to
+    background, surface to panel, raised to selectors, primary to main marks, secondary to text
+    bars, divider to row boundaries. Broad margins; flat fills.
+  context: A conceptual reading surface, not a literal product screenshot.
+  elements:
+    - A live release draft preview
+  preserve:
+    - Shared geometry, object count, spacing, and semantic accent assignment across themes
+    - Captured palette roles and broad margins
+  avoid:
+    - Per-note action buttons, overflow menus, or a second refresh arrow; the single refresh arrow
+      is an automatic-update metaphor, not an interactive control
+    - Bright thick heading bars or shaded surfaces; keep incidental content subordinate and fills
+      flat
+    - Logos, readable labels, invented screenshots, gradients, shadows, and 3D decoration
+  text: []
+  references: []
+variants:
+  dark:
+    file: assets/live-preview.dark.c9d568c1f44e.png
+    sha256: c9d568c1f44e68e6ac6ba95aa44a4468949935aef6174119ae74bf6b3706afe8
+    sceneHash: e60e1c94111443e3717d67f6082e665f621497a94aa09682a81683e2e659eabc
+    width: 1586
+    height: 992
+  light:
+    file: assets/live-preview.light.16402f929cf7.png
+    sha256: 16402f929cf783893952f4515ffa867d3a9310f084b304efedd5053fb5ec3aad
+    sceneHash: d282c6a1ad25ae7fe016132042f4dea72fae1c729e1aba2ece799f2ad3531405
+    width: 1586
+    height: 992

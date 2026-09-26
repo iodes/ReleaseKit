@@ -1,0 +1,37 @@
+schemaVersion: 1
+scene:
+  archetype: ui-detail
+  source: generated
+  subject: Agent tool and image theme selection
+  message: Choose tools and image themes during setup
+  focus: Selected options
+  composition: "Two compact selection groups centered side by side: three tool checkboxes and three
+    theme options. Accent only selected checks and the selected theme indicator. Surface group
+    panels, raised option tiles, primary neutral symbols, secondary incidental bars, divider
+    boundaries on canvas. Flat and widely spaced."
+  context: Conceptual setup controls, without product logos or invented labels.
+  elements:
+    - Agent tool and image theme selection
+  preserve:
+    - Shared geometry, object count, spacing, and semantic accent assignment across themes
+    - Captured palette roles and broad margins
+    - Theme choices mean both, dark only, and light only; show neutral paired, dark, and light
+      swatches rather than a third decorative color scheme
+  avoid:
+    - A colorful third theme or blue-tinted preview artwork that suggests an unsupported image theme
+    - Logos, readable labels, invented screenshots, gradients, shadows, and 3D decoration
+  text: []
+  references: []
+variants:
+  dark:
+    file: assets/agent-tool-selection.dark.b68926e203f7.png
+    sha256: b68926e203f7f30e29caccef7e02c8b0a0c55c7e9b352107a3744b3f750a94fb
+    sceneHash: ed6d881ba275e598aea6691c7605816100fa50c73c086bd442afebe59972c462
+    width: 1586
+    height: 992
+  light:
+    file: assets/agent-tool-selection.light.bec81a823928.png
+    sha256: bec81a823928a5b76547dcc5c9e5a7a515d7f5f85803cf7b25b63b0bf7ceaa45
+    sceneHash: 7eba9ebd4e1b36f5cb21016353aacf5c91213869ec06aa330d32ea83ff2c966d
+    width: 1586
+    height: 992

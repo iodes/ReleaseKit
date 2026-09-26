@@ -1,0 +1,33 @@
+schemaVersion: 1
+scene:
+  archetype: icon-tile
+  source: generated
+  subject: A checklist with a corrected item
+  message: Small corrections to existing behavior
+  focus: One corrected checklist item
+  composition: One centered neutral tile with a compact three-row checklist and a clear check on one
+    row. Canvas background, surface tile, primary check and outline, secondary row bars. No accent,
+    broad margins, flat fills.
+  context: Generic reusable minor fixes, independent of any one bug.
+  elements:
+    - A checklist with a corrected item
+  preserve:
+    - Shared geometry, object count, spacing, and semantic accent assignment across themes
+    - Captured palette roles and broad margins
+  avoid:
+    - Logos, readable labels, invented screenshots, gradients, shadows, and 3D decoration
+  text: []
+  references: []
+variants:
+  dark:
+    file: dark.a99df923f159.png
+    sha256: a99df923f1596464ac8a6968b658dbe5b6d33af0bd0179cb29298e1e504722d4
+    sceneHash: c4b7d3d6e0ca41023e8667fef20c86e613851005f0fadc6824c8e811ebfe4578
+    width: 1586
+    height: 992
+  light:
+    file: light.82b24911881a.png
+    sha256: 82b24911881a30a3df76725bc488153398ee5769f6fda2f453865e28fe99f23e
+    sceneHash: 12c10dfae2d7963f10c30104db6404d792c2f436cd2ae69e82d228ae944fb360
+    width: 1586
+    height: 992

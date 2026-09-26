@@ -1,0 +1,35 @@
+schemaVersion: 1
+scene:
+  archetype: data-view
+  source: generated
+  subject: A release list with status and next action
+  message: See release progress and the next useful step
+  focus: One next-action arrow
+  composition: Three neutral release rows in one compact centered panel, each with a small status
+    mark; one row ends in an accented next-action arrow. Canvas background, surface panel, primary
+    status glyphs, secondary text bars, divider row lines. Broad margins, flat shapes.
+  context: Conceptual status summary, without actual dates or version labels.
+  elements:
+    - A release list with status and next action
+  preserve:
+    - Shared geometry, object count, spacing, and semantic accent assignment across themes
+    - Captured palette roles and broad margins
+  avoid:
+    - Extra colored status marks; keep all three row status marks neutral and reserve blue for the
+      single next-action arrow
+    - Logos, readable labels, invented screenshots, gradients, shadows, and 3D decoration
+  text: []
+  references: []
+variants:
+  dark:
+    file: assets/release-progress.dark.01b6ce83ac79.png
+    sha256: 01b6ce83ac791070221146c4955b23f582f6f38b009abb6fe44c67e705a03d2f
+    sceneHash: e9b014b0ac9ed705bfda2acbcc2ef6200c41f5b64747337f21f90704389e5780
+    width: 1586
+    height: 992
+  light:
+    file: assets/release-progress.light.d92c8f148429.png
+    sha256: d92c8f14842903bda7fbc5809c39647805e0fd9828c539d216286594032e32ea
+    sceneHash: 9179b5144c242f3ec608aaf6462d54fce00826f577ba0dd77d8bd93169459e5c
+    width: 1586
+    height: 992
