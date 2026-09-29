@@ -5,7 +5,7 @@ import sharp from 'sharp';
 import { Project, prepare } from '../src/project.js';
 import { initProject } from '../src/install.js';
 import { addNote, markTranslation } from '../src/content.js';
-import { git } from '../src/git.js';
+import { git, repoRoot } from '../src/git.js';
 import { writeNote, writeYaml, write } from '../src/files.js';
 import { importImage } from '../src/images.js';
 import { themes, type Scene, type ReleaseId } from '../src/model.js';
@@ -22,9 +22,10 @@ export const sampleScene: Scene = {
 };
 
 export async function fixture(policy: 'both' | 'dark' | 'light' = 'both') {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'releasekit-test-'));
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'releasekit-test-'));
+  git(directory, ['init', '-b', 'main']);
+  const root = repoRoot(directory);
   created.push(root);
-  git(root, ['init', '-b', 'main']);
   git(root, ['config', 'user.name', 'Fixture Author']);
   git(root, ['config', 'user.email', 'fixture@example.invalid']);
   git(root, ['config', 'core.autocrlf', 'false']);
